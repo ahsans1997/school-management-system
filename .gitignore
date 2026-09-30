@@ -1,0 +1,20 @@
+# Monorepo root ignores. backend/ (Laravel) and frontend/ (Next.js)
+# each keep their own .gitignore for vendor/, node_modules/, .next/, .env, etc.
+
+# OS / editor
+.DS_Store
+Thumbs.db
+*.swp
+.idea/
+.vscode/
+
+# Logs
+*.log
+
+# Env files (never commit real secrets; .env.example is committed)
+.env
+.env.*
+!.env.example
+
+# Claude scratch / local tooling
+/scratchpad/
