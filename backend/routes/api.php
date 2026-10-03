@@ -1,10 +1,12 @@
 <?php
 
+use App\Http\Controllers\AcademicYearController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HealthController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\SchoolClassController;
 use App\Http\Controllers\SchoolSettingsController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -38,6 +40,21 @@ Route::prefix('auth')->group(function () {
 Route::middleware(['auth:api', 'token.type:access', 'active'])->group(function () {
     // Dashboard. Module 05. Authenticated only — widgets gate themselves.
     Route::get('dashboard', DashboardController::class);
+
+    // Academic Years. Module 06.
+    Route::get('academic-years', [AcademicYearController::class, 'index'])->middleware('permission:academic_year.view');
+    Route::post('academic-years', [AcademicYearController::class, 'store'])->middleware('permission:academic_year.create');
+    Route::get('academic-years/{academic_year}', [AcademicYearController::class, 'show'])->middleware('permission:academic_year.view');
+    Route::put('academic-years/{academic_year}', [AcademicYearController::class, 'update'])->middleware('permission:academic_year.edit');
+    Route::delete('academic-years/{academic_year}', [AcademicYearController::class, 'destroy'])->middleware('permission:academic_year.delete');
+    Route::post('academic-years/{academic_year}/set-current', [AcademicYearController::class, 'setCurrent'])->middleware('permission:academic_year.edit');
+
+    // Classes. Module 07.
+    Route::get('classes', [SchoolClassController::class, 'index'])->middleware('permission:class.view');
+    Route::post('classes', [SchoolClassController::class, 'store'])->middleware('permission:class.create');
+    Route::get('classes/{school_class}', [SchoolClassController::class, 'show'])->middleware('permission:class.view');
+    Route::put('classes/{school_class}', [SchoolClassController::class, 'update'])->middleware('permission:class.edit');
+    Route::delete('classes/{school_class}', [SchoolClassController::class, 'destroy'])->middleware('permission:class.delete');
 
     // School Settings. Module 04.
     Route::get('settings', [SchoolSettingsController::class, 'show'])->middleware('permission:settings.view');

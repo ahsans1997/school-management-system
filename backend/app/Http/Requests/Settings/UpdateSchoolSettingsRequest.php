@@ -46,8 +46,7 @@ class UpdateSchoolSettingsRequest extends FormRequest
             'payment_settings' => ['sometimes', 'array'],
             'payment_settings.*' => ['nullable', 'string', 'max:255'],
 
-            // Academic pointer
-            'active_academic_year_id' => ['sometimes', 'nullable', 'integer'],
+            // The current academic year is managed via /academic-years/{id}/set-current.
         ];
     }
 }

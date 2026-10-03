@@ -4,7 +4,7 @@
 
 Legend: ⬜ Not started · 🟡 In progress · 🔵 In review · ✅ Complete · ⏸️ Blocked
 
-**Overall: 6 / 39 modules complete.** Phase 1 — Foundation is done.
+**Overall: 8 / 39 modules complete.** Phase 1 — Foundation is done; Phase 2 under way.
 
 ---
 
@@ -23,8 +23,8 @@ Legend: ⬜ Not started · 🟡 In progress · 🔵 In review · ✅ Complete ·
 
 | ✔ | # | Module | Status | Completed | Doc |
 |---|---|--------|--------|-----------|-----|
-| [ ] | 06 | Academic Years | ⬜ Not started | — | [06-academic-years.md](modules/06-academic-years.md) |
-| [ ] | 07 | Classes | ⬜ Not started | — | [07-classes.md](modules/07-classes.md) |
+| [x] | 06 | Academic Years | ✅ Complete | 2026-09-30 | [06-academic-years.md](modules/06-academic-years.md) |
+| [x] | 07 | Classes | ✅ Complete | 2026-10-03 | [07-classes.md](modules/07-classes.md) |
 | [ ] | 08 | Sections | ⬜ Not started | — | [08-sections.md](modules/08-sections.md) |
 | [ ] | 09 | Subjects | ⬜ Not started | — | [09-subjects.md](modules/09-subjects.md) |
 | [ ] | 10 | Guardians | ⬜ Not started | — | [10-guardians.md](modules/10-guardians.md) |

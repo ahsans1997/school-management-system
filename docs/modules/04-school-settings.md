@@ -18,7 +18,7 @@ Excludes: academic year/class/section/subject entities themselves (later academi
 
 ## Database (tables owned / referenced)
 
-- `school_settings` — singleton row: identity fields, `socials` (JSON), system fields with DB defaults (`BDT`, `Asia/Dhaka`, `d/m/Y`, `en`, name `My School`), and three **encrypted** secret groups `email_settings`, `sms_settings`, `payment_settings` (`text` columns, `encrypted:array` casts), plus `active_academic_year_id` (nullable, indexed; the FK is added once `academic_years` exists — Module 06).
+- `school_settings` — singleton row: identity fields, `socials` (JSON), system fields with DB defaults (`BDT`, `Asia/Dhaka`, `d/m/Y`, `en`, name `My School`), and three **encrypted** secret groups `email_settings`, `sms_settings`, `payment_settings` (`text` columns, `encrypted:array` casts), plus `active_academic_year_id`. *(Removed in Module 06: it duplicated `academic_years.is_current`; the current year now lives only there, read via `AcademicYear::current()`.)*
 
 ## Permissions
 

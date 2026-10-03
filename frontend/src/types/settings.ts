@@ -24,7 +24,6 @@ export interface SchoolSettings {
   email_settings: SecretGroup;
   sms_settings: SecretGroup;
   payment_settings: SecretGroup;
-  active_academic_year_id: number | null;
   updated_at?: string;
 }
 

@@ -29,7 +29,6 @@ class SchoolSetting extends Model
     {
         return [
             'established_year' => 'integer',
-            'active_academic_year_id' => 'integer',
             'socials' => 'array',
             'email_settings' => 'encrypted:array',
             'sms_settings' => 'encrypted:array',

@@ -9,6 +9,12 @@ import { AREA_AUDIENCES } from "@/lib/audience";
 // add their screens here as they land.
 const NAV: readonly NavItem[] = [
   { href: "/admin/dashboard", label: "Dashboard" },
+  {
+    href: "/admin/academic-years",
+    label: "Academic years",
+    permission: "academic_year.view",
+  },
+  { href: "/admin/classes", label: "Classes", permission: "class.view" },
   { href: "/admin/users", label: "Users", permission: "user.view" },
   {
     href: "/admin/roles",

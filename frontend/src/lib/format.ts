@@ -19,3 +19,18 @@ export function formatDate(iso: string | null | undefined): string {
     year: "numeric",
   });
 }
+
+/**
+ * Format a date-only value (YYYY-MM-DD). Built from local parts on purpose:
+ * `new Date("2026-01-01")` parses as UTC midnight and shows the previous day
+ * in timezones west of UTC.
+ */
+export function formatDay(day: string | null | undefined): string {
+  if (!day) return "—";
+  const [y, m, d] = day.split("-").map(Number);
+  return new Date(y, m - 1, d).toLocaleDateString("en-GB", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  });
+}

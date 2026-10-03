@@ -3,6 +3,7 @@
 namespace App\Services\Dashboard\Widgets;
 
 use App\Enums\DashboardAudience;
+use App\Models\AcademicYear;
 use App\Models\SchoolSetting;
 use App\Models\User;
 use App\Services\Dashboard\Widget;
@@ -39,6 +40,7 @@ final class SchoolWidget extends Widget
             'established_year' => $settings->established_year,
             'principal_name' => $settings->principal_name,
             'address' => $settings->address,
+            'academic_year' => AcademicYear::current()?->name, // cached
         ];
     }
 }

@@ -30,6 +30,8 @@ export interface SchoolWidgetData {
   established_year: number | null;
   principal_name: string | null;
   address: string | null;
+  /** Name of the current academic year, if one exists. */
+  academic_year: string | null;
 }
 
 export interface UserStatsWidgetData {

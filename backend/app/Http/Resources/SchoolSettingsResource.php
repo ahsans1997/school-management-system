@@ -40,7 +40,6 @@ class SchoolSettingsResource extends JsonResource
             'sms_settings' => $this->masked('sms_settings'),
             'payment_settings' => $this->masked('payment_settings'),
 
-            'active_academic_year_id' => $this->active_academic_year_id,
             'updated_at' => $this->updated_at?->toIso8601String(),
         ];
     }

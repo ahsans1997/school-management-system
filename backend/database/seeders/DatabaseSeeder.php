@@ -14,7 +14,7 @@ class DatabaseSeeder extends Seeder
      * Demo accounts, one per dashboard audience. Known passwords, so they are
      * seeded in the local environment ONLY. Password for all: "password".
      *
-     * @var list<array{0: string, 1: string, 2: string}>  [email, name, role]
+     * @var list<array{0: string, 1: string, 2: string}> [email, name, role]
      */
     private const DEMO_USERS = [
         ['admin@school.test', 'School Admin', 'Admin'],

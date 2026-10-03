@@ -92,6 +92,7 @@ function SchoolCard({ data }: { data: SchoolWidgetData }) {
       </div>
       <Details
         rows={[
+          ["Current session", data.academic_year],
           ["EIIN", data.eiin],
           ["Established", data.established_year],
           ["Principal", data.principal_name],
