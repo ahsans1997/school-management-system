@@ -64,4 +64,4 @@ Spatie permissions: `enrollment.view`, `enrollment.create`, `enrollment.edit`, `
 
 ## Notes
 
-Capacity is read from `sections.capacity` (Module 08) and checked here. Promotion is transactional (spec §55 pattern) so a partial cohort move rolls back. Composite index (`student_id`,`academic_year_id`) per spec §54 supports the common lookups. Status enum lives in `app/Enums` (spec §49).
+Capacity is read from `sections.capacity` (Module 08) and checked here. Because each enrollment stores both `class_id` and `section_id`, validate that the section belongs to that class (`sections.class_id`), so the two columns can't disagree. Decide whether shrinking a section's capacity below its current enrollment is refused or only flagged. Promotion is transactional (spec §55 pattern) so a partial cohort move rolls back. Composite index (`student_id`,`academic_year_id`) per spec §54 supports the common lookups. Status enum lives in `app/Enums` (spec §49).

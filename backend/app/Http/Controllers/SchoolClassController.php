@@ -9,6 +9,7 @@ use App\Http\Requests\SchoolClass\StoreSchoolClassRequest;
 use App\Http\Requests\SchoolClass\UpdateSchoolClassRequest;
 use App\Http\Resources\SchoolClassResource;
 use App\Models\SchoolClass;
+use App\Support\PerPage;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
@@ -18,9 +19,10 @@ class SchoolClassController extends Controller
     public function index(): AnonymousResourceCollection
     {
         $classes = SchoolClass::query()
+            ->withCount('sections')
             ->orderBy('numeric_level')
             ->orderBy('name')
-            ->paginate(request()->integer('per_page', 25));
+            ->paginate(PerPage::from(request()));
 
         return SchoolClassResource::collection($classes);
     }

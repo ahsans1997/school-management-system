@@ -14,6 +14,7 @@ use App\Http\Requests\User\StoreUserRequest;
 use App\Http\Requests\User\UpdateUserRequest;
 use App\Http\Resources\ManagedUserResource;
 use App\Models\User;
+use App\Support\PerPage;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
@@ -38,7 +39,7 @@ class UserController extends Controller
                 $query->where('is_active', request()->boolean('is_active'));
             })
             ->orderBy('name')
-            ->paginate(request()->integer('per_page', 25));
+            ->paginate(PerPage::from(request()));
 
         return ManagedUserResource::collection($users);
     }

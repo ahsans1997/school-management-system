@@ -8,6 +8,7 @@ use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SchoolClassController;
 use App\Http\Controllers\SchoolSettingsController;
+use App\Http\Controllers\SectionController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -55,6 +56,13 @@ Route::middleware(['auth:api', 'token.type:access', 'active'])->group(function (
     Route::get('classes/{school_class}', [SchoolClassController::class, 'show'])->middleware('permission:class.view');
     Route::put('classes/{school_class}', [SchoolClassController::class, 'update'])->middleware('permission:class.edit');
     Route::delete('classes/{school_class}', [SchoolClassController::class, 'destroy'])->middleware('permission:class.delete');
+
+    // Sections. Module 08. Listed/created under their class, then addressed directly.
+    Route::get('classes/{school_class}/sections', [SectionController::class, 'index'])->middleware('permission:section.view');
+    Route::post('classes/{school_class}/sections', [SectionController::class, 'store'])->middleware('permission:section.create');
+    Route::get('sections/{section}', [SectionController::class, 'show'])->middleware('permission:section.view');
+    Route::put('sections/{section}', [SectionController::class, 'update'])->middleware('permission:section.edit');
+    Route::delete('sections/{section}', [SectionController::class, 'destroy'])->middleware('permission:section.delete');
 
     // School Settings. Module 04.
     Route::get('settings', [SchoolSettingsController::class, 'show'])->middleware('permission:settings.view');

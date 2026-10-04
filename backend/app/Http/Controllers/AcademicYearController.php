@@ -10,6 +10,7 @@ use App\Http\Requests\AcademicYear\StoreAcademicYearRequest;
 use App\Http\Requests\AcademicYear\UpdateAcademicYearRequest;
 use App\Http\Resources\AcademicYearResource;
 use App\Models\AcademicYear;
+use App\Support\PerPage;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
@@ -20,7 +21,7 @@ class AcademicYearController extends Controller
     {
         $years = AcademicYear::query()
             ->orderByDesc('start_date')
-            ->paginate(request()->integer('per_page', 25));
+            ->paginate(PerPage::from(request()));
 
         return AcademicYearResource::collection($years);
     }

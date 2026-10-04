@@ -10,6 +10,7 @@ use App\Http\Requests\Role\StoreRoleRequest;
 use App\Http\Requests\Role\SyncRolePermissionsRequest;
 use App\Http\Requests\Role\UpdateRoleRequest;
 use App\Http\Resources\RoleResource;
+use App\Support\PerPage;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
@@ -22,7 +23,7 @@ class RoleController extends Controller
         $roles = Role::query()
             ->with('permissions')
             ->orderBy('name')
-            ->paginate(request()->integer('per_page', 25));
+            ->paginate(PerPage::from(request()));
 
         return RoleResource::collection($roles);
     }

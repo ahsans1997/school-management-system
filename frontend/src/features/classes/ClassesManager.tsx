@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useCallback, useEffect, useState, type FormEvent } from "react";
 import { Pagination } from "@/components/Pagination";
 import { useAuth } from "@/features/auth/AuthContext";
@@ -110,6 +111,7 @@ export function ClassesManager() {
   const canCreate = can("class.create");
   const canEdit = can("class.edit");
   const canDelete = can("class.delete");
+  const canViewSections = can("section.view");
 
   const applyPage = useCallback((res: Paginated<SchoolClass>) => {
     setClasses(res.data);
@@ -267,6 +269,9 @@ export function ClassesManager() {
                 <th className="py-2 pr-3 font-medium">Name</th>
                 <th className="py-2 pr-3 font-medium">Shift</th>
                 <th className="py-2 pr-3 font-medium">Medium</th>
+                {canViewSections && (
+                  <th className="py-2 pr-3 font-medium">Sections</th>
+                )}
                 <th className="py-2 text-right font-medium">Actions</th>
               </tr>
             </thead>
@@ -315,6 +320,11 @@ export function ClassesManager() {
                         }
                       />
                     </td>
+                    {canViewSections && (
+                      <td className="py-2 pr-3 tabular-nums">
+                        {c.sections_count ?? "—"}
+                      </td>
+                    )}
                     <td className="space-x-3 py-2 text-right whitespace-nowrap">
                       <button
                         type="button"
@@ -344,6 +354,18 @@ export function ClassesManager() {
                     <td className="py-2 pr-3 font-medium">{c.name}</td>
                     <td className="py-2 pr-3">{labelOf(SHIFTS, c.shift)}</td>
                     <td className="py-2 pr-3">{labelOf(MEDIUMS, c.medium)}</td>
+                    {canViewSections && (
+                      <td className="py-2 pr-3">
+                        <Link
+                          href={`/admin/classes/${c.id}/sections`}
+                          className="text-xs hover:underline"
+                        >
+                          {c.sections_count === 1
+                            ? "1 section"
+                            : `${c.sections_count ?? 0} sections`}
+                        </Link>
+                      </td>
+                    )}
                     <td className="space-x-3 py-2 text-right whitespace-nowrap">
                       {canEdit && (
                         <button

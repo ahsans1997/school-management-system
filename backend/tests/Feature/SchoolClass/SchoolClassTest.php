@@ -7,10 +7,7 @@ use App\Enums\Shift;
 use App\Models\SchoolClass;
 use App\Models\User;
 use Database\Seeders\RolePermissionSeeder;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Schema;
 use Tests\TestCase;
 
 class SchoolClassTest extends TestCase
@@ -44,7 +41,7 @@ class SchoolClassTest extends TestCase
     public function test_list_is_paginated_and_ordered_by_level(): void
     {
         $this->schoolClass('Class 10', 10);
-        $this->schoolClass('Class 1', 1);
+        $this->schoolClass('Class 1', 1)->sections()->create(['name' => 'A', 'capacity' => 40]);
         $this->schoolClass('KG', 0);
 
         $this->asUser($this->admin())
@@ -53,8 +50,10 @@ class SchoolClassTest extends TestCase
             ->assertJsonPath('data.0.name', 'KG')
             ->assertJsonPath('data.1.name', 'Class 1')
             ->assertJsonPath('data.2.name', 'Class 10')
+            ->assertJsonPath('data.0.sections_count', 0)
+            ->assertJsonPath('data.1.sections_count', 1)
             ->assertJsonStructure([
-                'data' => [['id', 'name', 'numeric_level', 'shift', 'medium']],
+                'data' => [['id', 'name', 'numeric_level', 'shift', 'medium', 'sections_count']],
                 'meta' => ['current_page', 'last_page', 'per_page', 'total'],
             ]);
     }
@@ -140,16 +139,10 @@ class SchoolClassTest extends TestCase
         $this->assertModelMissing($class);
     }
 
-    public function test_a_class_that_is_in_use_cannot_be_deleted(): void
+    public function test_a_class_with_sections_cannot_be_deleted(): void
     {
         $class = $this->schoolClass('Class 4', 4);
-
-        // Stand-in for sections/enrollments, declared as they must be: ON DELETE RESTRICT.
-        Schema::create('class_dependents', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('class_id')->constrained('classes')->restrictOnDelete();
-        });
-        DB::table('class_dependents')->insert(['class_id' => $class->id]);
+        $class->sections()->create(['name' => 'A', 'capacity' => 40]);
 
         $this->asUser($this->admin())
             ->deleteJson("/api/classes/{$class->id}")

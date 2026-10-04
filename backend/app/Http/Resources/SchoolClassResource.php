@@ -20,6 +20,7 @@ class SchoolClassResource extends JsonResource
             'numeric_level' => $this->numeric_level,
             'shift' => $this->shift?->value,
             'medium' => $this->medium?->value,
+            'sections_count' => $this->whenCounted('sections'),
             'created_at' => $this->created_at?->toIso8601String(),
         ];
     }

@@ -8,6 +8,8 @@ export interface SchoolClass {
   numeric_level: number;
   shift: Shift | null;
   medium: Medium | null;
+  /** Present on the class list. */
+  sections_count?: number;
   created_at?: string;
 }
 
