@@ -17,6 +17,16 @@ Excludes: the enrollment mechanics of class+section+year assignment (Module 13 o
 
 - `08 — Sections`, `10 — Guardians`, `06 — Academic Years` (current class/section shown via enrollment; guardians linked; year context).
 
+## Carried over from Module 10 (Guardians)
+
+Module 10 built guardians and their Parent logins, and left the student side to this module because it needs `students`:
+
+- [ ] `student_guardians` — `id`, `student_id` (FK → `students`), `guardian_id` (FK → `guardians`, **RESTRICT**, so a linked guardian can't be deleted), `relationship` (enum: father/mother/…), `is_primary` (bool), timestamps. Unique (`student_id`,`guardian_id`). **Exactly one primary per student**, enforced in the link action (inside a transaction) and ideally at DB level, e.g. with the generated-column + unique-index trick from academic years.
+- [ ] `POST /guardians/{id}/students` (link: relationship, is_primary) and `DELETE /guardians/{id}/students/{studentId}` (unlink), gated by `guardian.edit`; link UI on the student record and/or the guardian screen.
+- [ ] Parent ownership: resolve the caller's guardian via `$user->personable` (the morph link, not a new column), and scope "my children" to `student_guardians`. Swap the parent dashboard's `children` PendingWidget for the real widget (same key).
+- [ ] **Drop `students.guardian_id`** from the plan below. The primary guardian is `student_guardians.is_primary`, and a second pointer would be duplicate state that drifts. Keep `father_name` / `mother_name` as plain text: certificates need them even when those parents aren't guardians.
+- [ ] If students get logins, register `'student' => Student::class` in the morph map (`AppServiceProvider`); `PersonLink` then validates those links automatically.
+
 ## Database (tables owned / referenced)
 
 - `students` — `id`, `student_id` (unique), `admission_no` (unique), `name`, `dob`, `gender`, `blood_group` (nullable), `roll` (nullable, canonical roll lives on enrollment), `father_name`, `mother_name`, `guardian_id` (nullable FK), `phone`, `address`, `photo` (nullable), `previous_school` (nullable), `documents` (json/related), `deleted_at` (soft delete), timestamps. Indexes: `admission_no`, `student_id` (spec §54).

@@ -3,6 +3,7 @@
 namespace App\Http\Requests\User;
 
 use App\Models\User;
+use App\Rules\PersonLink;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -25,7 +26,7 @@ class UpdateUserRequest extends FormRequest
                 Rule::unique('users', 'email')->ignore($this->route('user')),
             ],
             'personable_type' => ['nullable', 'string', Rule::in(User::PERSON_TYPES), 'required_with:personable_id'],
-            'personable_id' => ['nullable', 'integer', 'required_with:personable_type'],
+            'personable_id' => ['nullable', 'integer', 'required_with:personable_type', new PersonLink($this->route('user'))],
         ];
     }
 }

@@ -47,7 +47,7 @@ class DashboardService
             new PendingWidget('pending_marks', 'Marks to enter', '17 — Marks Entry', [A::Teacher]),
 
             // Parent — will be scoped to the guardian's own children only.
-            new PendingWidget('children', 'My children', '10 — Guardians', [A::Parent]),
+            new PendingWidget('children', 'My children', '11 — Students', [A::Parent]),
             new PendingWidget('child_attendance', 'Attendance', '14 — Attendance', [A::Parent]),
             new PendingWidget('child_results', 'Results', '18 — Results', [A::Parent]),
             new PendingWidget('child_fees', 'Fees & dues', '19 — Fees', [A::Parent]),

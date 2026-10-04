@@ -4,6 +4,7 @@ use App\Http\Controllers\AcademicYearController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\ClassSubjectController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\GuardianController;
 use App\Http\Controllers\HealthController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\RoleController;
@@ -75,6 +76,15 @@ Route::middleware(['auth:api', 'token.type:access', 'active'])->group(function (
     Route::get('classes/{school_class}/subjects', [ClassSubjectController::class, 'index'])->middleware('permission:subject.view');
     Route::post('classes/{school_class}/subjects', [ClassSubjectController::class, 'store'])->middleware('permission:subject.edit');
     Route::delete('classes/{school_class}/subjects/{subject}', [ClassSubjectController::class, 'destroy'])->middleware('permission:subject.edit');
+
+    // Guardians. Module 10. A login is created with guardian.edit (also checked
+    // on POST /guardians when it includes one); links to students arrive in Module 11.
+    Route::get('guardians', [GuardianController::class, 'index'])->middleware('permission:guardian.view');
+    Route::post('guardians', [GuardianController::class, 'store'])->middleware('permission:guardian.create');
+    Route::get('guardians/{guardian}', [GuardianController::class, 'show'])->middleware('permission:guardian.view');
+    Route::put('guardians/{guardian}', [GuardianController::class, 'update'])->middleware('permission:guardian.edit');
+    Route::delete('guardians/{guardian}', [GuardianController::class, 'destroy'])->middleware('permission:guardian.delete');
+    Route::post('guardians/{guardian}/account', [GuardianController::class, 'createAccount'])->middleware('permission:guardian.edit');
 
     // School Settings. Module 04.
     Route::get('settings', [SchoolSettingsController::class, 'show'])->middleware('permission:settings.view');

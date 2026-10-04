@@ -72,3 +72,4 @@ Access tokens 15 min (`JWT_TTL`), refresh 7 days (`JWT_REFRESH_TTL=10080`) per s
 - Dev admin seeded in `DatabaseSeeder` (`admin@school.test` / `password`) for local testing — replace/extend when Module 02 adds roles.
 - Frontend token storage uses `localStorage` (XSS surface); a future hardening step can move to httpOnly cookies.
 - Op note: `php artisan serve` stopped via the harness can orphan the PHP process holding the port; kill by PID (`netstat -ano` → `taskkill //PID <pid> //F`) if a restart says the port is busy.
+- **Fix (2026-10-04, found during Module 10):** concurrent 401s each called `/auth/refresh` with the same refresh token. Rotation blacklists it on first use, so the second call failed and the client wiped the new tokens, logging the user out. `authService.refresh()` is now single-flight, and `authedFetch` retries without refreshing if another caller already did, and doesn't clear tokens another tab just rotated.

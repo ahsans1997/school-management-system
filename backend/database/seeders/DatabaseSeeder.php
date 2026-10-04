@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Guardian;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -43,5 +44,15 @@ class DatabaseSeeder extends Seeder
                 )
                 ->syncRoles([$role]);
         }
+
+        // The demo parent login belongs to a guardian record, as real ones do.
+        $guardian = Guardian::query()->firstOrCreate(
+            ['phone' => '01700-000000', 'name' => 'Demo Parent'],
+            ['email' => 'parent@school.test'],
+        );
+        User::query()->where('email', 'parent@school.test')->update([
+            'personable_type' => $guardian->getMorphClass(),
+            'personable_id' => $guardian->getKey(),
+        ]);
     }
 }

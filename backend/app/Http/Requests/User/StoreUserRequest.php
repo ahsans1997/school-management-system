@@ -3,6 +3,7 @@
 namespace App\Http\Requests\User;
 
 use App\Models\User;
+use App\Rules\PersonLink;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -28,7 +29,7 @@ class StoreUserRequest extends FormRequest
             'roles' => ['sometimes', 'array'],
             'roles.*' => ['string', Rule::exists('roles', 'name')->where('guard_name', $guard)],
             'personable_type' => ['nullable', 'string', Rule::in(User::PERSON_TYPES), 'required_with:personable_id'],
-            'personable_id' => ['nullable', 'integer', 'required_with:personable_type'],
+            'personable_id' => ['nullable', 'integer', 'required_with:personable_type', new PersonLink],
         ];
     }
 }
