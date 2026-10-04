@@ -15,6 +15,7 @@ const NAV: readonly NavItem[] = [
     permission: "academic_year.view",
   },
   { href: "/admin/classes", label: "Classes", permission: "class.view" },
+  { href: "/admin/subjects", label: "Subjects", permission: "subject.view" },
   { href: "/admin/users", label: "Users", permission: "user.view" },
   {
     href: "/admin/roles",

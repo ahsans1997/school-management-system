@@ -19,7 +19,7 @@ class SchoolClassController extends Controller
     public function index(): AnonymousResourceCollection
     {
         $classes = SchoolClass::query()
-            ->withCount('sections')
+            ->withCount(['sections', 'subjects'])
             ->orderBy('numeric_level')
             ->orderBy('name')
             ->paginate(PerPage::from(request()));

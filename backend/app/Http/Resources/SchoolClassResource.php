@@ -21,6 +21,7 @@ class SchoolClassResource extends JsonResource
             'shift' => $this->shift?->value,
             'medium' => $this->medium?->value,
             'sections_count' => $this->whenCounted('sections'),
+            'subjects_count' => $this->whenCounted('subjects'),
             'created_at' => $this->created_at?->toIso8601String(),
         ];
     }

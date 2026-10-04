@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AcademicYearController;
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\ClassSubjectController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HealthController;
 use App\Http\Controllers\PermissionController;
@@ -9,6 +10,7 @@ use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SchoolClassController;
 use App\Http\Controllers\SchoolSettingsController;
 use App\Http\Controllers\SectionController;
+use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -63,6 +65,16 @@ Route::middleware(['auth:api', 'token.type:access', 'active'])->group(function (
     Route::get('sections/{section}', [SectionController::class, 'show'])->middleware('permission:section.view');
     Route::put('sections/{section}', [SectionController::class, 'update'])->middleware('permission:section.edit');
     Route::delete('sections/{section}', [SectionController::class, 'destroy'])->middleware('permission:section.delete');
+
+    // Subjects. Module 09. The catalogue, then which classes teach each subject.
+    Route::get('subjects', [SubjectController::class, 'index'])->middleware('permission:subject.view');
+    Route::post('subjects', [SubjectController::class, 'store'])->middleware('permission:subject.create');
+    Route::get('subjects/{subject}', [SubjectController::class, 'show'])->middleware('permission:subject.view');
+    Route::put('subjects/{subject}', [SubjectController::class, 'update'])->middleware('permission:subject.edit');
+    Route::delete('subjects/{subject}', [SubjectController::class, 'destroy'])->middleware('permission:subject.delete');
+    Route::get('classes/{school_class}/subjects', [ClassSubjectController::class, 'index'])->middleware('permission:subject.view');
+    Route::post('classes/{school_class}/subjects', [ClassSubjectController::class, 'store'])->middleware('permission:subject.edit');
+    Route::delete('classes/{school_class}/subjects/{subject}', [ClassSubjectController::class, 'destroy'])->middleware('permission:subject.edit');
 
     // School Settings. Module 04.
     Route::get('settings', [SchoolSettingsController::class, 'show'])->middleware('permission:settings.view');

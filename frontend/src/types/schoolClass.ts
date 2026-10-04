@@ -10,6 +10,8 @@ export interface SchoolClass {
   medium: Medium | null;
   /** Present on the class list. */
   sections_count?: number;
+  /** Present on the class list. */
+  subjects_count?: number;
   created_at?: string;
 }
 

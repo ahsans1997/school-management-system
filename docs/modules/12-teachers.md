@@ -65,4 +65,6 @@ Spatie permissions: `teacher.view`, `teacher.create`, `teacher.edit`, `teacher.d
 
 ## Notes
 
+**Carried over from Module 09:** `class_subjects` was built *without* `teacher_id`, because a column added before the `teachers` table existed couldn't have its FK. This module adds the subject-teacher link. Decide its grain first: a class with several sections often has a different teacher for the same subject in each section (Class 6 A Maths vs Class 6 B Maths). A single `class_subjects.teacher_id` can't express that. A separate `section_id + subject_id → teacher_id` assignment (unique on section + subject) can, and attendance, routine and marks scoping (spec §52) work per section anyway.
+
 `salary` is money → `decimal(15,2)` (spec §53), never float. Assignments are the source of truth for the teacher's authorization scope in later modules (a teacher enters marks only for assigned class/subject — spec §52). Enter-once/use-everywhere: this record feeds routine, portal, and public profile (spec §68).

@@ -5,6 +5,7 @@ import { useCallback, useEffect, useState, type FormEvent } from "react";
 import { Pagination } from "@/components/Pagination";
 import { useAuth } from "@/features/auth/AuthContext";
 import { errorMessage } from "@/lib/errors";
+import { labelOf } from "@/lib/options";
 import * as classService from "@/services/classService";
 import type { Paginated } from "@/types/api";
 import {
@@ -46,11 +47,6 @@ function toDraft(c: SchoolClass): Draft {
     medium: c.medium ?? "",
   };
 }
-
-const labelOf = (
-  options: { value: string; label: string }[],
-  value: string | null,
-) => options.find((o) => o.value === value)?.label ?? "—";
 
 /** Shift + medium selects, shared by the create form and the inline editor. */
 function ShiftMediumFields({
@@ -112,6 +108,7 @@ export function ClassesManager() {
   const canEdit = can("class.edit");
   const canDelete = can("class.delete");
   const canViewSections = can("section.view");
+  const canViewSubjects = can("subject.view");
 
   const applyPage = useCallback((res: Paginated<SchoolClass>) => {
     setClasses(res.data);
@@ -272,6 +269,9 @@ export function ClassesManager() {
                 {canViewSections && (
                   <th className="py-2 pr-3 font-medium">Sections</th>
                 )}
+                {canViewSubjects && (
+                  <th className="py-2 pr-3 font-medium">Subjects</th>
+                )}
                 <th className="py-2 text-right font-medium">Actions</th>
               </tr>
             </thead>
@@ -325,6 +325,11 @@ export function ClassesManager() {
                         {c.sections_count ?? "—"}
                       </td>
                     )}
+                    {canViewSubjects && (
+                      <td className="py-2 pr-3 tabular-nums">
+                        {c.subjects_count ?? "—"}
+                      </td>
+                    )}
                     <td className="space-x-3 py-2 text-right whitespace-nowrap">
                       <button
                         type="button"
@@ -363,6 +368,18 @@ export function ClassesManager() {
                           {c.sections_count === 1
                             ? "1 section"
                             : `${c.sections_count ?? 0} sections`}
+                        </Link>
+                      </td>
+                    )}
+                    {canViewSubjects && (
+                      <td className="py-2 pr-3">
+                        <Link
+                          href={`/admin/classes/${c.id}/subjects`}
+                          className="text-xs hover:underline"
+                        >
+                          {c.subjects_count === 1
+                            ? "1 subject"
+                            : `${c.subjects_count ?? 0} subjects`}
                         </Link>
                       </td>
                     )}
