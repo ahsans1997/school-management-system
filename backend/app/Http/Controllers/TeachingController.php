@@ -10,6 +10,7 @@ use App\Models\Section;
 use App\Models\Subject;
 use App\Models\Teacher;
 use App\Models\TeachingAssignment;
+use App\Support\GuardedDelete;
 use Illuminate\Http\JsonResponse;
 
 /**
@@ -32,7 +33,7 @@ class TeachingController extends Controller
     /** {assignment} is scoped to {teacher} by the route. */
     public function destroySubject(Teacher $teacher, TeachingAssignment $assignment): TeacherResource
     {
-        $assignment->delete();
+        GuardedDelete::delete($assignment, 'This subject is in the class routine. Remove those periods first.');
 
         return $this->assignmentsOf($teacher);
     }

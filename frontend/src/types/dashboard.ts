@@ -111,6 +111,23 @@ export interface MyAttendanceWidgetData {
   summary: AttendanceSummaryData | null;
 }
 
+/** Today's periods (teacher: theirs; student: their section's). */
+export interface TodaysPeriodsWidgetData {
+  linked: boolean;
+  day: string;
+  periods: {
+    id: number;
+    start_time: string;
+    end_time: string;
+    label: string | null;
+    room: string | null;
+    subject: { name: string } | null;
+    teacher: { name: string } | null;
+    class: { name: string };
+    section: { name: string };
+  }[];
+}
+
 export interface RecentUsersWidgetData {
   items: {
     id: number;

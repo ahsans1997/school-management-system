@@ -11,6 +11,7 @@ use App\Http\Controllers\HealthController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\PrivateFileController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\RoutineController;
 use App\Http\Controllers\SchoolClassController;
 use App\Http\Controllers\SchoolSettingsController;
 use App\Http\Controllers\SectionController;
@@ -159,6 +160,16 @@ Route::middleware(['auth:api', 'token.type:access', 'active'])->group(function (
     Route::post('attendance/bulk', [AttendanceController::class, 'store'])->middleware('permission:attendance.create');
     Route::put('attendance/{attendance}', [AttendanceController::class, 'update'])->middleware('permission:attendance.edit');
     Route::get('students/{student}/attendance', [AttendanceController::class, 'student'])->middleware('permission:attendance.view')->withTrashed();
+
+    // Class routine. Module 15. Teachers see only their sections and their own
+    // teacher routine; /routines/me follows the caller (teacher/student/parent).
+    Route::get('routines', [RoutineController::class, 'index'])->middleware('permission:routine.view');
+    Route::get('routines/me', [RoutineController::class, 'me']);
+    Route::get('routines/room', [RoutineController::class, 'room'])->middleware('permission:routine.view');
+    Route::get('routines/teacher/{teacher}', [RoutineController::class, 'teacher'])->middleware('permission:routine.view');
+    Route::post('routines', [RoutineController::class, 'store'])->middleware('permission:routine.create');
+    Route::put('routines/{routine}', [RoutineController::class, 'update'])->middleware('permission:routine.edit');
+    Route::get('sections/{section}/routine', [RoutineController::class, 'forSection'])->middleware('permission:routine.view');
 
     // School Settings. Module 04.
     Route::get('settings', [SchoolSettingsController::class, 'show'])->middleware('permission:settings.view');

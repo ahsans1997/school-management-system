@@ -10,12 +10,14 @@ use App\Services\Dashboard\Widgets\AttendanceTodayWidget;
 use App\Services\Dashboard\Widgets\ChildAttendanceWidget;
 use App\Services\Dashboard\Widgets\ChildrenWidget;
 use App\Services\Dashboard\Widgets\MyAttendanceWidget;
+use App\Services\Dashboard\Widgets\MyRoutineWidget;
 use App\Services\Dashboard\Widgets\PendingWidget;
 use App\Services\Dashboard\Widgets\ProfileWidget;
 use App\Services\Dashboard\Widgets\RecentUsersWidget;
 use App\Services\Dashboard\Widgets\SchoolWidget;
 use App\Services\Dashboard\Widgets\StudentStatsWidget;
 use App\Services\Dashboard\Widgets\TeacherStatsWidget;
+use App\Services\Dashboard\Widgets\TodaysClassesWidget;
 use App\Services\Dashboard\Widgets\UserStatsWidget;
 
 class DashboardService
@@ -46,6 +48,8 @@ class DashboardService
             new AttendanceTasksWidget,
             new ChildAttendanceWidget,
             new MyAttendanceWidget,
+            new TodaysClassesWidget,
+            new MyRoutineWidget,
 
             // Admin / staff — each gated by the permission its data needs.
             new PendingWidget('upcoming_exams', 'Upcoming exams', '16 — Exams', [A::Admin], 'exam.view'),
@@ -54,7 +58,6 @@ class DashboardService
             new PendingWidget('recent_admissions', 'Recent admissions', '31 — Online Admission', $management, 'admission.view'),
 
             // Teacher — will be scoped to the teacher's assigned classes/subjects.
-            new PendingWidget('todays_classes', "Today's classes", '15 — Class Routine', [A::Teacher]),
             new PendingWidget('pending_marks', 'Marks to enter', '17 — Marks Entry', [A::Teacher]),
 
             // Parent — will be scoped to the guardian's own children only.
@@ -63,7 +66,6 @@ class DashboardService
 
             // Student — will be scoped to the student's own record only.
             new PendingWidget('my_results', 'My results', '18 — Results', [A::Student]),
-            new PendingWidget('my_routine', 'My routine', '15 — Class Routine', [A::Student]),
             new PendingWidget('my_fees', 'My fees', '19 — Fees', [A::Student]),
 
             // Shared.

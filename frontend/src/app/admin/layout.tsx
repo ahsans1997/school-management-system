@@ -29,6 +29,11 @@ const NAV: readonly NavItem[] = [
     label: "Attendance",
     permission: "attendance.view",
   },
+  {
+    href: "/admin/routines",
+    label: "Class routine",
+    permission: "routine.view",
+  },
   { href: "/admin/users", label: "Users", permission: "user.view" },
   {
     href: "/admin/roles",

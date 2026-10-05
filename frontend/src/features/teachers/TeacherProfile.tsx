@@ -12,6 +12,7 @@ import { ApiRequestError } from "@/services/apiClient";
 import * as teacherService from "@/services/teacherService";
 import type { Teacher } from "@/types/teacher";
 import { TeacherLogin } from "./TeacherLogin";
+import { TeacherRoutine } from "./TeacherRoutine";
 import { TeacherTeaching } from "./TeacherTeaching";
 
 const isNotFound = (err: unknown) =>
@@ -226,6 +227,8 @@ export function TeacherProfile({ teacherId }: { teacherId: number }) {
           })
         }
       />
+
+      {can("routine.view") && <TeacherRoutine teacherId={teacher.id} />}
 
       <TeacherLogin
         teacher={teacher}

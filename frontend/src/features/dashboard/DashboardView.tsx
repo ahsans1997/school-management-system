@@ -19,6 +19,7 @@ import type {
   SchoolWidgetData,
   StudentStatsWidgetData,
   TeacherStatsWidgetData,
+  TodaysPeriodsWidgetData,
   UserStatsWidgetData,
 } from "@/types/dashboard";
 
@@ -36,6 +37,8 @@ const CUSTOM_KEYS = new Set([
   "attendance_tasks",
   "child_attendance",
   "my_attendance",
+  "todays_classes",
+  "my_routine",
 ]);
 
 function Card({
@@ -393,6 +396,55 @@ function MyAttendanceCard({ data }: { data: MyAttendanceWidgetData }) {
   );
 }
 
+/** Today's periods; a teacher sees the section, a student the teacher. */
+function TodaysPeriodsCard({
+  title,
+  data,
+  forTeacher,
+  link,
+}: {
+  title: string;
+  data: TodaysPeriodsWidgetData;
+  forTeacher: boolean;
+  link: string;
+}) {
+  return (
+    <Card title={title}>
+      {data.periods.length === 0 ? (
+        <p className="text-sm text-gray-500">
+          {data.linked ? "No periods today." : "Your login isn't linked yet."}
+        </p>
+      ) : (
+        <ul className="divide-y divide-gray-100 text-sm dark:divide-gray-800">
+          {data.periods.map((p) => (
+            <li key={p.id} className="flex justify-between gap-3 py-1.5">
+              <span className="text-gray-500 tabular-nums">
+                {p.start_time}–{p.end_time}
+              </span>
+              <span className="text-right">
+                <span className="font-medium">
+                  {p.label ?? p.subject?.name}
+                </span>
+                {!p.label && (
+                  <span className="block text-xs text-gray-500">
+                    {forTeacher
+                      ? `${p.class.name} ${p.section.name}`
+                      : p.teacher?.name}
+                    {p.room && ` · Room ${p.room}`}
+                  </span>
+                )}
+              </span>
+            </li>
+          ))}
+        </ul>
+      )}
+      <Link href={link} className="mt-2 inline-block text-xs hover:underline">
+        Full week →
+      </Link>
+    </Card>
+  );
+}
+
 /** Safety net for a live widget that doesn't have a renderer yet. */
 function GenericCard({ widget }: { widget: DashboardWidget }) {
   const rows = Object.entries(widget.data ?? {}).map(
@@ -452,6 +504,8 @@ export function DashboardView() {
   const attendanceTasks = find<AttendanceTasksWidgetData>("attendance_tasks");
   const childAttendance = find<ChildAttendanceWidgetData>("child_attendance");
   const myAttendance = find<MyAttendanceWidgetData>("my_attendance");
+  const todaysClasses = find<TodaysPeriodsWidgetData>("todays_classes");
+  const myRoutine = find<TodaysPeriodsWidgetData>("my_routine");
   const others = ready.filter((w) => !CUSTOM_KEYS.has(w.key));
 
   return (
@@ -511,6 +565,22 @@ export function DashboardView() {
       )}
 
       <div className="grid gap-4 md:grid-cols-2">
+        {todaysClasses && (
+          <TodaysPeriodsCard
+            title="Today's classes"
+            data={todaysClasses}
+            forTeacher
+            link="/teacher/routine"
+          />
+        )}
+        {myRoutine && (
+          <TodaysPeriodsCard
+            title="Today's periods"
+            data={myRoutine}
+            forTeacher={false}
+            link="/student/routine"
+          />
+        )}
         {attendanceTasks && <AttendanceTasksCard data={attendanceTasks} />}
         {assigned && <AssignedSubjectsCard data={assigned} />}
         {childAttendance && <ChildAttendanceCard data={childAttendance} />}
