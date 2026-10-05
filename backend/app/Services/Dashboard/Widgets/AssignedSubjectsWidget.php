@@ -32,15 +32,11 @@ final class AssignedSubjectsWidget extends Widget
 
     protected function data(User $user): array
     {
-        // Check the type before resolving: person types whose module isn't
-        // built yet have no model to resolve to.
-        $teacher = $user->personable_type === (new Teacher)->getMorphClass()
-            ? Teacher::query()->with([
-                'assignments.section.schoolClass',
-                'assignments.classSubject.subject',
-                'classTeacherOf.schoolClass',
-            ])->find($user->personable_id)
-            : null;
+        $teacher = Teacher::forUser($user)?->load([
+            'assignments.section.schoolClass',
+            'assignments.classSubject.subject',
+            'classTeacherOf.schoolClass',
+        ]);
 
         if ($teacher === null) {
             return ['linked' => false, 'subjects' => [], 'class_teacher_of' => []];

@@ -4,7 +4,7 @@
 
 Legend: ⬜ Not started · 🟡 In progress · 🔵 In review · ✅ Complete · ⏸️ Blocked
 
-**Overall: 12 / 39 modules complete.** Phase 1 — Foundation is done; Phase 2 under way.
+**Overall: 12 / 40 modules complete** (13b was split out of Module 13; 12 and 13 are in review pending a browser click-through). Phase 1 — Foundation is done; Phase 2 under way.
 
 ---
 
@@ -30,7 +30,8 @@ Legend: ⬜ Not started · 🟡 In progress · 🔵 In review · ✅ Complete ·
 | [x] | 10 | Guardians | ✅ Complete | 2026-10-04 | [10-guardians.md](modules/10-guardians.md) |
 | [x] | 11 | Students | ✅ Complete | 2026-10-05 | [11-students.md](modules/11-students.md) |
 | [ ] | 12 | Teachers | 🔵 In review: browser click-through pending | — | [12-teachers.md](modules/12-teachers.md) |
-| [ ] | 13 | Enrollments | ⬜ Not started | — | [13-enrollments.md](modules/13-enrollments.md) |
+| [ ] | 13 | Enrollments | 🔵 In review: browser click-through pending | — | [13-enrollments.md](modules/13-enrollments.md) |
+| [ ] | 13b | Student ID cards, certificates & import/export | ⬜ Not started | — | [13b-student-records-tools.md](modules/13b-student-records-tools.md) |
 
 ## Phase 3 — Academic Operations
 

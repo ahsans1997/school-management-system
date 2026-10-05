@@ -12,6 +12,7 @@ import { labelOf } from "@/lib/options";
 import { ApiRequestError } from "@/services/apiClient";
 import * as studentService from "@/services/studentService";
 import { BLOOD_GROUPS, GENDERS, type Student } from "@/types/student";
+import { StudentEnrollment } from "./StudentEnrollment";
 import { StudentGuardians } from "./StudentGuardians";
 
 const isNotFound = (err: unknown) =>
@@ -199,6 +200,25 @@ export function StudentProfile({ studentId }: { studentId: number }) {
           ]}
         />
       </section>
+
+      <StudentEnrollment
+        student={student}
+        canEnroll={
+          !archived &&
+          can("enrollment.create") &&
+          can("academic_year.view") &&
+          can("class.view") &&
+          can("section.view")
+        }
+        canEdit={!archived && can("enrollment.edit")}
+        onChanged={(message) => {
+          setNotice(message);
+          studentService
+            .getStudent(student.id)
+            .then(setStudent)
+            .catch((err) => setError(errorMessage(err)));
+        }}
+      />
 
       <StudentGuardians
         student={student}

@@ -94,7 +94,7 @@ export function StudentsList() {
       <p className="mb-6 text-sm text-gray-500 dark:text-gray-400">
         {archived
           ? "Archived records are kept and can be restored."
-          : "Class, section and roll come from enrollments, once those are set up."}
+          : "Class, section and roll are for the current academic year."}
       </p>
 
       {error && (
@@ -153,6 +153,7 @@ export function StudentsList() {
               <thead>
                 <tr className="border-b border-gray-200 text-left text-gray-500 dark:border-gray-800 dark:text-gray-400">
                   <th className="py-2 pr-3 font-medium">Student</th>
+                  <th className="py-2 pr-3 font-medium">Class</th>
                   <th className="py-2 pr-3 font-medium">Student ID</th>
                   <th className="py-2 pr-3 font-medium">Admission no.</th>
                   <th className="py-2 pr-3 font-medium">Gender</th>
@@ -187,6 +188,21 @@ export function StudentsList() {
                         )}
                         {s.name}
                       </Link>
+                    </td>
+                    <td className="py-2 pr-3 whitespace-nowrap">
+                      {s.current_enrollment ? (
+                        <>
+                          {s.current_enrollment.class?.name}{" "}
+                          {s.current_enrollment.section?.name}
+                          <span className="block text-xs text-gray-500">
+                            Roll {s.current_enrollment.roll}
+                            {s.current_enrollment.status !== "active" &&
+                              ` · ${s.current_enrollment.status}`}
+                          </span>
+                        </>
+                      ) : (
+                        <span className="text-gray-500">Not enrolled</span>
+                      )}
                     </td>
                     <td className="py-2 pr-3 tabular-nums">{s.student_id}</td>
                     <td className="py-2 pr-3 whitespace-nowrap tabular-nums">

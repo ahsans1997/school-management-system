@@ -59,4 +59,30 @@ class Teacher extends Model
     {
         return $this->hasMany(Section::class, 'class_teacher_id');
     }
+
+    /**
+     * The teacher record a login belongs to, if it's linked to one. Checks the
+     * type before resolving: person types whose module isn't built yet have
+     * no model to resolve to.
+     */
+    public static function forUser(User $user): ?self
+    {
+        return $user->personable_type === (new self)->getMorphClass()
+            ? self::query()->find($user->personable_id)
+            : null;
+    }
+
+    /**
+     * Sections this teacher teaches in or is class teacher of.
+     *
+     * @return list<int>
+     */
+    public function sectionIds(): array
+    {
+        return $this->assignments()->pluck('section_id')
+            ->merge($this->classTeacherOf()->pluck('id'))
+            ->unique()
+            ->values()
+            ->all();
+    }
 }

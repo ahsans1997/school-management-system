@@ -1,4 +1,5 @@
 import type { StoredDocument } from "@/types/document";
+import type { Enrollment } from "@/types/enrollment";
 
 export type Gender = "male" | "female" | "other";
 export type BloodGroup =
@@ -45,6 +46,10 @@ export interface Student {
   /** On the profile (show/update). Primary first. */
   guardians?: GuardianLink[];
   documents?: StoredDocument[];
+  /** This year's enrollment (class/section/roll), on the list and profile. */
+  current_enrollment?: Enrollment | null;
+  /** Every year's enrollment, newest first (profile). */
+  enrollments?: Enrollment[];
   archived_at: string | null;
   created_at: string | null;
 }

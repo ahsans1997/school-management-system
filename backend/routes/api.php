@@ -4,6 +4,7 @@ use App\Http\Controllers\AcademicYearController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\ClassSubjectController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\EnrollmentController;
 use App\Http\Controllers\GuardianController;
 use App\Http\Controllers\HealthController;
 use App\Http\Controllers\PermissionController;
@@ -138,6 +139,15 @@ Route::middleware(['auth:api', 'token.type:access', 'active'])->group(function (
     Route::delete('teachers/{teacher}/subjects/{assignment}', [TeachingController::class, 'destroySubject'])->middleware('permission:teacher.edit')->scopeBindings();
     Route::post('teachers/{teacher}/classes', [TeachingController::class, 'storeClass'])->middleware('permission:teacher.edit');
     Route::delete('teachers/{teacher}/classes/{section}', [TeachingController::class, 'destroyClass'])->middleware('permission:teacher.edit');
+
+    // Enrollments. Module 13. A student's section + roll for a year; the class
+    // comes from the section. Leaving is a status change, not a delete.
+    Route::get('enrollments', [EnrollmentController::class, 'index'])->middleware('permission:enrollment.view');
+    Route::post('enrollments', [EnrollmentController::class, 'store'])->middleware('permission:enrollment.create');
+    Route::post('enrollments/promote', [EnrollmentController::class, 'promote'])->middleware('permission:enrollment.create');
+    Route::get('enrollments/{enrollment}', [EnrollmentController::class, 'show'])->middleware('permission:enrollment.view');
+    Route::put('enrollments/{enrollment}', [EnrollmentController::class, 'update'])->middleware('permission:enrollment.edit');
+    Route::delete('enrollments/{enrollment}', [EnrollmentController::class, 'destroy'])->middleware('permission:enrollment.delete');
 
     // School Settings. Module 04.
     Route::get('settings', [SchoolSettingsController::class, 'show'])->middleware('permission:settings.view');

@@ -46,6 +46,12 @@ class StudentResource extends JsonResource
                     ->values()
                     ->map(fn (Guardian $g) => $this->guardianLink($g)),
             ),
+            // This year's place (class/section/roll come from enrollments, Module 13).
+            'current_enrollment' => $this->whenLoaded(
+                'currentEnrollment',
+                fn () => $this->currentEnrollment ? new EnrollmentResource($this->currentEnrollment) : null,
+            ),
+            'enrollments' => EnrollmentResource::collection($this->whenLoaded('enrollments')),
             'documents' => DocumentResource::collection($this->whenLoaded('documents')),
             'archived_at' => $this->deleted_at?->toIso8601String(),
             'created_at' => $this->created_at?->toIso8601String(),

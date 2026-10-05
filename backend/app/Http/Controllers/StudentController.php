@@ -15,15 +15,32 @@ use Illuminate\Http\Response;
 
 class StudentController extends Controller
 {
+    /** Loaded for a profile. */
+    private const PROFILE = [
+        'guardians',
+        'documents',
+        'currentEnrollment.schoolClass',
+        'currentEnrollment.section',
+        'currentEnrollment.academicYear',
+        'enrollments.schoolClass',
+        'enrollments.section',
+        'enrollments.academicYear',
+    ];
+
     /**
      * ?search matches name, student ID, admission no. or phone;
-     * ?archived=1 lists archived students instead; ?gender filters.
+     * ?archived=1 lists archived students instead; ?gender filters;
+     * ?class_id / ?section_id filter by this year's enrollment.
+     * Teachers only ever see the students of their own sections.
      */
     public function index(): AnonymousResourceCollection
     {
         $students = Student::query()
+            ->visibleTo(request()->user())
             ->when(request()->boolean('archived'), fn ($query) => $query->onlyTrashed())
-            ->with('primaryGuardian')
+            ->with(['primaryGuardian', 'currentEnrollment.schoolClass', 'currentEnrollment.section'])
+            ->when(request()->integer('class_id'), fn ($query, int $id) => $query->whereHas('currentEnrollment', fn ($q) => $q->where('class_id', $id)))
+            ->when(request()->integer('section_id'), fn ($query, int $id) => $query->whereHas('currentEnrollment', fn ($q) => $q->where('section_id', $id)))
             ->when(request('search'), function ($query, string $search) {
                 $query->where(function ($q) use ($search) {
                     $q->where('name', 'like', "%{$search}%")
@@ -46,15 +63,23 @@ class StudentController extends Controller
             ->setStatusCode(201);
     }
 
-    /** Archived students can still be viewed (read-only). */
+    /**
+     * Archived students can still be viewed (read-only). Outside a teacher's
+     * own sections the student is reported missing, not forbidden.
+     */
     public function show(Student $student): StudentResource
     {
-        return new StudentResource($student->load(['guardians', 'documents']));
+        abort_unless(
+            Student::withTrashed()->visibleTo(request()->user())->whereKey($student->id)->exists(),
+            404,
+        );
+
+        return new StudentResource($student->load(self::PROFILE));
     }
 
     public function update(UpdateStudentRequest $request, Student $student, UpdateStudentAction $action): StudentResource
     {
-        return new StudentResource($action->execute($student, $request->validated())->load(['guardians', 'documents']));
+        return new StudentResource($action->execute($student, $request->validated())->load(self::PROFILE));
     }
 
     /** Archive (soft delete) — student records are never hard-deleted. */
@@ -71,6 +96,6 @@ class StudentController extends Controller
 
         $student->restore();
 
-        return new StudentResource($student->load(['guardians', 'documents']));
+        return new StudentResource($student->load(self::PROFILE));
     }
 }
