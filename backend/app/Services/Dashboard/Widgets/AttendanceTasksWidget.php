@@ -26,7 +26,7 @@ final class AttendanceTasksWidget extends Widget
         return [DashboardAudience::Teacher];
     }
 
-    public function permission(): ?string
+    public function permission(): string
     {
         return 'attendance.create';
     }

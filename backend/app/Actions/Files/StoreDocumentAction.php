@@ -2,7 +2,7 @@
 
 namespace App\Actions\Files;
 
-use App\Models\Concerns\HasDocuments;
+use App\Models\Contracts\HasPrivateFiles;
 use App\Models\Document;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
@@ -12,10 +12,8 @@ class StoreDocumentAction
 {
     /**
      * Private disk, random filename; the original name is kept only as metadata.
-     *
-     * @param  Model&HasDocuments  $owner
      */
-    public function execute(Model $owner, string $title, UploadedFile $file, User $uploader): Document
+    public function execute(Model&HasPrivateFiles $owner, string $title, UploadedFile $file, User $uploader): Document
     {
         $path = $file->store($owner->fileFolder().'/documents', 'local');
 

@@ -1,0 +1,20 @@
+includes:
+    - vendor/larastan/larastan/extension.neon
+
+parameters:
+    paths:
+        - app
+        - routes
+        - database
+    # Level 5: types of arguments and return values; raise once the code is clean.
+    level: 5
+    # Models declare casts in a casts() method; read them so dates are Carbon
+    # and enum columns are enums (otherwise Larastan sees plain strings).
+    parseModelCastsMethod: true
+    exceptions:
+        # Database errors are runtime errors any query can raise; Eloquent's
+        # @throws tags don't list them, so a catch of QueryException around
+        # save()/delete() (FK RESTRICT → 409) would otherwise look dead.
+        uncheckedExceptionClasses:
+            - Illuminate\Database\QueryException
+        reportUncheckedExceptionDeadCatch: false

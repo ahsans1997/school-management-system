@@ -24,7 +24,7 @@ class TeacherResource extends JsonResource
             'designation' => $this->designation,
             'department' => $this->department,
             'qualification' => $this->qualification,
-            'joining_date' => $this->joining_date?->toDateString(),
+            'joining_date' => $this->joining_date->toDateString(),
             'phone' => $this->phone,
             'email' => $this->email,
             'address' => $this->address,

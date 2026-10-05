@@ -25,7 +25,7 @@ class SaveExamRequest extends FormRequest
     {
         /** @var Exam|null $exam */
         $exam = $this->route('exam');
-        $yearId = $exam?->academic_year_id ?? $this->integer('academic_year_id');
+        $yearId = $exam->academic_year_id ?? $this->integer('academic_year_id');
 
         return [
             'academic_year_id' => [$exam ? 'prohibited' : 'required', 'integer', Rule::exists('academic_years', 'id')],

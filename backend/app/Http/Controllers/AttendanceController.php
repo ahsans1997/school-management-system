@@ -35,10 +35,10 @@ class AttendanceController extends Controller
         $sections = Section::query()
             ->with('schoolClass')
             ->when($ids !== null, fn ($q) => $q->whereKey($ids))
-            ->withCount(['enrollments as students' => fn ($q) => $q->where('academic_year_id', $year?->id ?? 0)
+            ->withCount(['enrollments as active_students' => fn ($q) => $q->where('academic_year_id', $year->id ?? 0)
                 ->where('status', EnrollmentStatus::Active->value)
                 ->whereHas('student', fn ($s) => $s->withoutTrashed())])
-            ->withExists(['attendances as marked_today' => fn ($q) => $q->whereDate('date', $today)])
+            ->withExists(['attendances as marked' => fn ($q) => $q->whereDate('date', $today)])
             ->get()
             ->sortBy(fn (Section $s) => [$s->schoolClass->numeric_level, $s->name])
             ->values();
@@ -47,8 +47,8 @@ class AttendanceController extends Controller
             'id' => $s->id,
             'name' => $s->name,
             'class' => ['id' => $s->schoolClass->id, 'name' => $s->schoolClass->name],
-            'students' => $s->students,
-            'marked_today' => (bool) $s->marked_today,
+            'students' => $s->active_students,
+            'marked_today' => (bool) $s->marked,
         ])]);
     }
 

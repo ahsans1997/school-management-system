@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Section;
 
 use App\Enums\EnrollmentStatus;
+use App\Models\AcademicYear;
 use App\Models\Section;
 use App\Models\StudentEnrollment;
 use Illuminate\Validation\Validator;
@@ -23,20 +24,21 @@ class UpdateSectionRequest extends SectionRequest
                 return;
             }
 
+            // Plain rows (toBase): `taken` is an aggregate, not a model attribute.
             $busiest = StudentEnrollment::query()
-                ->with('academicYear')
                 ->selectRaw('academic_year_id, count(*) as taken')
                 ->where('section_id', $this->ignoredSection()->id)
                 ->where('status', EnrollmentStatus::Active->value)
                 ->whereHas('student', fn ($q) => $q->withoutTrashed())
                 ->groupBy('academic_year_id')
                 ->orderByDesc('taken')
+                ->toBase()
                 ->first();
 
             if ($busiest !== null && $busiest->taken > $capacity) {
                 $validator->errors()->add(
                     'capacity',
-                    "{$busiest->taken} students are enrolled in this section for {$busiest->academicYear->name}; capacity can't be lower.",
+                    "{$busiest->taken} students are enrolled in this section for ".AcademicYear::find($busiest->academic_year_id)?->name."; capacity can't be lower.",
                 );
             }
         }];

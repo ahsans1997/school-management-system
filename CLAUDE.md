@@ -104,6 +104,7 @@ php artisan test                  # PHPUnit 12
 php artisan test --filter=Name    # single test
 php artisan queue:work            # process the database queue
 ./vendor/bin/pint                 # format (Laravel Pint)
+./vendor/bin/phpstan analyse      # static analysis (Larastan, level 5; must stay at 0 errors)
 ```
 **Frontend** (from `frontend/`):
 ```bash

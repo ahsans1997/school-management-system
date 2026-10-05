@@ -17,8 +17,8 @@ class AcademicYearResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
-            'start_date' => $this->start_date?->toDateString(),
-            'end_date' => $this->end_date?->toDateString(),
+            'start_date' => $this->start_date->toDateString(),
+            'end_date' => $this->end_date->toDateString(),
             'is_current' => $this->is_current,
             'created_at' => $this->created_at?->toIso8601String(),
         ];

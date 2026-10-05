@@ -2,15 +2,23 @@
 
 namespace App\Actions\Files;
 
+use App\Models\Contracts\HasPrivateFiles;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
 
 class RemovePhotoAction
 {
-    public function execute(Model $owner): Model
+    /**
+     * @template TOwner of Model&HasPrivateFiles
+     *
+     * @param  TOwner  $owner
+     * @return TOwner
+     */
+    public function execute(Model&HasPrivateFiles $owner): Model&HasPrivateFiles
     {
-        if ($owner->photo_path !== null) {
-            Storage::disk('local')->delete($owner->photo_path);
+        $path = $owner->getAttribute('photo_path');
+        if ($path !== null) {
+            Storage::disk('local')->delete($path);
             $owner->forceFill(['photo_path' => null])->save();
         }
 

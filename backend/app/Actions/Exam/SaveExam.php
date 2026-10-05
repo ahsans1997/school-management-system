@@ -18,7 +18,7 @@ class SaveExam
      */
     public function execute(?Exam $exam, array $data): Exam
     {
-        $year = $exam?->academicYear ?? AcademicYear::findOrFail($data['academic_year_id']);
+        $year = $exam->academicYear ?? AcademicYear::findOrFail($data['academic_year_id']);
         $start = $data['start_date'];
         $end = $data['end_date'] ?? null;
         $last = $end ?? $start;

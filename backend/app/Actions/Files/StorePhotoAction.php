@@ -2,6 +2,7 @@
 
 namespace App\Actions\Files;
 
+use App\Models\Contracts\HasPrivateFiles;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
@@ -9,12 +10,16 @@ use Illuminate\Support\Facades\Storage;
 class StorePhotoAction
 {
     /**
-     * Private disk, random filename; the previous photo is removed. The
-     * owner has a `photo_path` column and HasDocuments' fileFolder().
+     * Private disk, random filename; the previous photo is removed.
+     *
+     * @template TOwner of Model&HasPrivateFiles
+     *
+     * @param  TOwner  $owner
+     * @return TOwner
      */
-    public function execute(Model $owner, UploadedFile $file): Model
+    public function execute(Model&HasPrivateFiles $owner, UploadedFile $file): Model&HasPrivateFiles
     {
-        $previous = $owner->photo_path;
+        $previous = $owner->getAttribute('photo_path');
         $path = $file->store($owner->fileFolder(), 'local');
 
         $owner->forceFill(['photo_path' => $path])->save();

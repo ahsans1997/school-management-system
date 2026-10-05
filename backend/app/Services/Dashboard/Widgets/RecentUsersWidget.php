@@ -26,7 +26,7 @@ final class RecentUsersWidget extends Widget
         return [DashboardAudience::Admin, DashboardAudience::Staff];
     }
 
-    public function permission(): ?string
+    public function permission(): string
     {
         return 'user.view';
     }

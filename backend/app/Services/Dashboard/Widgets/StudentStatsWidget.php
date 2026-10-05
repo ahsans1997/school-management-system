@@ -26,7 +26,7 @@ final class StudentStatsWidget extends Widget
         return [DashboardAudience::Admin, DashboardAudience::Staff];
     }
 
-    public function permission(): ?string
+    public function permission(): string
     {
         return 'student.view';
     }

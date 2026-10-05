@@ -29,7 +29,7 @@ final class AttendanceTodayWidget extends Widget
         return [DashboardAudience::Admin];
     }
 
-    public function permission(): ?string
+    public function permission(): string
     {
         return 'attendance.view';
     }
@@ -41,7 +41,7 @@ final class AttendanceTodayWidget extends Widget
 
         // Sections with at least one active student this year.
         $sections = Section::query()
-            ->whereHas('enrollments', fn ($q) => $q->where('academic_year_id', $year?->id ?? 0)
+            ->whereHas('enrollments', fn ($q) => $q->where('academic_year_id', $year->id ?? 0)
                 ->where('status', EnrollmentStatus::Active->value))
             ->withExists(['attendances as marked' => fn ($q) => $q->whereDate('date', $today)])
             ->get();

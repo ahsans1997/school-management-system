@@ -3,15 +3,20 @@
 namespace App\Models;
 
 use App\Enums\ExamType;
+use Carbon\CarbonInterface;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Carbon;
 
 /**
  * An exam in an academic year (spec §16). Its year is fixed at creation;
  * deleting archives it (soft delete) so marks and results keep their exam.
+ *
+ * Counts the exam lists add with withCount('subjects as …'):
+ *
+ * @property-read int $papers_count
+ * @property-read int $classes_count  distinct classes with papers
  */
 class Exam extends Model
 {
@@ -58,7 +63,7 @@ class Exam extends Model
     }
 
     /** Last day of the exam: the end date, or the start date for a one-day exam. */
-    public function lastDay(): Carbon
+    public function lastDay(): CarbonInterface
     {
         return $this->end_date ?? $this->start_date;
     }

@@ -56,7 +56,7 @@ class SchoolSetting extends Model
 
         // Rehydrate as an existing row. Casts (incl. decryption) apply on
         // access, and wasRecentlyCreated stays false so reads never return 201.
-        return (new static)->newFromBuilder($attributes);
+        return (new self)->newFromBuilder($attributes);
     }
 
     public static function forgetCache(): void

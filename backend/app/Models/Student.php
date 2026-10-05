@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Enums\BloodGroup;
 use App\Enums\Gender;
 use App\Models\Concerns\HasDocuments;
+use App\Models\Contracts\HasPrivateFiles;
 use App\Support\TeacherScope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -16,8 +17,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 /**
  * The student master record (spec §9). Deleting archives (soft delete).
  * Class/section/roll for a year live on the enrollment (Module 13).
+ *
+ * @property-read StudentGuardian $pivot  the guardian link, when loaded through Guardian::students()
  */
-class Student extends Model
+class Student extends Model implements HasPrivateFiles
 {
     use HasDocuments, SoftDeletes;
 
@@ -38,11 +41,12 @@ class Student extends Model
     }
 
     /**
-     * @return BelongsToMany<Guardian, $this>
+     * @return BelongsToMany<Guardian, $this, StudentGuardian>
      */
     public function guardians(): BelongsToMany
     {
         return $this->belongsToMany(Guardian::class, 'student_guardians')
+            ->using(StudentGuardian::class)
             ->withPivot(['relationship', 'is_primary'])
             ->withTimestamps();
     }
@@ -50,7 +54,7 @@ class Student extends Model
     /**
      * The primary guardian (at most one — enforced by a unique index).
      *
-     * @return BelongsToMany<Guardian, $this>
+     * @return BelongsToMany<Guardian, $this, StudentGuardian>
      */
     public function primaryGuardian(): BelongsToMany
     {
@@ -76,7 +80,7 @@ class Student extends Model
     public function currentEnrollment(): HasOne
     {
         return $this->hasOne(StudentEnrollment::class)
-            ->where('academic_year_id', AcademicYear::current()?->id ?? 0);
+            ->where('academic_year_id', AcademicYear::current()->id ?? 0);
     }
 
     /**
@@ -94,7 +98,7 @@ class Student extends Model
         }
 
         $query->whereHas('enrollments', fn (Builder $q) => $q->active()
-            ->where('academic_year_id', AcademicYear::current()?->id ?? 0)
+            ->where('academic_year_id', AcademicYear::current()->id ?? 0)
             ->whereIn('section_id', $sectionIds));
     }
 }

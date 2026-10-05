@@ -3,6 +3,7 @@
 namespace App\Actions\Person;
 
 use App\Actions\User\CreateUserAction;
+use App\Models\Contracts\HasAccount;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 
@@ -16,16 +17,15 @@ class CreatePersonAccountAction
     public function __construct(private readonly CreateUserAction $createUser) {}
 
     /**
-     * @param  Model  $person  has an `account()` morphOne and a `name`
      * @param  array{email: string, password: string}  $credentials
      */
-    public function execute(Model $person, string $role, array $credentials): User
+    public function execute(Model&HasAccount $person, string $role, array $credentials): User
     {
         // e.g. "This guardian already has a login account."
         abort_if($person->account()->exists(), 409, "This {$person->getMorphClass()} already has a login account.");
 
         $user = $this->createUser->execute([
-            'name' => $person->name,
+            'name' => $person->getAttribute('name'),
             'email' => $credentials['email'],
             'password' => $credentials['password'],
             'roles' => [$role],

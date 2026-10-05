@@ -9,6 +9,11 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 /**
  * A division of a class (e.g. "A"). Its class is fixed at creation; capacity
  * caps enrollment (checked in Module 13).
+ *
+ * Aggregates some queries add (withCount / withExists aliases):
+ *
+ * @property-read int $active_students  active enrollments this year (attendance sections list)
+ * @property-read bool|int $marked  whether today's attendance is taken (0/1 from the database)
  */
 class Section extends Model
 {

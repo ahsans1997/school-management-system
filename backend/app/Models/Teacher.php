@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use App\Models\Concerns\HasDocuments;
+use App\Models\Contracts\HasAccount;
+use App\Models\Contracts\HasPrivateFiles;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
@@ -12,7 +14,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * The teacher master record (spec §11). Stored under the morph alias
  * "teacher". Deleting archives (soft delete).
  */
-class Teacher extends Model
+class Teacher extends Model implements HasAccount, HasPrivateFiles
 {
     use HasDocuments, SoftDeletes;
 

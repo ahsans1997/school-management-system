@@ -17,7 +17,7 @@ use Illuminate\Validation\ValidationException;
 class GradeScaleService
 {
     /**
-     * @param  array{name: string, grades: list<array<string, mixed>>}  $input
+     * @param  array{name: string, grades: array<array-key, array<string, mixed>>}  $input  grades' keys may not be 0..n
      */
     public function save(?GradeScale $scale, array $input): GradeScale
     {

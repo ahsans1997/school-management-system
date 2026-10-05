@@ -7,6 +7,14 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /** A section's attendance sheet for one day. Written only by SaveAttendanceSheet. */
+/**
+ * Status counts the attendance list adds with withCount('details as …'):
+ *
+ * @property-read int $present
+ * @property-read int $absent
+ * @property-read int $late
+ * @property-read int $leave
+ */
 class Attendance extends Model
 {
     protected $guarded = ['id'];

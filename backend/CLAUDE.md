@@ -32,7 +32,10 @@ php artisan test                  # PHPUnit 12
 php artisan test --filter=Name    # single test
 php artisan queue:work            # process the database queue
 ./vendor/bin/pint                 # format
+./vendor/bin/phpstan analyse      # Larastan (phpstan.neon, level 5) — keep at 0 errors
 ```
+
+**Editor errors on PHP 8 syntax** (enums, `match`, `readonly`, `?->`, named arguments) mean the editor is checking with XAMPP's PHP 7.4. Point it at Laragon's PHP 8.3 (`.vscode/settings.json`, git-ignored). Never rewrite the code to older PHP to silence them: Laravel 13 can't run on 7.4, and doing so broke login once.
 
 ## Database
 

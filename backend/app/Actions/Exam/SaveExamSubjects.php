@@ -21,7 +21,7 @@ use Illuminate\Validation\ValidationException;
 class SaveExamSubjects
 {
     /**
-     * @param  list<array<string, mixed>>  $input
+     * @param  array<array-key, array<string, mixed>>  $input  from the request; keys may not be 0..n
      */
     public function execute(Exam $exam, SchoolClass $class, array $input): void
     {

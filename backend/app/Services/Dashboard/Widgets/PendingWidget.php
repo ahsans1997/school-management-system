@@ -13,16 +13,33 @@ use App\Services\Dashboard\Widget;
  */
 final class PendingWidget extends Widget
 {
+    private string $key;
+
+    private string $title;
+
+    private string $module;
+
+    /** @var list<DashboardAudience> */
+    private array $audiences;
+
+    private ?string $permission;
+
     /**
      * @param  list<DashboardAudience>  $audiences
      */
     public function __construct(
-        private readonly string $key,
-        private readonly string $title,
-        private readonly string $module,
-        private readonly array $audiences,
-        private readonly ?string $permission = null,
-    ) {}
+        string $key,
+        string $title,
+        string $module,
+        array $audiences,
+        ?string $permission = null
+    ) {
+        $this->key = $key;
+        $this->title = $title;
+        $this->module = $module;
+        $this->audiences = $audiences;
+        $this->permission = $permission;
+    }
 
     public function key(): string
     {

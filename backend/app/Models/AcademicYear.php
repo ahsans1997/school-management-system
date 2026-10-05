@@ -40,7 +40,7 @@ class AcademicYear extends Model
             fn () => static::query()->where('is_current', true)->first()?->getAttributes(),
         );
 
-        return $attributes ? (new static)->newFromBuilder($attributes) : null;
+        return $attributes ? (new self)->newFromBuilder($attributes) : null;
     }
 
     public static function forgetCurrentCache(): void
