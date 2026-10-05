@@ -14,6 +14,8 @@ export interface Guardian {
   occupation: string | null;
   address: string | null;
   account: GuardianAccount | null;
+  /** Linked children (on the list). */
+  students_count?: number;
   created_at?: string;
 }
 

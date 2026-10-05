@@ -263,8 +263,8 @@ export function GuardiansManager() {
       <h1 className="mb-1 text-2xl font-semibold">Guardians</h1>
       <p className="mb-6 text-sm text-gray-500 dark:text-gray-400">
         Parents and guardians. Search by phone before adding one, so the same
-        person isn&apos;t entered twice. Children are linked from the student
-        record.
+        person isn&apos;t entered twice. Link children from each student&apos;s
+        profile.
       </p>
 
       {error && (
@@ -442,6 +442,7 @@ export function GuardiansManager() {
                 <th className="py-2 pr-3 font-medium">Phone</th>
                 <th className="py-2 pr-3 font-medium">Email</th>
                 <th className="py-2 pr-3 font-medium">Occupation</th>
+                <th className="py-2 pr-3 font-medium">Children</th>
                 <th className="py-2 pr-3 font-medium">Parent login</th>
                 <th className="py-2 text-right font-medium">Actions</th>
               </tr>
@@ -458,6 +459,9 @@ export function GuardiansManager() {
                   </td>
                   <td className="py-2 pr-3">{g.email ?? "—"}</td>
                   <td className="py-2 pr-3">{g.occupation ?? "—"}</td>
+                  <td className="py-2 pr-3 tabular-nums">
+                    {g.students_count ?? 0}
+                  </td>
                   <td className="py-2 pr-3">
                     {g.account ? (
                       <span>

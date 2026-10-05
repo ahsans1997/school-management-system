@@ -8,8 +8,10 @@ import type {
   DashboardPayload,
   DashboardWidget,
   ProfileWidgetData,
+  ChildrenWidgetData,
   RecentUsersWidgetData,
   SchoolWidgetData,
+  StudentStatsWidgetData,
   UserStatsWidgetData,
 } from "@/types/dashboard";
 
@@ -19,6 +21,8 @@ const CUSTOM_KEYS = new Set([
   "school",
   "user_stats",
   "recent_users",
+  "student_stats",
+  "children",
 ]);
 
 function Card({
@@ -188,6 +192,55 @@ function RecentUsersCard({ data }: { data: RecentUsersWidgetData }) {
   );
 }
 
+function StudentsByGenderCard({ data }: { data: StudentStatsWidgetData }) {
+  return (
+    <Card title="Students by gender">
+      <table className="w-full text-sm">
+        <tbody>
+          {data.by_gender.map((row) => (
+            <tr
+              key={row.gender}
+              className="border-t border-gray-100 first:border-t-0 dark:border-gray-800"
+            >
+              <td className="py-1.5">{row.label}</td>
+              <td className="py-1.5 text-right tabular-nums">{row.count}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </Card>
+  );
+}
+
+/** A parent's own children (the API scopes this to their guardian record). */
+function ChildrenCard({ data }: { data: ChildrenWidgetData }) {
+  return (
+    <Card title="My children" wide>
+      {!data.linked ? (
+        <p className="text-sm text-gray-500">
+          Your login isn&apos;t linked to a guardian record yet. Please contact
+          the school office.
+        </p>
+      ) : data.items.length === 0 ? (
+        <p className="text-sm text-gray-500">
+          No children are linked to you yet.
+        </p>
+      ) : (
+        <ul className="divide-y divide-gray-100 text-sm dark:divide-gray-800">
+          {data.items.map((child) => (
+            <li key={child.id} className="flex justify-between gap-3 py-2">
+              <span className="font-medium">{child.name}</span>
+              <span className="text-gray-500 tabular-nums dark:text-gray-400">
+                ID {child.student_id}
+              </span>
+            </li>
+          ))}
+        </ul>
+      )}
+    </Card>
+  );
+}
+
 /** Safety net for a live widget that doesn't have a renderer yet. */
 function GenericCard({ widget }: { widget: DashboardWidget }) {
   const rows = Object.entries(widget.data ?? {}).map(
@@ -239,6 +292,8 @@ export function DashboardView() {
   const school = find<SchoolWidgetData>("school");
   const stats = find<UserStatsWidgetData>("user_stats");
   const recent = find<RecentUsersWidgetData>("recent_users");
+  const students = find<StudentStatsWidgetData>("student_stats");
+  const children = find<ChildrenWidgetData>("children");
   const others = ready.filter((w) => !CUSTOM_KEYS.has(w.key));
 
   return (
@@ -262,10 +317,23 @@ export function DashboardView() {
         </div>
       )}
 
+      {students && (
+        <div className="grid gap-4 sm:grid-cols-3">
+          <StatTile label="Students" value={students.total} />
+          <StatTile
+            label="Admitted this month"
+            value={students.admitted_this_month}
+          />
+          <StatTile label="Archived" value={students.archived} />
+        </div>
+      )}
+
       <div className="grid gap-4 md:grid-cols-2">
+        {children && <ChildrenCard data={children} />}
         {school && <SchoolCard data={school} />}
         {profile && <ProfileCard data={profile} />}
         {stats && <UsersByRoleCard data={stats} />}
+        {students && <StudentsByGenderCard data={students} />}
         {recent && <RecentUsersCard data={recent} />}
         {others.map((w) => (
           <GenericCard key={w.key} widget={w} />

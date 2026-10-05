@@ -23,6 +23,7 @@ class GuardianController extends Controller
     {
         $guardians = Guardian::query()
             ->with('account')
+            ->withCount('students')
             ->when(request('search'), function ($query, string $search) {
                 $query->where(function ($q) use ($search) {
                     $q->where('name', 'like', "%{$search}%")
@@ -45,7 +46,7 @@ class GuardianController extends Controller
 
     public function show(Guardian $guardian): GuardianResource
     {
-        return new GuardianResource($guardian->load('account'));
+        return new GuardianResource($guardian->load(['account', 'students']));
     }
 
     public function update(

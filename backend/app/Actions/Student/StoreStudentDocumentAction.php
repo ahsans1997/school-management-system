@@ -1,0 +1,38 @@
+<?php
+
+namespace App\Actions\Student;
+
+use App\Models\Student;
+use App\Models\StudentDocument;
+use App\Models\User;
+use Illuminate\Http\UploadedFile;
+
+class StoreStudentDocumentAction
+{
+    /** Private disk, random filename; the original name is kept only as metadata. */
+    public function execute(Student $student, string $title, UploadedFile $file, User $uploader): StudentDocument
+    {
+        $path = $file->store("students/{$student->id}/documents", 'local');
+
+        return $student->documents()->create([
+            'title' => $title,
+            'path' => $path,
+            'original_name' => self::safeName($file->getClientOriginalName()),
+            'mime_type' => $file->getMimeType(), // sniffed from content, not the client's claim
+            'size' => $file->getSize(),
+            'uploaded_by' => $uploader->id,
+        ]);
+    }
+
+    /**
+     * The client's filename, made safe to send back in Content-Disposition.
+     * Symfony already drops any path before the last "/" or "\"; this also
+     * removes control characters (e.g. newlines) and bounds the length.
+     */
+    private static function safeName(string $name): string
+    {
+        $name = trim(preg_replace('/[\/\\\\\x00-\x1F\x7F]+/', '_', $name) ?? '');
+
+        return mb_substr($name === '' ? 'document' : $name, -200);
+    }
+}

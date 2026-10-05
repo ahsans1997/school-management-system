@@ -4,10 +4,12 @@ namespace App\Services\Dashboard;
 
 use App\Enums\DashboardAudience as A;
 use App\Models\User;
+use App\Services\Dashboard\Widgets\ChildrenWidget;
 use App\Services\Dashboard\Widgets\PendingWidget;
 use App\Services\Dashboard\Widgets\ProfileWidget;
 use App\Services\Dashboard\Widgets\RecentUsersWidget;
 use App\Services\Dashboard\Widgets\SchoolWidget;
+use App\Services\Dashboard\Widgets\StudentStatsWidget;
 use App\Services\Dashboard\Widgets\UserStatsWidget;
 
 class DashboardService
@@ -30,9 +32,10 @@ class DashboardService
             new SchoolWidget,
             new UserStatsWidget,
             new RecentUsersWidget,
+            new StudentStatsWidget,
+            new ChildrenWidget,
 
             // Admin / staff — each gated by the permission its data needs.
-            new PendingWidget('student_stats', 'Students', '11 — Students', $management, 'student.view'),
             new PendingWidget('teacher_stats', 'Teachers', '12 — Teachers', $management, 'teacher.view'),
             new PendingWidget('attendance_today', "Today's attendance", '14 — Attendance', [A::Admin], 'attendance.view'),
             new PendingWidget('upcoming_exams', 'Upcoming exams', '16 — Exams', [A::Admin], 'exam.view'),
@@ -47,7 +50,6 @@ class DashboardService
             new PendingWidget('pending_marks', 'Marks to enter', '17 — Marks Entry', [A::Teacher]),
 
             // Parent — will be scoped to the guardian's own children only.
-            new PendingWidget('children', 'My children', '11 — Students', [A::Parent]),
             new PendingWidget('child_attendance', 'Attendance', '14 — Attendance', [A::Parent]),
             new PendingWidget('child_results', 'Results', '18 — Results', [A::Parent]),
             new PendingWidget('child_fees', 'Fees & dues', '19 — Fees', [A::Parent]),

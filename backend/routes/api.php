@@ -11,6 +11,11 @@ use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SchoolClassController;
 use App\Http\Controllers\SchoolSettingsController;
 use App\Http\Controllers\SectionController;
+use App\Http\Controllers\StudentController;
+use App\Http\Controllers\StudentDocumentController;
+use App\Http\Controllers\StudentFileController;
+use App\Http\Controllers\StudentGuardianController;
+use App\Http\Controllers\StudentPhotoController;
 use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -35,6 +40,16 @@ Route::prefix('auth')->group(function () {
         Route::post('logout', [AuthController::class, 'logout'])->middleware('token.type:access');
         Route::post('refresh', [AuthController::class, 'refresh'])->middleware('token.type:refresh');
     });
+});
+
+/*
+| Private files via expiring signed links (App\Support\SignedFileUrl) — so
+| <img> and download links work without a bearer token. The signature is the
+| credential; links are only issued in responses to authorized callers.
+*/
+Route::middleware('signed:relative')->prefix('files')->group(function () {
+    Route::get('students/{student}/photo', [StudentFileController::class, 'photo'])->withTrashed()->name('files.student-photo');
+    Route::get('student-documents/{document}', [StudentFileController::class, 'document'])->name('files.student-document');
 });
 
 /*
@@ -85,6 +100,22 @@ Route::middleware(['auth:api', 'token.type:access', 'active'])->group(function (
     Route::put('guardians/{guardian}', [GuardianController::class, 'update'])->middleware('permission:guardian.edit');
     Route::delete('guardians/{guardian}', [GuardianController::class, 'destroy'])->middleware('permission:guardian.delete');
     Route::post('guardians/{guardian}/account', [GuardianController::class, 'createAccount'])->middleware('permission:guardian.edit');
+
+    // Students. Module 11. Delete archives (soft delete); archived students stay
+    // viewable but read-only (other routes don't bind trashed records → 404).
+    Route::get('students', [StudentController::class, 'index'])->middleware('permission:student.view');
+    Route::post('students', [StudentController::class, 'store'])->middleware('permission:student.create');
+    Route::get('students/{student}', [StudentController::class, 'show'])->middleware('permission:student.view')->withTrashed();
+    Route::put('students/{student}', [StudentController::class, 'update'])->middleware('permission:student.edit');
+    Route::delete('students/{student}', [StudentController::class, 'destroy'])->middleware('permission:student.delete');
+    Route::post('students/{student}/restore', [StudentController::class, 'restore'])->middleware('permission:student.delete')->withTrashed();
+    Route::post('students/{student}/photo', [StudentPhotoController::class, 'store'])->middleware('permission:student.edit');
+    Route::delete('students/{student}/photo', [StudentPhotoController::class, 'destroy'])->middleware('permission:student.edit');
+    Route::post('students/{student}/documents', [StudentDocumentController::class, 'store'])->middleware('permission:student.edit');
+    Route::delete('students/{student}/documents/{document}', [StudentDocumentController::class, 'destroy'])->middleware('permission:student.edit')->scopeBindings();
+    Route::post('students/{student}/guardians', [StudentGuardianController::class, 'store'])->middleware('permission:student.edit');
+    Route::put('students/{student}/guardians/{guardian}', [StudentGuardianController::class, 'update'])->middleware('permission:student.edit');
+    Route::delete('students/{student}/guardians/{guardian}', [StudentGuardianController::class, 'destroy'])->middleware('permission:student.edit');
 
     // School Settings. Module 04.
     Route::get('settings', [SchoolSettingsController::class, 'show'])->middleware('permission:settings.view');

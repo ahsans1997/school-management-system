@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 
 /**
@@ -21,5 +22,17 @@ class Guardian extends Model
     public function account(): MorphOne
     {
         return $this->morphOne(User::class, 'personable');
+    }
+
+    /**
+     * The guardian's children. Archived students drop out (soft deletes).
+     *
+     * @return BelongsToMany<Student, $this>
+     */
+    public function students(): BelongsToMany
+    {
+        return $this->belongsToMany(Student::class, 'student_guardians')
+            ->withPivot(['relationship', 'is_primary'])
+            ->withTimestamps();
     }
 }

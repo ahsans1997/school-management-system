@@ -13,6 +13,18 @@ Includes: enrolling a student into class+section for a year with a roll and stat
 
 Excludes: the student, class, section, and year records themselves (Modules 11/07/08/06). Attendance, results, and fees consume enrollments but are later modules.
 
+## Carried over from Module 11 (Students)
+
+These student features need enrollment data (class, section, roll, and the enrollment's status), so they were moved here from Module 11. This module may be big enough to split when it starts.
+
+- [ ] **Transfer** (`POST /students/{id}/transfer`) — a change of the current enrollment's status (transferred/left) plus date and reason, not a new student-level field.
+- [ ] **Promote** — already planned here (cohort promotion).
+- [ ] **ID card** (`GET /students/{id}/id-card`, queued PDF) — needs class/section/roll; the photo comes via the student's private photo file.
+- [ ] **Certificates** (transfer certificate, testimonial) — need the transfer record (and results for testimonials).
+- [ ] **Import / export** (`POST /students/import`, `GET /students/export`, queued jobs with status) — real files carry class/section/roll, so import should enroll in the same pass. Typed-in `student_id` / `admission_no` are already supported for migrated records.
+- [ ] Show the current class/section/roll on the student list and profile (they deliberately aren't stored on `students`).
+- [ ] Teacher scoping (with Module 12): the Teacher role holds `student.view` and can currently list every student. Narrow it to their assigned sections once assignments and enrollments exist.
+
 ## Dependencies
 
 - `11 — Students`, `08 — Sections`, `06 — Academic Years`.

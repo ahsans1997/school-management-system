@@ -41,6 +41,24 @@ export interface UserStatsWidgetData {
   by_role: { role: string; count: number }[];
 }
 
+export interface StudentStatsWidgetData {
+  total: number;
+  admitted_this_month: number;
+  archived: number;
+  by_gender: { gender: string; label: string; count: number }[];
+}
+
+export interface ChildrenWidgetData {
+  /** False when this login isn't linked to a guardian record. */
+  linked: boolean;
+  items: {
+    id: number;
+    name: string;
+    student_id: string;
+    relationship: string;
+  }[];
+}
+
 export interface RecentUsersWidgetData {
   items: {
     id: number;
