@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AcademicYearController;
+use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\ClassSubjectController;
 use App\Http\Controllers\DashboardController;
@@ -148,6 +149,16 @@ Route::middleware(['auth:api', 'token.type:access', 'active'])->group(function (
     Route::get('enrollments/{enrollment}', [EnrollmentController::class, 'show'])->middleware('permission:enrollment.view');
     Route::put('enrollments/{enrollment}', [EnrollmentController::class, 'update'])->middleware('permission:enrollment.edit');
     Route::delete('enrollments/{enrollment}', [EnrollmentController::class, 'destroy'])->middleware('permission:enrollment.delete');
+
+    // Attendance. Module 14. Permission AND section scope (TeacherScope) on
+    // every endpoint: teachers only reach the sections they teach.
+    Route::get('attendance', [AttendanceController::class, 'index'])->middleware('permission:attendance.view');
+    Route::get('attendance/sections', [AttendanceController::class, 'sections'])->middleware('permission:attendance.view');
+    Route::get('attendance/sheet', [AttendanceController::class, 'sheet'])->middleware('permission:attendance.view');
+    Route::get('attendance/monthly', [AttendanceController::class, 'monthly'])->middleware('permission:attendance.view');
+    Route::post('attendance/bulk', [AttendanceController::class, 'store'])->middleware('permission:attendance.create');
+    Route::put('attendance/{attendance}', [AttendanceController::class, 'update'])->middleware('permission:attendance.edit');
+    Route::get('students/{student}/attendance', [AttendanceController::class, 'student'])->middleware('permission:attendance.view')->withTrashed();
 
     // School Settings. Module 04.
     Route::get('settings', [SchoolSettingsController::class, 'show'])->middleware('permission:settings.view');

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * A division of a class (e.g. "A"). Its class is fixed at creation; capacity
@@ -39,5 +40,21 @@ class Section extends Model
     public function classTeacher(): BelongsTo
     {
         return $this->belongsTo(Teacher::class, 'class_teacher_id');
+    }
+
+    /**
+     * @return HasMany<StudentEnrollment, $this>
+     */
+    public function enrollments(): HasMany
+    {
+        return $this->hasMany(StudentEnrollment::class);
+    }
+
+    /**
+     * @return HasMany<Attendance, $this>
+     */
+    public function attendances(): HasMany
+    {
+        return $this->hasMany(Attendance::class);
     }
 }

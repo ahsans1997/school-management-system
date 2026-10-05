@@ -74,6 +74,43 @@ export interface AssignedSubjectsWidgetData {
   class_teacher_of: { class: string; section: string }[];
 }
 
+export interface AttendanceSummaryData {
+  present: number;
+  absent: number;
+  late: number;
+  leave: number;
+  marked: number;
+  percentage: number | null;
+}
+
+export interface AttendanceTodayWidgetData extends AttendanceSummaryData {
+  date: string;
+  sections_total: number;
+  sections_marked: number;
+}
+
+export interface AttendanceTasksWidgetData {
+  linked: boolean;
+  sections: {
+    section_id: number;
+    class: string;
+    section: string;
+    marked: boolean;
+  }[];
+}
+
+export interface ChildAttendanceWidgetData {
+  linked: boolean;
+  academic_year?: string;
+  children: (AttendanceSummaryData & { name: string })[];
+}
+
+export interface MyAttendanceWidgetData {
+  linked: boolean;
+  academic_year?: string;
+  summary: AttendanceSummaryData | null;
+}
+
 export interface RecentUsersWidgetData {
   items: {
     id: number;

@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState, type ReactNode } from "react";
 import { formatCount, formatDate } from "@/lib/format";
 import { ApiRequestError } from "@/services/apiClient";
@@ -9,6 +10,10 @@ import type {
   DashboardWidget,
   ProfileWidgetData,
   AssignedSubjectsWidgetData,
+  AttendanceTasksWidgetData,
+  AttendanceTodayWidgetData,
+  ChildAttendanceWidgetData,
+  MyAttendanceWidgetData,
   ChildrenWidgetData,
   RecentUsersWidgetData,
   SchoolWidgetData,
@@ -27,6 +32,10 @@ const CUSTOM_KEYS = new Set([
   "children",
   "teacher_stats",
   "assigned_subjects",
+  "attendance_today",
+  "attendance_tasks",
+  "child_attendance",
+  "my_attendance",
 ]);
 
 function Card({
@@ -287,6 +296,103 @@ function AssignedSubjectsCard({ data }: { data: AssignedSubjectsWidgetData }) {
   );
 }
 
+const pct = (value: number | null) => (value === null ? "—" : `${value}%`);
+
+/** A teacher's sections with today's state; links straight to taking it. */
+function AttendanceTasksCard({ data }: { data: AttendanceTasksWidgetData }) {
+  const pending = data.sections.filter((s) => !s.marked).length;
+  return (
+    <Card
+      title={
+        pending > 0 ? `Attendance to take (${pending})` : "Attendance to take"
+      }
+    >
+      {!data.linked ? (
+        <p className="text-sm text-gray-500">
+          Your login isn&apos;t linked to a teacher record yet.
+        </p>
+      ) : data.sections.length === 0 ? (
+        <p className="text-sm text-gray-500">You have no sections yet.</p>
+      ) : (
+        <ul className="divide-y divide-gray-100 text-sm dark:divide-gray-800">
+          {data.sections.map((s) => (
+            <li
+              key={s.section_id}
+              className="flex items-center justify-between gap-3 py-2"
+            >
+              <span className="font-medium">
+                {s.class} {s.section}
+              </span>
+              {s.marked ? (
+                <span className="text-green-600">Taken today</span>
+              ) : (
+                <Link
+                  href={`/teacher/attendance?section=${s.section_id}`}
+                  className="hover:underline"
+                >
+                  Take now →
+                </Link>
+              )}
+            </li>
+          ))}
+        </ul>
+      )}
+    </Card>
+  );
+}
+
+/** Each of a parent's children: attendance % this year. */
+function ChildAttendanceCard({ data }: { data: ChildAttendanceWidgetData }) {
+  return (
+    <Card
+      title={`Attendance${data.academic_year ? ` · ${data.academic_year}` : ""}`}
+    >
+      {data.children.length === 0 ? (
+        <p className="text-sm text-gray-500">Nothing to show yet.</p>
+      ) : (
+        <ul className="divide-y divide-gray-100 text-sm dark:divide-gray-800">
+          {data.children.map((c) => (
+            <li key={c.name} className="flex justify-between gap-3 py-2">
+              <span className="font-medium">{c.name}</span>
+              <span className="text-gray-500 tabular-nums">
+                {pct(c.percentage)}
+                {c.marked > 0 && ` · ${c.absent} absent of ${c.marked} days`}
+              </span>
+            </li>
+          ))}
+        </ul>
+      )}
+    </Card>
+  );
+}
+
+/** A student's own attendance this year. */
+function MyAttendanceCard({ data }: { data: MyAttendanceWidgetData }) {
+  return (
+    <Card
+      title={`My attendance${data.academic_year ? ` · ${data.academic_year}` : ""}`}
+    >
+      {!data.summary || data.summary.marked === 0 ? (
+        <p className="text-sm text-gray-500">
+          {data.linked
+            ? "No attendance taken yet."
+            : "Your login isn't linked to a student record yet."}
+        </p>
+      ) : (
+        <p className="text-sm">
+          <span className="text-2xl font-semibold tabular-nums">
+            {pct(data.summary.percentage)}
+          </span>{" "}
+          <span className="text-gray-500 tabular-nums">
+            · {data.summary.absent} absent, {data.summary.late} late of{" "}
+            {data.summary.marked} days
+          </span>
+        </p>
+      )}
+    </Card>
+  );
+}
+
 /** Safety net for a live widget that doesn't have a renderer yet. */
 function GenericCard({ widget }: { widget: DashboardWidget }) {
   const rows = Object.entries(widget.data ?? {}).map(
@@ -342,6 +448,10 @@ export function DashboardView() {
   const children = find<ChildrenWidgetData>("children");
   const teachers = find<TeacherStatsWidgetData>("teacher_stats");
   const assigned = find<AssignedSubjectsWidgetData>("assigned_subjects");
+  const attendanceToday = find<AttendanceTodayWidgetData>("attendance_today");
+  const attendanceTasks = find<AttendanceTasksWidgetData>("attendance_tasks");
+  const childAttendance = find<ChildAttendanceWidgetData>("child_attendance");
+  const myAttendance = find<MyAttendanceWidgetData>("my_attendance");
   const others = ready.filter((w) => !CUSTOM_KEYS.has(w.key));
 
   return (
@@ -376,6 +486,22 @@ export function DashboardView() {
         </div>
       )}
 
+      {attendanceToday && (
+        <div className="grid gap-4 sm:grid-cols-3">
+          <StatTile
+            label="Sections taken today"
+            value={attendanceToday.sections_marked}
+          />
+          <StatTile
+            label="Sections still to take"
+            value={
+              attendanceToday.sections_total - attendanceToday.sections_marked
+            }
+          />
+          <StatTile label="Absent today" value={attendanceToday.absent} />
+        </div>
+      )}
+
       {teachers && (
         <div className="grid gap-4 sm:grid-cols-3">
           <StatTile label="Teachers" value={teachers.total} />
@@ -385,7 +511,10 @@ export function DashboardView() {
       )}
 
       <div className="grid gap-4 md:grid-cols-2">
+        {attendanceTasks && <AttendanceTasksCard data={attendanceTasks} />}
         {assigned && <AssignedSubjectsCard data={assigned} />}
+        {childAttendance && <ChildAttendanceCard data={childAttendance} />}
+        {myAttendance && <MyAttendanceCard data={myAttendance} />}
         {children && <ChildrenCard data={children} />}
         {school && <SchoolCard data={school} />}
         {profile && <ProfileCard data={profile} />}

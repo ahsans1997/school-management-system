@@ -12,6 +12,7 @@ import { labelOf } from "@/lib/options";
 import { ApiRequestError } from "@/services/apiClient";
 import * as studentService from "@/services/studentService";
 import { BLOOD_GROUPS, GENDERS, type Student } from "@/types/student";
+import { StudentAttendanceSummary } from "./StudentAttendanceSummary";
 import { StudentEnrollment } from "./StudentEnrollment";
 import { StudentGuardians } from "./StudentGuardians";
 
@@ -219,6 +220,10 @@ export function StudentProfile({ studentId }: { studentId: number }) {
             .catch((err) => setError(errorMessage(err)));
         }}
       />
+
+      {can("attendance.view") && (
+        <StudentAttendanceSummary studentId={student.id} />
+      )}
 
       <StudentGuardians
         student={student}

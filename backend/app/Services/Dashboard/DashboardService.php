@@ -5,7 +5,11 @@ namespace App\Services\Dashboard;
 use App\Enums\DashboardAudience as A;
 use App\Models\User;
 use App\Services\Dashboard\Widgets\AssignedSubjectsWidget;
+use App\Services\Dashboard\Widgets\AttendanceTasksWidget;
+use App\Services\Dashboard\Widgets\AttendanceTodayWidget;
+use App\Services\Dashboard\Widgets\ChildAttendanceWidget;
 use App\Services\Dashboard\Widgets\ChildrenWidget;
+use App\Services\Dashboard\Widgets\MyAttendanceWidget;
 use App\Services\Dashboard\Widgets\PendingWidget;
 use App\Services\Dashboard\Widgets\ProfileWidget;
 use App\Services\Dashboard\Widgets\RecentUsersWidget;
@@ -38,9 +42,12 @@ class DashboardService
             new ChildrenWidget,
             new TeacherStatsWidget,
             new AssignedSubjectsWidget,
+            new AttendanceTodayWidget,
+            new AttendanceTasksWidget,
+            new ChildAttendanceWidget,
+            new MyAttendanceWidget,
 
             // Admin / staff — each gated by the permission its data needs.
-            new PendingWidget('attendance_today', "Today's attendance", '14 — Attendance', [A::Admin], 'attendance.view'),
             new PendingWidget('upcoming_exams', 'Upcoming exams', '16 — Exams', [A::Admin], 'exam.view'),
             new PendingWidget('pending_fees', 'Pending fees', '19 — Fees', $management, 'fee.view'),
             new PendingWidget('monthly_finance', 'Income & expense (this month)', '21 — Expenses & Basic Accounts', $management, 'accounts.view'),
@@ -48,16 +55,13 @@ class DashboardService
 
             // Teacher — will be scoped to the teacher's assigned classes/subjects.
             new PendingWidget('todays_classes', "Today's classes", '15 — Class Routine', [A::Teacher]),
-            new PendingWidget('attendance_tasks', 'Attendance to take', '14 — Attendance', [A::Teacher]),
             new PendingWidget('pending_marks', 'Marks to enter', '17 — Marks Entry', [A::Teacher]),
 
             // Parent — will be scoped to the guardian's own children only.
-            new PendingWidget('child_attendance', 'Attendance', '14 — Attendance', [A::Parent]),
             new PendingWidget('child_results', 'Results', '18 — Results', [A::Parent]),
             new PendingWidget('child_fees', 'Fees & dues', '19 — Fees', [A::Parent]),
 
             // Student — will be scoped to the student's own record only.
-            new PendingWidget('my_attendance', 'My attendance', '14 — Attendance', [A::Student]),
             new PendingWidget('my_results', 'My results', '18 — Results', [A::Student]),
             new PendingWidget('my_routine', 'My routine', '15 — Class Routine', [A::Student]),
             new PendingWidget('my_fees', 'My fees', '19 — Fees', [A::Student]),

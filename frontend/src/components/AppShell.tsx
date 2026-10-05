@@ -10,6 +10,8 @@ export interface NavItem {
   label: string;
   /** Hidden unless the user holds this permission. */
   permission?: string;
+  /** Active only on this exact path (for a portal's home link). */
+  exact?: boolean;
 }
 
 interface AppShellProps {
@@ -63,7 +65,8 @@ export function AppShell({ children, nav = [] }: AppShellProps) {
           >
             {items.map((item) => {
               const active =
-                pathname === item.href || pathname.startsWith(`${item.href}/`);
+                pathname === item.href ||
+                (!item.exact && pathname.startsWith(`${item.href}/`));
               return (
                 <Link
                   key={item.href}

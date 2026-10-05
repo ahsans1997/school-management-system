@@ -4,7 +4,7 @@
 
 Legend: ⬜ Not started · 🟡 In progress · 🔵 In review · ✅ Complete · ⏸️ Blocked
 
-**Overall: 12 / 40 modules complete** (13b was split out of Module 13; 12 and 13 are in review pending a browser click-through). Phase 1 — Foundation is done; Phase 2 under way.
+**Overall: 12 / 40 modules complete** (13b was split out of Module 13; 12, 13 and 14 are in review pending a browser click-through). Phase 1 — Foundation is done; Phase 2 under way.
 
 ---
 
@@ -37,7 +37,7 @@ Legend: ⬜ Not started · 🟡 In progress · 🔵 In review · ✅ Complete ·
 
 | ✔ | # | Module | Status | Completed | Doc |
 |---|---|--------|--------|-----------|-----|
-| [ ] | 14 | Attendance | ⬜ Not started | — | [14-attendance.md](modules/14-attendance.md) |
+| [ ] | 14 | Attendance | 🔵 In review: browser click-through pending | — | [14-attendance.md](modules/14-attendance.md) |
 | [ ] | 15 | Class Routine | ⬜ Not started | — | [15-class-routine.md](modules/15-class-routine.md) |
 | [ ] | 16 | Exams | ⬜ Not started | — | [16-exams.md](modules/16-exams.md) |
 | [ ] | 17 | Marks Entry | ⬜ Not started | — | [17-marks-entry.md](modules/17-marks-entry.md) |

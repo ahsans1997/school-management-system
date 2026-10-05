@@ -3,9 +3,9 @@
 namespace App\Models;
 
 use App\Enums\BloodGroup;
-use App\Enums\DashboardAudience;
 use App\Enums\Gender;
 use App\Models\Concerns\HasDocuments;
+use App\Support\TeacherScope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -88,11 +88,10 @@ class Student extends Model
      */
     public function scopeVisibleTo(Builder $query, User $user): void
     {
-        if (DashboardAudience::forUser($user) !== DashboardAudience::Teacher) {
+        $sectionIds = TeacherScope::sectionIds($user);
+        if ($sectionIds === null) {
             return;
         }
-
-        $sectionIds = Teacher::forUser($user)?->sectionIds() ?? [];
 
         $query->whereHas('enrollments', fn (Builder $q) => $q->active()
             ->where('academic_year_id', AcademicYear::current()?->id ?? 0)
