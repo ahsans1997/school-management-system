@@ -1,3 +1,5 @@
+import type { StoredDocument } from "@/types/document";
+
 export type Gender = "male" | "female" | "other";
 export type BloodGroup =
   "A+" | "A-" | "B+" | "B-" | "AB+" | "AB-" | "O+" | "O-";
@@ -21,17 +23,6 @@ export interface GuardianLink {
   is_primary: boolean;
 }
 
-export interface StudentDocument {
-  id: number;
-  title: string;
-  original_name: string;
-  mime_type: string;
-  size: number;
-  /** Expiring signed link — no auth header needed. */
-  download_url: string;
-  created_at: string | null;
-}
-
 export interface Student {
   id: number;
   /** Public-facing ID (ID card, public result lookup). */
@@ -53,7 +44,7 @@ export interface Student {
   primary_guardian?: GuardianLink | null;
   /** On the profile (show/update). Primary first. */
   guardians?: GuardianLink[];
-  documents?: StudentDocument[];
+  documents?: StoredDocument[];
   archived_at: string | null;
   created_at: string | null;
 }

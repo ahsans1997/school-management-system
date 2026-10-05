@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Guardian;
+use App\Models\Teacher;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -53,6 +54,16 @@ class DatabaseSeeder extends Seeder
         User::query()->where('email', 'parent@school.test')->update([
             'personable_type' => $guardian->getMorphClass(),
             'personable_id' => $guardian->getKey(),
+        ]);
+
+        // Likewise the demo teacher login belongs to a teacher record.
+        $teacher = Teacher::query()->firstOrCreate(
+            ['employee_id' => 'T-DEMO'],
+            ['name' => 'Demo Teacher', 'phone' => '01700-000001', 'joining_date' => '2020-01-01', 'email' => 'teacher@school.test'],
+        );
+        User::query()->where('email', 'teacher@school.test')->update([
+            'personable_type' => $teacher->getMorphClass(),
+            'personable_id' => $teacher->getKey(),
         ]);
     }
 }

@@ -127,3 +127,4 @@ Canonical class/section/roll for a given year live on `student_enrollments` (Mod
   - **List and dashboard:** the list shows the photo thumbnail and the primary guardian. The dashboard tiles read 1 / 1 / 0, and the gender split shows Female 1.
   - No horizontal overflow at 375px on the list, profile, form, guardians and dashboard screens.
 - Dev DB: student **Nusrat Jahan** (photo, one document, guardians Rahima Khatun [primary, mother] and Abdul Karim [father]).
+- **Later change (Module 12):** `student_documents` was folded into the polymorphic `documents` table, shared with teachers and later admission applications, by a data migration. The photo/document actions, requests and file routes became shared ones (`App\Actions\Files\*`, `PrivateFileController`, `/api/files/documents/{id}`). The student API is unchanged apart from the document download URL path.

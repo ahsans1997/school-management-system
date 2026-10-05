@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Http\Requests\Student;
+namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreStudentDocumentRequest extends FormRequest
+/** A document upload for any record (students, teachers…). */
+class StoreDocumentRequest extends FormRequest
 {
     public function authorize(): bool
     {

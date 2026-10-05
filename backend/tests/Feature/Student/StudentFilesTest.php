@@ -128,7 +128,7 @@ class StudentFilesTest extends TestCase
             ->assertDownload('birth-cert.pdf');
 
         $this->asUser($this->admin)->deleteJson("/api/students/{$student->id}/documents/{$doc['id']}")->assertNoContent();
-        $this->assertDatabaseMissing('student_documents', ['id' => $doc['id']]);
+        $this->assertDatabaseMissing('documents', ['id' => $doc['id']]);
         $this->assertSame([], Storage::disk('local')->allFiles());
     }
 
@@ -156,7 +156,7 @@ class StudentFilesTest extends TestCase
         // Same answer for a real and a missing record: the signature is checked first.
         $this->get("/api/files/students/{$student->id}/photo")->assertForbidden();
         $this->get('/api/files/students/999/photo')->assertForbidden();
-        $this->get('/api/files/student-documents/999')->assertForbidden();
+        $this->get('/api/files/documents/999')->assertForbidden();
     }
 
     public function test_documents_must_be_pdfs_or_images(): void

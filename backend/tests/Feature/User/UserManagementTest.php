@@ -184,11 +184,11 @@ class UserManagementTest extends TestCase
                 'name' => 'Linked User',
                 'email' => 'linked@school.test',
                 'password' => 'password123',
-                'personable_type' => 'teacher',
+                'personable_type' => 'employee',
                 'personable_id' => 5,
             ])
             ->assertCreated()
-            ->assertJsonPath('data.personable_type', 'teacher')
+            ->assertJsonPath('data.personable_type', 'employee')
             ->assertJsonPath('data.personable_id', 5);
     }
 

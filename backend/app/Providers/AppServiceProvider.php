@@ -3,6 +3,8 @@
 namespace App\Providers;
 
 use App\Models\Guardian;
+use App\Models\Student;
+use App\Models\Teacher;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Http\Request;
@@ -28,6 +30,8 @@ class AppServiceProvider extends ServiceProvider
         // person module registers its model here when it lands.
         Relation::morphMap([
             'guardian' => Guardian::class,
+            'student' => Student::class,
+            'teacher' => Teacher::class,
         ]);
 
         // Brute-force protection on login: 5 attempts/min keyed by email + IP.

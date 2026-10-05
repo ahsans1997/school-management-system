@@ -8,10 +8,12 @@ import type {
   DashboardPayload,
   DashboardWidget,
   ProfileWidgetData,
+  AssignedSubjectsWidgetData,
   ChildrenWidgetData,
   RecentUsersWidgetData,
   SchoolWidgetData,
   StudentStatsWidgetData,
+  TeacherStatsWidgetData,
   UserStatsWidgetData,
 } from "@/types/dashboard";
 
@@ -23,6 +25,8 @@ const CUSTOM_KEYS = new Set([
   "recent_users",
   "student_stats",
   "children",
+  "teacher_stats",
+  "assigned_subjects",
 ]);
 
 function Card({
@@ -241,6 +245,48 @@ function ChildrenCard({ data }: { data: ChildrenWidgetData }) {
   );
 }
 
+/** A teacher's own subjects and class-teacher sections (scoped by the API). */
+function AssignedSubjectsCard({ data }: { data: AssignedSubjectsWidgetData }) {
+  return (
+    <Card title="My subjects" wide>
+      {!data.linked ? (
+        <p className="text-sm text-gray-500">
+          Your login isn&apos;t linked to a teacher record yet. Please contact
+          the school office.
+        </p>
+      ) : data.subjects.length === 0 && data.class_teacher_of.length === 0 ? (
+        <p className="text-sm text-gray-500">Nothing is assigned to you yet.</p>
+      ) : (
+        <div className="space-y-3 text-sm">
+          {data.class_teacher_of.length > 0 && (
+            <p>
+              Class teacher of{" "}
+              <span className="font-medium">
+                {data.class_teacher_of
+                  .map((c) => `${c.class} ${c.section}`)
+                  .join(", ")}
+              </span>
+            </p>
+          )}
+          <ul className="divide-y divide-gray-100 dark:divide-gray-800">
+            {data.subjects.map((s) => (
+              <li
+                key={`${s.class}-${s.section}-${s.subject}`}
+                className="flex justify-between gap-3 py-2"
+              >
+                <span className="font-medium">{s.subject}</span>
+                <span className="text-gray-500 dark:text-gray-400">
+                  {s.class} {s.section}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+    </Card>
+  );
+}
+
 /** Safety net for a live widget that doesn't have a renderer yet. */
 function GenericCard({ widget }: { widget: DashboardWidget }) {
   const rows = Object.entries(widget.data ?? {}).map(
@@ -294,6 +340,8 @@ export function DashboardView() {
   const recent = find<RecentUsersWidgetData>("recent_users");
   const students = find<StudentStatsWidgetData>("student_stats");
   const children = find<ChildrenWidgetData>("children");
+  const teachers = find<TeacherStatsWidgetData>("teacher_stats");
+  const assigned = find<AssignedSubjectsWidgetData>("assigned_subjects");
   const others = ready.filter((w) => !CUSTOM_KEYS.has(w.key));
 
   return (
@@ -328,7 +376,16 @@ export function DashboardView() {
         </div>
       )}
 
+      {teachers && (
+        <div className="grid gap-4 sm:grid-cols-3">
+          <StatTile label="Teachers" value={teachers.total} />
+          <StatTile label="With a login" value={teachers.with_login} />
+          <StatTile label="Not yet assigned" value={teachers.unassigned} />
+        </div>
+      )}
+
       <div className="grid gap-4 md:grid-cols-2">
+        {assigned && <AssignedSubjectsCard data={assigned} />}
         {children && <ChildrenCard data={children} />}
         {school && <SchoolCard data={school} />}
         {profile && <ProfileCard data={profile} />}

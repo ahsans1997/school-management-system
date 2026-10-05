@@ -29,7 +29,7 @@ Legend: ⬜ Not started · 🟡 In progress · 🔵 In review · ✅ Complete ·
 | [x] | 09 | Subjects | ✅ Complete | 2026-10-04 | [09-subjects.md](modules/09-subjects.md) |
 | [x] | 10 | Guardians | ✅ Complete | 2026-10-04 | [10-guardians.md](modules/10-guardians.md) |
 | [x] | 11 | Students | ✅ Complete | 2026-10-05 | [11-students.md](modules/11-students.md) |
-| [ ] | 12 | Teachers | ⬜ Not started | — | [12-teachers.md](modules/12-teachers.md) |
+| [ ] | 12 | Teachers | 🔵 In review: browser click-through pending | — | [12-teachers.md](modules/12-teachers.md) |
 | [ ] | 13 | Enrollments | ⬜ Not started | — | [13-enrollments.md](modules/13-enrollments.md) |
 
 ## Phase 3 — Academic Operations

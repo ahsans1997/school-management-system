@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Http\Requests\Student;
+namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UploadStudentPhotoRequest extends FormRequest
+/** A profile photo for any person record (students, teachers…). */
+class UploadPhotoRequest extends FormRequest
 {
     public function authorize(): bool
     {

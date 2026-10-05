@@ -59,6 +59,21 @@ export interface ChildrenWidgetData {
   }[];
 }
 
+export interface TeacherStatsWidgetData {
+  total: number;
+  with_login: number;
+  /** No subject and no class-teacher section yet. */
+  unassigned: number;
+  archived: number;
+}
+
+export interface AssignedSubjectsWidgetData {
+  /** False when this login isn't linked to a teacher record. */
+  linked: boolean;
+  subjects: { class: string; section: string; subject: string }[];
+  class_teacher_of: { class: string; section: string }[];
+}
+
 export interface RecentUsersWidgetData {
   items: {
     id: number;

@@ -1,7 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useEffect, useState } from "react";
+import { DetailsList } from "@/components/DetailsList";
+import { DocumentsPanel } from "@/components/DocumentsPanel";
+import { PhotoEditor } from "@/components/PhotoEditor";
 import { useAuth } from "@/features/auth/AuthContext";
 import { errorMessage } from "@/lib/errors";
 import { formatDay } from "@/lib/format";
@@ -9,28 +12,10 @@ import { labelOf } from "@/lib/options";
 import { ApiRequestError } from "@/services/apiClient";
 import * as studentService from "@/services/studentService";
 import { BLOOD_GROUPS, GENDERS, type Student } from "@/types/student";
-import { StudentDocuments } from "./StudentDocuments";
 import { StudentGuardians } from "./StudentGuardians";
-
-/** Matches the API: JPEG/PNG/WebP up to 2 MB. */
-const PHOTO_ACCEPT = "image/jpeg,image/png,image/webp";
-const PHOTO_MAX_BYTES = 2 * 1024 * 1024;
 
 const isNotFound = (err: unknown) =>
   err instanceof ApiRequestError && err.error.status === 404;
-
-function Details({ rows }: { rows: [string, ReactNode][] }) {
-  return (
-    <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1.5 text-sm">
-      {rows.map(([label, value]) => (
-        <div key={label} className="contents">
-          <dt className="text-gray-500 dark:text-gray-400">{label}</dt>
-          <dd className="min-w-0 break-words">{value || "—"}</dd>
-        </div>
-      ))}
-    </dl>
-  );
-}
 
 /** A student's record: details, photo, guardians, documents, archive/restore. */
 export function StudentProfile({ studentId }: { studentId: number }) {
@@ -41,7 +26,6 @@ export function StudentProfile({ studentId }: { studentId: number }) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
-  const photoInput = useRef<HTMLInputElement>(null);
 
   // Initial fetch: state is set only in promise callbacks, and ignored after unmount.
   useEffect(() => {
@@ -106,19 +90,6 @@ export function StudentProfile({ studentId }: { studentId: number }) {
   const archived = student.archived_at !== null;
   const canEdit = can("student.edit") && !archived;
 
-  function choosePhoto(file: File | undefined) {
-    if (!file || !student) return;
-    if (file.size > PHOTO_MAX_BYTES) {
-      setError("The photo must be 2 MB or smaller.");
-      return;
-    }
-    void run(
-      () => studentService.uploadPhoto(student.id, file),
-      "Photo updated.",
-    );
-    if (photoInput.current) photoInput.current.value = "";
-  }
-
   return (
     <div className="mx-auto max-w-4xl space-y-6 p-6">
       {backLink}
@@ -137,50 +108,25 @@ export function StudentProfile({ studentId }: { studentId: number }) {
       {notice && <p className="text-sm text-green-600">{notice}</p>}
 
       <header className="flex flex-wrap items-start gap-4">
-        <div className="shrink-0">
-          {student.photo_url ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={student.photo_url}
-              alt={`Photo of ${student.name}`}
-              className="h-28 w-24 rounded-md border border-gray-200 object-cover dark:border-gray-800"
-            />
-          ) : (
-            <div className="flex h-28 w-24 items-center justify-center rounded-md border border-dashed border-gray-300 text-xs text-gray-500 dark:border-gray-700">
-              No photo
-            </div>
-          )}
-          {canEdit && (
-            <div className="mt-2 flex flex-col gap-1 text-xs">
-              <label className="cursor-pointer hover:underline">
-                {student.photo_url ? "Replace photo" : "Upload photo"}
-                <input
-                  ref={photoInput}
-                  type="file"
-                  accept={PHOTO_ACCEPT}
-                  className="sr-only"
-                  disabled={busy}
-                  onChange={(e) => choosePhoto(e.target.files?.[0])}
-                />
-              </label>
-              {student.photo_url && (
-                <button
-                  type="button"
-                  disabled={busy}
-                  onClick={() =>
-                    void run(
-                      () => studentService.removePhoto(student.id),
-                      "Photo removed.",
-                    )
-                  }
-                  className="text-left text-red-600 hover:underline"
-                >
-                  Remove photo
-                </button>
-              )}
-            </div>
-          )}
-        </div>
+        <PhotoEditor
+          photoUrl={student.photo_url}
+          alt={`Photo of ${student.name}`}
+          canEdit={canEdit}
+          busy={busy}
+          onError={setError}
+          onUpload={(file) =>
+            void run(
+              () => studentService.uploadPhoto(student.id, file),
+              "Photo updated.",
+            )
+          }
+          onRemove={() =>
+            void run(
+              () => studentService.removePhoto(student.id),
+              "Photo removed.",
+            )
+          }
+        />
 
         <div className="min-w-0 flex-1">
           <h1 className="text-2xl font-semibold">{student.name}</h1>
@@ -239,7 +185,7 @@ export function StudentProfile({ studentId }: { studentId: number }) {
 
       <section className="rounded-lg border border-gray-200 p-4 dark:border-gray-800">
         <h2 className="mb-3 text-sm font-semibold">Details</h2>
-        <Details
+        <DetailsList
           rows={[
             ["Date of birth", formatDay(student.dob)],
             ["Gender", labelOf(GENDERS, student.gender)],
@@ -261,9 +207,13 @@ export function StudentProfile({ studentId }: { studentId: number }) {
         onChange={(next) => merge({ guardians: next.guardians })}
       />
 
-      <StudentDocuments
-        student={student}
+      <DocumentsPanel
+        documents={student.documents ?? []}
         canEdit={canEdit}
+        upload={(title, file) =>
+          studentService.uploadDocument(student.id, title, file)
+        }
+        remove={(doc) => studentService.deleteDocument(student.id, doc.id)}
         onChange={(documents) => merge({ documents })}
       />
     </div>

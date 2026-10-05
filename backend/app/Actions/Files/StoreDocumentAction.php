@@ -1,20 +1,25 @@
 <?php
 
-namespace App\Actions\Student;
+namespace App\Actions\Files;
 
-use App\Models\Student;
-use App\Models\StudentDocument;
+use App\Models\Concerns\HasDocuments;
+use App\Models\Document;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\UploadedFile;
 
-class StoreStudentDocumentAction
+class StoreDocumentAction
 {
-    /** Private disk, random filename; the original name is kept only as metadata. */
-    public function execute(Student $student, string $title, UploadedFile $file, User $uploader): StudentDocument
+    /**
+     * Private disk, random filename; the original name is kept only as metadata.
+     *
+     * @param  Model&HasDocuments  $owner
+     */
+    public function execute(Model $owner, string $title, UploadedFile $file, User $uploader): Document
     {
-        $path = $file->store("students/{$student->id}/documents", 'local');
+        $path = $file->store($owner->fileFolder().'/documents', 'local');
 
-        return $student->documents()->create([
+        return $owner->documents()->create([
             'title' => $title,
             'path' => $path,
             'original_name' => self::safeName($file->getClientOriginalName()),

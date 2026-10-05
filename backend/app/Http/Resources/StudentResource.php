@@ -46,7 +46,7 @@ class StudentResource extends JsonResource
                     ->values()
                     ->map(fn (Guardian $g) => $this->guardianLink($g)),
             ),
-            'documents' => StudentDocumentResource::collection($this->whenLoaded('documents')),
+            'documents' => DocumentResource::collection($this->whenLoaded('documents')),
             'archived_at' => $this->deleted_at?->toIso8601String(),
             'created_at' => $this->created_at?->toIso8601String(),
         ];

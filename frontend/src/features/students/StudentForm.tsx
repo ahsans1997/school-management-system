@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, type FormEvent, type ReactNode } from "react";
+import { useState, type FormEvent } from "react";
+import { FormField, fieldInputClass } from "@/components/FormField";
 import { errorMessage } from "@/lib/errors";
 import { ApiRequestError } from "@/services/apiClient";
 import {
@@ -26,8 +27,7 @@ type Draft = Record<
   string
 > & { gender: Gender | ""; blood_group: BloodGroup | "" };
 
-const inputClass =
-  "w-full rounded-md border border-gray-300 px-2 py-1 text-sm dark:border-gray-700 dark:bg-gray-800";
+const inputClass = fieldInputClass;
 
 const orNull = (value: string) => value.trim() || null;
 
@@ -63,33 +63,6 @@ function toInput(d: Draft): StudentInput {
     address: orNull(d.address),
     previous_school: orNull(d.previous_school),
   };
-}
-
-/** Label + control + server error (or hint). Top level, so inputs keep focus. */
-function Field({
-  label,
-  hint,
-  error,
-  wide = false,
-  children,
-}: {
-  label: string;
-  hint?: string;
-  error?: string;
-  wide?: boolean;
-  children: ReactNode;
-}) {
-  return (
-    <label className={`text-sm ${wide ? "sm:col-span-2" : ""}`}>
-      <span className="mb-1 block font-medium">{label}</span>
-      {children}
-      {error ? (
-        <span className="mt-1 block text-xs text-red-600">{error}</span>
-      ) : hint ? (
-        <span className="mt-1 block text-xs text-gray-500">{hint}</span>
-      ) : null}
-    </label>
-  );
 }
 
 interface StudentFormProps {
@@ -155,13 +128,13 @@ export function StudentForm({
 
       <fieldset className="grid gap-4 sm:grid-cols-2">
         <legend className="mb-2 text-sm font-semibold">Student</legend>
-        <Field error={fieldErrors.name?.[0]} label="Full name" wide>
+        <FormField error={fieldErrors.name?.[0]} label="Full name" wide>
           {text("name", { required: true, maxLength: 100 })}
-        </Field>
-        <Field error={fieldErrors.dob?.[0]} label="Date of birth">
+        </FormField>
+        <FormField error={fieldErrors.dob?.[0]} label="Date of birth">
           {text("dob", { type: "date", required: true })}
-        </Field>
-        <Field error={fieldErrors.gender?.[0]} label="Gender">
+        </FormField>
+        <FormField error={fieldErrors.gender?.[0]} label="Gender">
           <select
             required
             value={draft.gender}
@@ -175,8 +148,8 @@ export function StudentForm({
               </option>
             ))}
           </select>
-        </Field>
-        <Field
+        </FormField>
+        <FormField
           error={fieldErrors.blood_group?.[0]}
           label="Blood group (optional)"
         >
@@ -192,48 +165,52 @@ export function StudentForm({
               </option>
             ))}
           </select>
-        </Field>
-        <Field error={fieldErrors.phone?.[0]} label="Phone (optional)">
+        </FormField>
+        <FormField error={fieldErrors.phone?.[0]} label="Phone (optional)">
           {text("phone", { type: "tel", maxLength: 20 })}
-        </Field>
-        <Field error={fieldErrors.address?.[0]} label="Address (optional)" wide>
+        </FormField>
+        <FormField
+          error={fieldErrors.address?.[0]}
+          label="Address (optional)"
+          wide
+        >
           {text("address", { maxLength: 500 })}
-        </Field>
+        </FormField>
       </fieldset>
 
       <fieldset className="grid gap-4 sm:grid-cols-2">
         <legend className="mb-2 text-sm font-semibold">Parents</legend>
-        <Field
+        <FormField
           error={fieldErrors.father_name?.[0]}
           label="Father's name (optional)"
           hint="As printed on certificates. Link guardians on the profile."
         >
           {text("father_name", { maxLength: 100 })}
-        </Field>
-        <Field
+        </FormField>
+        <FormField
           error={fieldErrors.mother_name?.[0]}
           label="Mother's name (optional)"
         >
           {text("mother_name", { maxLength: 100 })}
-        </Field>
+        </FormField>
       </fieldset>
 
       <fieldset className="grid gap-4 sm:grid-cols-2">
         <legend className="mb-2 text-sm font-semibold">Admission</legend>
-        <Field
+        <FormField
           error={fieldErrors.admission_date?.[0]}
           label={creating ? "Admission date (optional)" : "Admission date"}
           hint={creating ? "Defaults to today." : undefined}
         >
           {text("admission_date", { type: "date", required: !creating })}
-        </Field>
-        <Field
+        </FormField>
+        <FormField
           error={fieldErrors.previous_school?.[0]}
           label="Previous school (optional)"
         >
           {text("previous_school", { maxLength: 150 })}
-        </Field>
-        <Field
+        </FormField>
+        <FormField
           error={fieldErrors.admission_no?.[0]}
           label={creating ? "Admission no. (optional)" : "Admission no."}
           hint={
@@ -243,8 +220,8 @@ export function StudentForm({
           }
         >
           {text("admission_no", { maxLength: 20, required: !creating })}
-        </Field>
-        <Field
+        </FormField>
+        <FormField
           error={fieldErrors.student_id?.[0]}
           label={creating ? "Student ID (optional)" : "Student ID"}
           hint={
@@ -254,7 +231,7 @@ export function StudentForm({
           }
         >
           {text("student_id", { maxLength: 20, required: !creating })}
-        </Field>
+        </FormField>
       </fieldset>
 
       <div className="flex gap-3">

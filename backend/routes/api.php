@@ -7,16 +7,19 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\GuardianController;
 use App\Http\Controllers\HealthController;
 use App\Http\Controllers\PermissionController;
+use App\Http\Controllers\PrivateFileController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SchoolClassController;
 use App\Http\Controllers\SchoolSettingsController;
 use App\Http\Controllers\SectionController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\StudentDocumentController;
-use App\Http\Controllers\StudentFileController;
 use App\Http\Controllers\StudentGuardianController;
 use App\Http\Controllers\StudentPhotoController;
 use App\Http\Controllers\SubjectController;
+use App\Http\Controllers\TeacherController;
+use App\Http\Controllers\TeacherFilesController;
+use App\Http\Controllers\TeachingController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -48,8 +51,9 @@ Route::prefix('auth')->group(function () {
 | credential; links are only issued in responses to authorized callers.
 */
 Route::middleware('signed:relative')->prefix('files')->group(function () {
-    Route::get('students/{student}/photo', [StudentFileController::class, 'photo'])->withTrashed()->name('files.student-photo');
-    Route::get('student-documents/{document}', [StudentFileController::class, 'document'])->name('files.student-document');
+    Route::get('students/{student}/photo', [PrivateFileController::class, 'studentPhoto'])->withTrashed()->name('files.student-photo');
+    Route::get('teachers/{teacher}/photo', [PrivateFileController::class, 'teacherPhoto'])->withTrashed()->name('files.teacher-photo');
+    Route::get('documents/{document}', [PrivateFileController::class, 'document'])->name('files.document');
 });
 
 /*
@@ -116,6 +120,24 @@ Route::middleware(['auth:api', 'token.type:access', 'active'])->group(function (
     Route::post('students/{student}/guardians', [StudentGuardianController::class, 'store'])->middleware('permission:student.edit');
     Route::put('students/{student}/guardians/{guardian}', [StudentGuardianController::class, 'update'])->middleware('permission:student.edit');
     Route::delete('students/{student}/guardians/{guardian}', [StudentGuardianController::class, 'destroy'])->middleware('permission:student.edit');
+
+    // Teachers. Module 12. Delete archives (refused while they still teach);
+    // archived teachers stay viewable but read-only.
+    Route::get('teachers', [TeacherController::class, 'index'])->middleware('permission:teacher.view');
+    Route::post('teachers', [TeacherController::class, 'store'])->middleware('permission:teacher.create');
+    Route::get('teachers/{teacher}', [TeacherController::class, 'show'])->middleware('permission:teacher.view')->withTrashed();
+    Route::put('teachers/{teacher}', [TeacherController::class, 'update'])->middleware('permission:teacher.edit');
+    Route::delete('teachers/{teacher}', [TeacherController::class, 'destroy'])->middleware('permission:teacher.delete');
+    Route::post('teachers/{teacher}/restore', [TeacherController::class, 'restore'])->middleware('permission:teacher.delete')->withTrashed();
+    Route::post('teachers/{teacher}/account', [TeacherController::class, 'createAccount'])->middleware('permission:teacher.edit');
+    Route::post('teachers/{teacher}/photo', [TeacherFilesController::class, 'storePhoto'])->middleware('permission:teacher.edit');
+    Route::delete('teachers/{teacher}/photo', [TeacherFilesController::class, 'destroyPhoto'])->middleware('permission:teacher.edit');
+    Route::post('teachers/{teacher}/documents', [TeacherFilesController::class, 'storeDocument'])->middleware('permission:teacher.edit');
+    Route::delete('teachers/{teacher}/documents/{document}', [TeacherFilesController::class, 'destroyDocument'])->middleware('permission:teacher.edit')->scopeBindings();
+    Route::post('teachers/{teacher}/subjects', [TeachingController::class, 'storeSubject'])->middleware('permission:teacher.edit');
+    Route::delete('teachers/{teacher}/subjects/{assignment}', [TeachingController::class, 'destroySubject'])->middleware('permission:teacher.edit')->scopeBindings();
+    Route::post('teachers/{teacher}/classes', [TeachingController::class, 'storeClass'])->middleware('permission:teacher.edit');
+    Route::delete('teachers/{teacher}/classes/{section}', [TeachingController::class, 'destroyClass'])->middleware('permission:teacher.edit');
 
     // School Settings. Module 04.
     Route::get('settings', [SchoolSettingsController::class, 'show'])->middleware('permission:settings.view');

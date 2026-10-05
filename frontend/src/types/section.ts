@@ -9,6 +9,8 @@ export interface Section {
   capacity: number;
   /** Present on GET /sections/{id}. */
   class?: SchoolClass;
+  /** On the class's section list; set from the teacher's profile. */
+  class_teacher?: { id: number; name: string } | null;
   created_at?: string;
 }
 

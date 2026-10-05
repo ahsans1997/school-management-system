@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Http\Requests\Guardian;
+namespace App\Http\Requests\Teacher;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
-class CreateGuardianAccountRequest extends FormRequest
+class SetClassTeacherRequest extends FormRequest
 {
     public function authorize(): bool
     {
@@ -16,6 +17,8 @@ class CreateGuardianAccountRequest extends FormRequest
      */
     public function rules(): array
     {
-        return StoreGuardianRequest::accountRules();
+        return [
+            'section_id' => ['bail', 'required', 'integer', Rule::exists('sections', 'id')],
+        ];
     }
 }

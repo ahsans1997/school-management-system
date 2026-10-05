@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests\Guardian;
 
-use Illuminate\Validation\Rule;
+use App\Http\Requests\AccountRules;
 
 class StoreGuardianRequest extends GuardianRequest
 {
@@ -24,22 +24,7 @@ class StoreGuardianRequest extends GuardianRequest
             ...parent::rules(),
             // Optional Parent-portal login, created in the same transaction.
             'account' => ['nullable', 'array:email,password'],
-            ...self::accountRules('account.'),
-        ];
-    }
-
-    /**
-     * Login fields; reused by the standalone "create login" request.
-     *
-     * @return array<string, mixed>
-     */
-    public static function accountRules(string $prefix = ''): array
-    {
-        $required = $prefix === '' ? 'required' : 'required_with:account';
-
-        return [
-            "{$prefix}email" => [$required, 'string', 'email', 'max:255', Rule::unique('users', 'email')],
-            "{$prefix}password" => [$required, 'string', 'min:8'],
+            ...AccountRules::rules('account.'),
         ];
     }
 }

@@ -25,6 +25,7 @@ class SectionController extends Controller
     public function index(SchoolClass $schoolClass): AnonymousResourceCollection
     {
         $sections = $schoolClass->sections()
+            ->with('classTeacher')
             ->orderBy('name')
             ->paginate(PerPage::from(request()));
 

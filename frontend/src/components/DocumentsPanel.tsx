@@ -3,8 +3,7 @@
 import { useRef, useState, type FormEvent } from "react";
 import { errorMessage } from "@/lib/errors";
 import { formatBytes, formatDate } from "@/lib/format";
-import * as studentService from "@/services/studentService";
-import type { Student, StudentDocument } from "@/types/student";
+import type { StoredDocument } from "@/types/document";
 
 const inputClass =
   "rounded-md border border-gray-300 px-2 py-1 text-sm dark:border-gray-700 dark:bg-gray-800";
@@ -14,15 +13,22 @@ const ACCEPT = "application/pdf,image/jpeg,image/png,image/webp";
 const MAX_BYTES = 5 * 1024 * 1024;
 
 interface Props {
-  student: Student;
-  /** student.edit and not archived. */
+  documents: StoredDocument[];
+  /** Edit permission and not archived. */
   canEdit: boolean;
-  onChange: (documents: StudentDocument[]) => void;
+  upload: (title: string, file: File) => Promise<StoredDocument>;
+  remove: (doc: StoredDocument) => Promise<unknown>;
+  onChange: (documents: StoredDocument[]) => void;
 }
 
-/** Documents on the record: download (signed link), upload, delete. */
-export function StudentDocuments({ student, canEdit, onChange }: Props) {
-  const documents = student.documents ?? [];
+/** Documents on a record: download (signed link), upload, delete. */
+export function DocumentsPanel({
+  documents,
+  canEdit,
+  upload,
+  remove,
+  onChange,
+}: Props) {
   const fileInput = useRef<HTMLInputElement>(null);
   const [title, setTitle] = useState("");
   const [busy, setBusy] = useState(false);
@@ -39,11 +45,7 @@ export function StudentDocuments({ student, canEdit, onChange }: Props) {
     setBusy(true);
     setError(null);
     try {
-      const doc = await studentService.uploadDocument(
-        student.id,
-        title.trim(),
-        file,
-      );
+      const doc = await upload(title.trim(), file);
       onChange([doc, ...documents]);
       setTitle("");
       if (fileInput.current) fileInput.current.value = "";
@@ -54,13 +56,13 @@ export function StudentDocuments({ student, canEdit, onChange }: Props) {
     }
   }
 
-  async function handleDelete(doc: StudentDocument) {
+  async function handleDelete(doc: StoredDocument) {
     if (!window.confirm(`Delete “${doc.title}”? This cannot be undone.`))
       return;
     setBusy(true);
     setError(null);
     try {
-      await studentService.deleteDocument(student.id, doc.id);
+      await remove(doc);
       onChange(documents.filter((d) => d.id !== doc.id));
     } catch (err) {
       setError(errorMessage(err));

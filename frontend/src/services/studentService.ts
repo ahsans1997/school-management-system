@@ -1,11 +1,7 @@
 import { authedFetch } from "@/services/authService";
 import type { Paginated } from "@/types/api";
-import type {
-  Relationship,
-  Student,
-  StudentDocument,
-  StudentInput,
-} from "@/types/student";
+import type { StoredDocument } from "@/types/document";
+import type { Relationship, Student, StudentInput } from "@/types/student";
 
 export interface StudentQuery {
   page?: number;
@@ -82,11 +78,11 @@ export function uploadDocument(
   id: number,
   title: string,
   file: File,
-): Promise<StudentDocument> {
+): Promise<StoredDocument> {
   const form = new FormData();
   form.append("title", title);
   form.append("file", file);
-  return authedFetch<{ data: StudentDocument }>(`/students/${id}/documents`, {
+  return authedFetch<{ data: StoredDocument }>(`/students/${id}/documents`, {
     method: "POST",
     body: form,
   }).then((r) => r.data);

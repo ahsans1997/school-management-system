@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Actions\Guardian\CreateGuardianAccountAction;
 use App\Actions\Guardian\CreateGuardianAction;
 use App\Actions\Guardian\DeleteGuardianAction;
 use App\Actions\Guardian\UpdateGuardianAction;
-use App\Http\Requests\Guardian\CreateGuardianAccountRequest;
+use App\Actions\Person\CreatePersonAccountAction;
+use App\Http\Requests\CreateAccountRequest;
 use App\Http\Requests\Guardian\StoreGuardianRequest;
 use App\Http\Requests\Guardian\UpdateGuardianRequest;
 use App\Http\Resources\GuardianResource;
@@ -66,11 +66,11 @@ class GuardianController extends Controller
 
     /** Give an existing guardian a Parent-portal login. */
     public function createAccount(
-        CreateGuardianAccountRequest $request,
+        CreateAccountRequest $request,
         Guardian $guardian,
-        CreateGuardianAccountAction $action,
+        CreatePersonAccountAction $action,
     ): JsonResponse {
-        $action->execute($guardian, $request->validated());
+        $action->execute($guardian, 'Parent', $request->validated());
 
         return (new GuardianResource($guardian))
             ->response()

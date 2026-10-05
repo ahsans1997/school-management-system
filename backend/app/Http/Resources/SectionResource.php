@@ -20,6 +20,10 @@ class SectionResource extends JsonResource
             'name' => $this->name,
             'capacity' => $this->capacity,
             'class' => new SchoolClassResource($this->whenLoaded('schoolClass')),
+            'class_teacher' => $this->whenLoaded('classTeacher', fn () => $this->classTeacher ? [
+                'id' => $this->classTeacher->id,
+                'name' => $this->classTeacher->name,
+            ] : null),
             'created_at' => $this->created_at?->toIso8601String(),
         ];
     }

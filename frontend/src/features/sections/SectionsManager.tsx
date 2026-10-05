@@ -234,6 +234,7 @@ export function SectionsManager({ classId }: { classId: number }) {
               <tr className="border-b border-gray-200 text-left text-gray-500 dark:border-gray-800 dark:text-gray-400">
                 <th className="py-2 pr-3 font-medium">Section</th>
                 <th className="py-2 pr-3 font-medium">Capacity</th>
+                <th className="py-2 pr-3 font-medium">Class teacher</th>
                 <th className="py-2 text-right font-medium">Actions</th>
               </tr>
             </thead>
@@ -268,6 +269,9 @@ export function SectionsManager({ classId }: { classId: number }) {
                         className={`w-24 ${inputClass}`}
                       />
                     </td>
+                    <td className="py-2 pr-3">
+                      {section.class_teacher?.name ?? "—"}
+                    </td>
                     <td className="space-x-3 py-2 text-right whitespace-nowrap">
                       <button
                         type="button"
@@ -294,6 +298,18 @@ export function SectionsManager({ classId }: { classId: number }) {
                     <td className="py-2 pr-3 font-medium">{section.name}</td>
                     <td className="py-2 pr-3 tabular-nums">
                       {section.capacity}
+                    </td>
+                    <td className="py-2 pr-3">
+                      {section.class_teacher ? (
+                        <Link
+                          href={`/admin/teachers/${section.class_teacher.id}`}
+                          className="hover:underline"
+                        >
+                          {section.class_teacher.name}
+                        </Link>
+                      ) : (
+                        "—"
+                      )}
                     </td>
                     <td className="space-x-3 py-2 text-right whitespace-nowrap">
                       {canEdit && (
