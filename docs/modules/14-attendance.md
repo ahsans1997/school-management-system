@@ -1,8 +1,8 @@
 # Module 14 — Attendance
 
-- **Status:** 🔵 In review: built, tested and verified through the live API. The UI builds, lints and type-checks but still needs a browser click-through (see Build notes).
+- **Status:** ✅ Complete
 - **Phase:** Phase 3 — Academic Operations
-- **Completed on:** —
+- **Completed on:** 2026-10-05
 - **Owner agent:** `module-builder`
 
 > Daily student attendance (Present / Absent / Late / Leave) per section, taken in one request per section and day, with edits, a monthly grid, percentages, a per-student report and attendance dashboards for every audience (spec §14).
@@ -78,7 +78,7 @@ Included:
 - [x] Teacher portal navigation (Home, Attendance); admin nav entry
 - [x] Student profile attendance summary; dashboard cards for all four audiences
 - [x] Typed `attendanceService` + `types/attendance.ts`
-- [ ] Browser click-through (see Build notes)
+- [x] Browser click-through (2026-10-05, see Build notes)
 
 ## Acceptance criteria
 
@@ -94,7 +94,12 @@ Included:
 Teacher attendance shares the concept but not these tables: build it with staff/HR. Later modules can reuse `AttendanceService::summarize` for report cards (Module 18) and `TeacherScope` for any teacher-facing endpoint.
 
 **Build notes (2026-10-05):**
-- **Not yet clicked through in a browser** (in-app browser tools still blocked this session). The screens compile, lint and type-check, and call the endpoints verified below. **To finish:** sign in as `farhana.teacher@school.test`, open Attendance in the teacher portal, take and change a day, check the Monthly tab, then the admin Attendance page and a student profile; mark ✅.
+- **Clicked through in the browser (2026-10-05):**
+  - As Farhana: the teacher home shows both sections "Taken today". On Attendance, 6A loaded with "Taken by Farhana Akter".
+  - Marked Nusrat absent with a remark → "Attendance updated for Class 6 A, 5 Oct 2026." The Monthly tab showed Nusrat A / 0 % and Rafi L / 100 %. Nusrat was then set back to present.
+  - Admin Attendance lists every section, 7A included; a student transferred out that day is left off 6B's roll.
+  - Rafi's profile shows "1 late … of 1 day" with "Late · Bus delayed".
+  - **Fixed:** day counts said "of 1 days" (dashboard cards and the student profile).
 - Verified live through the API on MariaDB (2026-10-05):
   - **Sections:** Farhana's list = 6A (2 students) + 6B (1); the demo teacher's = 6A only.
   - **Taking:** the 6A sheet showed Nusrat (1) and Rafi (2) unmarked. Farhana saved it (Rafi absent, "Fever") → 201. Re-saving with Rafi late ("Bus delayed") → 200, with counts updated, not duplicated. Farhana also took 6B.

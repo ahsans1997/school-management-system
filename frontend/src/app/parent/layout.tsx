@@ -6,6 +6,7 @@ import { AREA_AUDIENCES } from "@/lib/audience";
 const NAV: readonly NavItem[] = [
   { href: "/parent", label: "Home", exact: true },
   { href: "/parent/routine", label: "Class routines" },
+  { href: "/parent/exams", label: "Exams" },
 ];
 
 export default function ParentLayout({ children }: { children: ReactNode }) {

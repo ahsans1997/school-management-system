@@ -18,6 +18,7 @@ use App\Services\Dashboard\Widgets\SchoolWidget;
 use App\Services\Dashboard\Widgets\StudentStatsWidget;
 use App\Services\Dashboard\Widgets\TeacherStatsWidget;
 use App\Services\Dashboard\Widgets\TodaysClassesWidget;
+use App\Services\Dashboard\Widgets\UpcomingExamsWidget;
 use App\Services\Dashboard\Widgets\UserStatsWidget;
 
 class DashboardService
@@ -50,9 +51,9 @@ class DashboardService
             new MyAttendanceWidget,
             new TodaysClassesWidget,
             new MyRoutineWidget,
+            new UpcomingExamsWidget,
 
             // Admin / staff — each gated by the permission its data needs.
-            new PendingWidget('upcoming_exams', 'Upcoming exams', '16 — Exams', [A::Admin], 'exam.view'),
             new PendingWidget('pending_fees', 'Pending fees', '19 — Fees', $management, 'fee.view'),
             new PendingWidget('monthly_finance', 'Income & expense (this month)', '21 — Expenses & Basic Accounts', $management, 'accounts.view'),
             new PendingWidget('recent_admissions', 'Recent admissions', '31 — Online Admission', $management, 'admission.view'),

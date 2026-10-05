@@ -128,6 +128,20 @@ export interface TodaysPeriodsWidgetData {
   }[];
 }
 
+/** Upcoming exams: admins see all (with counts), portals only their own. */
+export interface UpcomingExamsWidgetData {
+  exams: {
+    id: number;
+    name: string;
+    type: string;
+    start_date: string;
+    end_date: string | null;
+    /** Admin only. */
+    papers?: number;
+    classes?: number;
+  }[];
+}
+
 export interface RecentUsersWidgetData {
   items: {
     id: number;

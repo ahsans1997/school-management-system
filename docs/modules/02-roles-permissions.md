@@ -23,7 +23,7 @@ Excludes: assigning roles to individual users and user management (Module 03), r
 
 ## Permissions
 
-Catalogue is server-defined in [config/permissions.php](../../backend/config/permissions.php) — **80 permissions across 24 domain groups** (dashboard, user, role, permission, settings, academic_year, class, section, subject, guardian, student, teacher, enrollment, attendance, routine, exam, result, fee, accounts, report, notification, audit, admission, website). Introduces its own: `role.view|create|edit|delete`, `permission.view`.
+Catalogue is server-defined in [config/permissions.php](../../backend/config/permissions.php) — **81 permissions across 24 domain groups** (80 at launch; Module 16 added `exam.grading`) (dashboard, user, role, permission, settings, academic_year, class, section, subject, guardian, student, teacher, enrollment, attendance, routine, exam, result, fee, accounts, report, notification, audit, admission, website). Introduces its own: `role.view|create|edit|delete`, `permission.view`.
 
 Seeds **11 roles**: Admin, Principal, Teacher, Accountant, Receptionist, Librarian, Transport Manager, HR Manager, Staff, Parent, Student. Admin receives all permissions; the others get sensible starting sets (editable via the API).
 

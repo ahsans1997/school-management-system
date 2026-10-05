@@ -1,8 +1,8 @@
 # Module 12 — Teachers
 
-- **Status:** 🔵 In review: built, tested and verified through the live API. The admin UI builds, lints and type-checks but still needs a browser click-through (see Build notes).
+- **Status:** ✅ Complete
 - **Phase:** Phase 2 — Academic Core
-- **Completed on:** —
+- **Completed on:** 2026-10-05
 - **Owner agent:** `module-builder`
 
 > The teacher master record (spec §11): profile, photo, documents, salary, an optional portal login, and the teaching assignments that later scope routine, attendance and marks entry (spec §52).
@@ -89,7 +89,7 @@ The plan's single "assign subject(s) to class(es)" endpoint became per-section e
 - [x] `admin/teachers/new` and `[id]/edit` form with per-field errors (salary sent as a decimal string)
 - [x] `admin/teachers/[id]` profile: photo, details (formatted salary), teaching panel (class → section → subject pickers; assign / make class teacher; remove), portal-login panel, documents, archive/restore
 - [x] Dashboard renderers (`teacher_stats` tiles, "My subjects" card); Sections screen shows the class teacher
-- [ ] Browser click-through of the new screens (see Build notes)
+- [x] Browser click-through of the new screens (2026-10-05, see Build notes)
 
 ## Acceptance criteria
 
@@ -105,7 +105,12 @@ The plan's single "assign subject(s) to class(es)" endpoint became per-section e
 `salary` is money → `decimal(15,2)` (spec §53), never float. Assignments are the source of truth for the teacher's authorization scope in later modules (spec §52). Enter-once/use-everywhere: this record feeds routine, portal and public profile (spec §68).
 
 **Build notes (2026-10-05):**
-- **Not yet clicked through in a browser.** The in-app browser tools were blocked for the rest of this session by auto mode's safety check (it reacts to earlier conversation content, not to these actions). So the new teacher screens and the refactored student profile weren't exercised in the browser. They compile, lint and type-check, and they call the endpoints verified below. **To finish:** open `/admin/teachers` and click through add → profile → assign → login → photo/document → archive (or rerun this check in a fresh session), then mark this module ✅.
+- **Clicked through in the browser (2026-10-05):**
+  - Added a test teacher (→ `T-0003`, salary shown as 25,000.75); the profile opened.
+  - Assigned Class 7 A Bangla and made them class teacher of 7A. Archiving was then refused ("This teacher still has subjects or a class assigned. Hand them over first.").
+  - Created a login (shown as active), uploaded a photo and a PDF document (both served through signed links; the document downloads without a token), and edited the department.
+  - Removed the subject and class-teacher role, then archived: the profile turned read-only and the login showed "disabled"; signing in with it was refused ("This account has been disabled.").
+  - The test teacher was removed afterwards.
 - Verified live through the API on MariaDB, using the same calls the screens make:
   - **Migration:** the migrated student document still downloads (`attachment; filename=birth-certificate.pdf`).
   - **Create:** Farhana Akter was created with a login → `T-0001`, salary `"32000.50"`, Teacher role. The login signs in to the `teacher` audience.

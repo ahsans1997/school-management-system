@@ -51,7 +51,8 @@ export function StudentAttendanceSummary({ studentId }: { studentId: number }) {
             <span className="text-gray-500 tabular-nums">
               · {report.summary.present} present, {report.summary.late} late,{" "}
               {report.summary.absent} absent, {report.summary.leave} leave of{" "}
-              {report.summary.marked} days
+              {report.summary.marked}{" "}
+              {report.summary.marked === 1 ? "day" : "days"}
             </span>
           </p>
           {report.exceptions.length > 0 && (

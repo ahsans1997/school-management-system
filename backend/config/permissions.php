@@ -38,7 +38,7 @@ return [
         'enrollment' => ['enrollment.view', 'enrollment.create', 'enrollment.edit', 'enrollment.delete'],
         'attendance' => ['attendance.view', 'attendance.create', 'attendance.edit'],
         'routine' => ['routine.view', 'routine.create', 'routine.edit'],
-        'exam' => ['exam.view', 'exam.create', 'exam.edit', 'exam.delete', 'exam.marks_entry'],
+        'exam' => ['exam.view', 'exam.create', 'exam.edit', 'exam.delete', 'exam.marks_entry', 'exam.grading'],
         'result' => ['result.view', 'result.publish'],
         'fee' => ['fee.view', 'fee.create', 'fee.payment', 'fee.refund', 'fee.report'],
         'accounts' => ['accounts.view', 'accounts.create', 'accounts.report'],

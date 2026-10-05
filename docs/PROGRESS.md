@@ -4,7 +4,7 @@
 
 Legend: ⬜ Not started · 🟡 In progress · 🔵 In review · ✅ Complete · ⏸️ Blocked
 
-**Overall: 12 / 40 modules complete** (13b was split out of Module 13; 12–15 are in review pending a browser click-through). Phase 1 — Foundation is done; Phase 2 under way.
+**Overall: 17 / 40 modules complete** (13b was split out of Module 13). Phase 1 — Foundation is done; Phase 2 needs only 13b; Phase 3 is up to Module 16.
 
 ---
 
@@ -29,17 +29,17 @@ Legend: ⬜ Not started · 🟡 In progress · 🔵 In review · ✅ Complete ·
 | [x] | 09 | Subjects | ✅ Complete | 2026-10-04 | [09-subjects.md](modules/09-subjects.md) |
 | [x] | 10 | Guardians | ✅ Complete | 2026-10-04 | [10-guardians.md](modules/10-guardians.md) |
 | [x] | 11 | Students | ✅ Complete | 2026-10-05 | [11-students.md](modules/11-students.md) |
-| [ ] | 12 | Teachers | 🔵 In review: browser click-through pending | — | [12-teachers.md](modules/12-teachers.md) |
-| [ ] | 13 | Enrollments | 🔵 In review: browser click-through pending | — | [13-enrollments.md](modules/13-enrollments.md) |
+| [x] | 12 | Teachers | ✅ Complete | 2026-10-05 | [12-teachers.md](modules/12-teachers.md) |
+| [x] | 13 | Enrollments | ✅ Complete | 2026-10-05 | [13-enrollments.md](modules/13-enrollments.md) |
 | [ ] | 13b | Student ID cards, certificates & import/export | ⬜ Not started | — | [13b-student-records-tools.md](modules/13b-student-records-tools.md) |
 
 ## Phase 3 — Academic Operations
 
 | ✔ | # | Module | Status | Completed | Doc |
 |---|---|--------|--------|-----------|-----|
-| [ ] | 14 | Attendance | 🔵 In review: browser click-through pending | — | [14-attendance.md](modules/14-attendance.md) |
-| [ ] | 15 | Class Routine | 🔵 In review: browser click-through pending | — | [15-class-routine.md](modules/15-class-routine.md) |
-| [ ] | 16 | Exams | ⬜ Not started | — | [16-exams.md](modules/16-exams.md) |
+| [x] | 14 | Attendance | ✅ Complete | 2026-10-05 | [14-attendance.md](modules/14-attendance.md) |
+| [x] | 15 | Class Routine | ✅ Complete | 2026-10-05 | [15-class-routine.md](modules/15-class-routine.md) |
+| [x] | 16 | Exams | ✅ Complete | 2026-10-05 | [16-exams.md](modules/16-exams.md) |
 | [ ] | 17 | Marks Entry | ⬜ Not started | — | [17-marks-entry.md](modules/17-marks-entry.md) |
 | [ ] | 18 | Results | ⬜ Not started | — | [18-results.md](modules/18-results.md) |
 

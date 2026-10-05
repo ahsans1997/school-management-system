@@ -6,6 +6,7 @@ import { AREA_AUDIENCES } from "@/lib/audience";
 const NAV: readonly NavItem[] = [
   { href: "/student", label: "Home", exact: true },
   { href: "/student/routine", label: "My routine" },
+  { href: "/student/exams", label: "Exams" },
 ];
 
 export default function StudentLayout({ children }: { children: ReactNode }) {

@@ -11,6 +11,7 @@ const NAV: readonly NavItem[] = [
     permission: "attendance.view",
   },
   { href: "/teacher/routine", label: "My routine" },
+  { href: "/teacher/exams", label: "Exams" },
 ];
 
 export default function TeacherLayout({ children }: { children: ReactNode }) {

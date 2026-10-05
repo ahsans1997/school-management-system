@@ -36,7 +36,10 @@ export function StudentEnrollment({
 }: Props) {
   const current = student.current_enrollment ?? null;
   const history = student.enrollments ?? [];
-  const [currentYear, setCurrentYear] = useState<AcademicYear | null>(null);
+  // undefined until the years have loaded; null = no current year is set.
+  const [currentYear, setCurrentYear] = useState<
+    AcademicYear | null | undefined
+  >(undefined);
   const [classes, setClasses] = useState<SchoolClass[]>([]);
   const [classId, setClassId] = useState("");
   const [sections, setSections] = useState<Section[]>([]);
@@ -190,6 +193,7 @@ export function StudentEnrollment({
       )}
 
       {showEnroll &&
+        currentYear !== undefined &&
         (currentYear === null ? (
           <p className="text-xs text-gray-500">
             Set a current academic year to enroll students.

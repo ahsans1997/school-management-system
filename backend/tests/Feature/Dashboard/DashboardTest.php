@@ -157,10 +157,10 @@ class DashboardTest extends TestCase
 
     public function test_pending_widgets_are_labelled_and_carry_no_data(): void
     {
-        $widget = $this->widgets($this->dashboardFor($this->userWithRoles('Admin')))['upcoming_exams'];
+        $widget = $this->widgets($this->dashboardFor($this->userWithRoles('Teacher')))['pending_marks'];
 
         $this->assertSame('pending', $widget['status']);
-        $this->assertSame('16 — Exams', $widget['module']);
+        $this->assertSame('17 — Marks Entry', $widget['module']);
         $this->assertNull($widget['data']);
     }
 

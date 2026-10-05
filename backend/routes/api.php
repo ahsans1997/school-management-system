@@ -6,6 +6,9 @@ use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\ClassSubjectController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EnrollmentController;
+use App\Http\Controllers\ExamController;
+use App\Http\Controllers\ExamSubjectController;
+use App\Http\Controllers\GradeScaleController;
 use App\Http\Controllers\GuardianController;
 use App\Http\Controllers\HealthController;
 use App\Http\Controllers\PermissionController;
@@ -170,6 +173,27 @@ Route::middleware(['auth:api', 'token.type:access', 'active'])->group(function (
     Route::post('routines', [RoutineController::class, 'store'])->middleware('permission:routine.create');
     Route::put('routines/{routine}', [RoutineController::class, 'update'])->middleware('permission:routine.edit');
     Route::get('sections/{section}/routine', [RoutineController::class, 'forSection'])->middleware('permission:routine.view');
+
+    // Exams. Module 16. Archive = soft delete (restorable); a class's papers are
+    // set as a whole. /exams/me follows the caller (teacher/student/parent).
+    Route::get('exams', [ExamController::class, 'index'])->middleware('permission:exam.view');
+    Route::post('exams', [ExamController::class, 'store'])->middleware('permission:exam.create');
+    Route::get('exams/me', [ExamController::class, 'me']);
+    Route::get('exams/{exam}', [ExamController::class, 'show'])->middleware('permission:exam.view')->withTrashed();
+    Route::put('exams/{exam}', [ExamController::class, 'update'])->middleware('permission:exam.edit');
+    Route::delete('exams/{exam}', [ExamController::class, 'destroy'])->middleware('permission:exam.delete');
+    Route::post('exams/{exam}/restore', [ExamController::class, 'restore'])->middleware('permission:exam.delete')->withTrashed();
+    Route::get('exams/{exam}/schedule', [ExamController::class, 'schedule'])->middleware('permission:exam.view');
+    Route::get('exams/{exam}/classes/{school_class}/subjects', [ExamSubjectController::class, 'show'])->middleware('permission:exam.view');
+    Route::put('exams/{exam}/classes/{school_class}/subjects', [ExamSubjectController::class, 'update'])->middleware('permission:exam.edit');
+
+    // Grade scales. Module 16. Changing one regrades every result, so writes
+    // need exam.grading (Admin only by default).
+    Route::get('grade-scales', [GradeScaleController::class, 'index'])->middleware('permission:exam.view');
+    Route::post('grade-scales', [GradeScaleController::class, 'store'])->middleware('permission:exam.grading');
+    Route::get('grade-scales/{grade_scale}', [GradeScaleController::class, 'show'])->middleware('permission:exam.view');
+    Route::put('grade-scales/{grade_scale}', [GradeScaleController::class, 'update'])->middleware('permission:exam.grading');
+    Route::delete('grade-scales/{grade_scale}', [GradeScaleController::class, 'destroy'])->middleware('permission:exam.grading');
 
     // School Settings. Module 04.
     Route::get('settings', [SchoolSettingsController::class, 'show'])->middleware('permission:settings.view');

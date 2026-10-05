@@ -1,8 +1,8 @@
 # Module 13 — Enrollments
 
-- **Status:** 🔵 In review: built, tested and verified through the live API. The admin UI builds, lints and type-checks but still needs a browser click-through (see Build notes).
+- **Status:** ✅ Complete
 - **Phase:** Phase 2 — Academic Core
-- **Completed on:** —
+- **Completed on:** 2026-10-05
 - **Owner agent:** `module-builder`
 
 > Places students into a section (and so a class) for an academic year with a roll (spec §13). Handles transfers, leaving and cohort promotion, enforces section capacity, and scopes teachers to their own students (spec §52).
@@ -83,7 +83,7 @@ Students: `GET /students` rows carry `current_enrollment` and accept `?class_id`
 - [x] `admin/enrollments` (year / class / section filters, seats indicator, find-and-enroll, inline roll/status/reason edit, promotion panel with per-student ticks and confirmation) + nav entry
 - [x] Student list "Class" column (section + roll, or "Not enrolled"); student profile Enrollment panel (current place, transfer out / mark as left, enroll for the current year, history)
 - [x] Typed `enrollmentService` + `types/enrollment.ts`
-- [ ] Browser click-through (see Build notes)
+- [x] Browser click-through (2026-10-05, see Build notes)
 
 ## Acceptance criteria
 
@@ -99,7 +99,13 @@ Students: `GET /students` rows carry `current_enrollment` and accept `?class_id`
 Capacity is read from `sections.capacity` (Module 08). Promotion is transactional (spec §55 pattern). Later modules should iterate **active enrollments of the current year** for "who is in this section", and authorize teachers through `teaching_assignments` / `Student::visibleTo`.
 
 **Build notes (2026-10-05):**
-- **Not yet clicked through in a browser.** The in-app browser tools were still blocked for this session (same reason as Module 12). The new screens compile, lint and type-check and call the endpoints verified below. **To finish:** open `/admin/enrollments` (and a student profile's Enrollment panel), click through enroll → edit → promote → transfer, then mark ✅.
+- **Clicked through in the browser (2026-10-05):**
+  - Enrolled a new test student into 6B from the profile's Enrollment panel (roll 2 assigned automatically).
+  - On `/admin/enrollments`, roll 1 was refused ("Roll 1 is already taken in Class 6 B for 2026."); roll 5 saved.
+  - Promoted only that student (Anika unticked) into Class 7 A for 2027: the 2026 row turned "Promoted" and the 2027 list showed 7A roll 1.
+  - Transferred the student out from the profile with a destination school.
+  - **Fixed:** the Enrollment panel briefly said "Set a current academic year to enroll students" while the years were still loading.
+  - The test student (and its enrollments) was removed afterwards.
 - Verified live through the API on MariaDB:
   - **Enroll:** added students Rafi Karim (`2026-0002`) and Anika Rahman (`2026-0003`). Enrolled Nusrat (6A roll 1), Rafi (6A roll 2) and Anika (6B roll 1) for 2026.
   - **Refusals:** re-enrolling Nusrat into 6B gave "already enrolled for 2026 (Class 6 A)". Giving Rafi roll 1 gave "Roll 1 is already taken". Shrinking 6A to capacity 1 gave "2 students are enrolled…".

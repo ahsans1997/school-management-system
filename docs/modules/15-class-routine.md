@@ -1,8 +1,8 @@
 # Module 15 — Class Routine / Timetable
 
-- **Status:** 🔵 In review: built, tested and verified through the live API. The UI builds, lints and type-checks but still needs a browser click-through (see Build notes).
+- **Status:** ✅ Complete
 - **Phase:** Phase 3 — Academic Operations
-- **Completed on:** —
+- **Completed on:** 2026-10-05
 - **Owner agent:** `module-builder`
 
 > Weekly timetables per section, built from period slots, rendering as class, teacher, room and "my routine" views from the same data, with teacher double-booking, room clash and overlap detection (spec §15).
@@ -74,7 +74,7 @@ Excludes: automatic timetable generation, break templates beyond labelled period
 - [x] Shared read-only `RoutineGrid` (section / teacher / room perspectives)
 - [x] Portal pages: `teacher/routine`, `student/routine`, `parent/routine` (via `/routines/me`), plus portal navs for students and parents; teacher profile "Weekly routine" panel
 - [x] Dashboard cards for today's periods (teacher, student)
-- [ ] Browser click-through (see Build notes)
+- [x] Browser click-through (2026-10-05, see Build notes)
 
 ## Acceptance criteria
 
@@ -90,7 +90,11 @@ Excludes: automatic timetable generation, break templates beyond labelled period
 Room stays free text in V1; a `rooms` table can replace it later without changing the view APIs. **Effective-dated routines** (mid-term versions) were left out: a save replaces the week. If history is needed, add versioned routines with `effective_from`.
 
 **Build notes (2026-10-05):**
-- **Not yet clicked through in a browser** (in-app browser tools still blocked this session). **To finish:** build a week on `/admin/routines`, provoke a clash, then open My routine as Farhana (teacher portal) and as `karim.parent@school.test` (parent portal); mark ✅.
+- **Clicked through in the browser (2026-10-05):**
+  - The builder loaded 6B's week. A new Sun 08:00–08:40 Maths period was refused, with the message on top and under that row ("Farhana Akter already teaches Class 6 A on Sunday 08:00–08:40 (Mathematics).").
+  - Removing that row and saving gave "Routine saved for Class 6 B."; the room 101 lookup showed the three 6A periods.
+  - Farhana's My routine shows Sunday Maths in 6A (101) and 6B (102). karim.parent's Class routines shows Nusrat's 6A week (Sunday + Monday, Tiffin included).
+  - A teacher opening `/admin/...` is sent back to `/teacher`.
 - Verified live through the API on MariaDB:
   - **Builder options:** 6A offers English — Demo Teacher and Mathematics — Farhana Akter.
   - **6A week saved:** Sun P1 Maths 08:00–08:40 (101), P2 English 08:40–09:20 (101), P3 Tiffin, Mon P1 English (101).

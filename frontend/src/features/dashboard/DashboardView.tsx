@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState, type ReactNode } from "react";
-import { formatCount, formatDate } from "@/lib/format";
+import { formatCount, formatDate, formatDay } from "@/lib/format";
 import { ApiRequestError } from "@/services/apiClient";
 import { getDashboard } from "@/services/dashboardService";
 import type {
@@ -20,6 +20,7 @@ import type {
   StudentStatsWidgetData,
   TeacherStatsWidgetData,
   TodaysPeriodsWidgetData,
+  UpcomingExamsWidgetData,
   UserStatsWidgetData,
 } from "@/types/dashboard";
 
@@ -39,6 +40,7 @@ const CUSTOM_KEYS = new Set([
   "my_attendance",
   "todays_classes",
   "my_routine",
+  "upcoming_exams",
 ]);
 
 function Card({
@@ -359,7 +361,8 @@ function ChildAttendanceCard({ data }: { data: ChildAttendanceWidgetData }) {
               <span className="font-medium">{c.name}</span>
               <span className="text-gray-500 tabular-nums">
                 {pct(c.percentage)}
-                {c.marked > 0 && ` · ${c.absent} absent of ${c.marked} days`}
+                {c.marked > 0 &&
+                  ` · ${c.absent} absent of ${c.marked} ${c.marked === 1 ? "day" : "days"}`}
               </span>
             </li>
           ))}
@@ -388,7 +391,7 @@ function MyAttendanceCard({ data }: { data: MyAttendanceWidgetData }) {
           </span>{" "}
           <span className="text-gray-500 tabular-nums">
             · {data.summary.absent} absent, {data.summary.late} late of{" "}
-            {data.summary.marked} days
+            {data.summary.marked} {data.summary.marked === 1 ? "day" : "days"}
           </span>
         </p>
       )}
@@ -440,6 +443,52 @@ function TodaysPeriodsCard({
       )}
       <Link href={link} className="mt-2 inline-block text-xs hover:underline">
         Full week →
+      </Link>
+    </Card>
+  );
+}
+
+function UpcomingExamsCard({
+  data,
+  audience,
+}: {
+  data: UpcomingExamsWidgetData;
+  audience: string;
+}) {
+  const admin = audience === "admin";
+  const href = (id: number) =>
+    admin ? `/admin/exams/${id}` : `/${audience}/exams`;
+  return (
+    <Card title="Upcoming exams">
+      {data.exams.length === 0 ? (
+        <p className="text-sm text-gray-500">No upcoming exams.</p>
+      ) : (
+        <ul className="divide-y divide-gray-100 text-sm dark:divide-gray-800">
+          {data.exams.map((e) => (
+            <li key={e.id} className="flex justify-between gap-3 py-1.5">
+              <Link href={href(e.id)} className="font-medium hover:underline">
+                {e.name}
+              </Link>
+              <span className="text-right text-gray-500">
+                {e.end_date && e.end_date !== e.start_date
+                  ? `${formatDay(e.start_date)} – ${formatDay(e.end_date)}`
+                  : formatDay(e.start_date)}
+                {admin && e.classes !== undefined && (
+                  <span className="block text-xs">
+                    {e.classes} {e.classes === 1 ? "class" : "classes"} ·{" "}
+                    {e.papers} {e.papers === 1 ? "paper" : "papers"}
+                  </span>
+                )}
+              </span>
+            </li>
+          ))}
+        </ul>
+      )}
+      <Link
+        href={admin ? "/admin/exams" : `/${audience}/exams`}
+        className="mt-2 inline-block text-xs hover:underline"
+      >
+        All exams →
       </Link>
     </Card>
   );
@@ -506,6 +555,7 @@ export function DashboardView() {
   const myAttendance = find<MyAttendanceWidgetData>("my_attendance");
   const todaysClasses = find<TodaysPeriodsWidgetData>("todays_classes");
   const myRoutine = find<TodaysPeriodsWidgetData>("my_routine");
+  const upcomingExams = find<UpcomingExamsWidgetData>("upcoming_exams");
   const others = ready.filter((w) => !CUSTOM_KEYS.has(w.key));
 
   return (
@@ -580,6 +630,9 @@ export function DashboardView() {
             forTeacher={false}
             link="/student/routine"
           />
+        )}
+        {upcomingExams && (
+          <UpcomingExamsCard data={upcomingExams} audience={payload.audience} />
         )}
         {attendanceTasks && <AttendanceTasksCard data={attendanceTasks} />}
         {assigned && <AssignedSubjectsCard data={assigned} />}
