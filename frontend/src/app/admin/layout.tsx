@@ -17,6 +17,7 @@ const NAV: readonly NavItem[] = [
   { href: "/admin/classes", label: "Classes", permission: "class.view" },
   { href: "/admin/subjects", label: "Subjects", permission: "subject.view" },
   { href: "/admin/students", label: "Students", permission: "student.view" },
+  { href: "/admin/id-cards", label: "ID cards", permission: "student.view" },
   {
     href: "/admin/enrollments",
     label: "Enrollments",

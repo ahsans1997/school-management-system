@@ -4,7 +4,6 @@ namespace App\Http\Resources;
 
 use App\Models\Guardian;
 use App\Models\Student;
-use App\Support\SignedFileUrl;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -30,11 +29,7 @@ class StudentResource extends JsonResource
             'phone' => $this->phone,
             'address' => $this->address,
             'previous_school' => $this->previous_school,
-            // Expiring signed link; the version busts caches when the photo changes.
-            'photo_url' => $this->photo_path === null ? null : SignedFileUrl::to('files.student-photo', [
-                'student' => $this->id,
-                'v' => substr(sha1($this->photo_path), 0, 8),
-            ]),
+            'photo_url' => $this->photoUrl(),
             'primary_guardian' => $this->whenLoaded(
                 'primaryGuardian',
                 fn () => ($g = $this->primaryGuardian->first()) ? $this->guardianLink($g) : null,

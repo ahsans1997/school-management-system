@@ -8,6 +8,8 @@ export interface RequestOptions extends Omit<RequestInit, "body"> {
   body?: JsonBody | FormData;
   /** JWT access token. Storage + refresh wiring lands in the Authentication module (01). */
   token?: string | null;
+  /** Return the response body as a Blob (file downloads) instead of JSON. */
+  asBlob?: boolean;
 }
 
 export class ApiRequestError extends Error {
@@ -23,7 +25,7 @@ export class ApiRequestError extends Error {
  */
 export async function apiFetch<T>(
   path: string,
-  { body, token, headers, ...init }: RequestOptions = {},
+  { body, token, headers, asBlob = false, ...init }: RequestOptions = {},
 ): Promise<T> {
   // FormData: let the browser set the multipart Content-Type + boundary.
   const isForm = body instanceof FormData;
@@ -57,6 +59,9 @@ export async function apiFetch<T>(
       status: res.status,
     });
   }
+
+  // Errors above are still JSON; a successful download is the file itself.
+  if (asBlob) return (await res.blob()) as T;
 
   return payload as T;
 }

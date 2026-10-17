@@ -24,3 +24,25 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/*
+ * Printing (ID cards, certificates, schedules): white paper whatever the
+ * screen theme, no app chrome (AppShell marks it print:hidden), and colours
+ * kept for card headers.
+ */
+@media print {
+  @page {
+    size: A4;
+    margin: 10mm;
+  }
+
+  :root {
+    --background: #ffffff;
+    --foreground: #000000;
+  }
+
+  body {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}

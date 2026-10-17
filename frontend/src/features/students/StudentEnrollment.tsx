@@ -1,6 +1,8 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState } from "react";
+import { useAuth } from "@/features/auth/AuthContext";
 import { errorMessage } from "@/lib/errors";
 import { formatDay } from "@/lib/format";
 import { labelOf } from "@/lib/options";
@@ -34,6 +36,7 @@ export function StudentEnrollment({
   canEdit,
   onChanged,
 }: Props) {
+  const { can } = useAuth();
   const current = student.current_enrollment ?? null;
   const history = student.enrollments ?? [];
   // undefined until the years have loaded; null = no current year is set.
@@ -118,6 +121,14 @@ export function StudentEnrollment({
           </p>
           {current.exit_reason && (
             <p className="text-xs text-gray-500">{current.exit_reason}</p>
+          )}
+          {current.status === "transferred" && can("enrollment.view") && (
+            <Link
+              href={`/admin/enrollments/${current.id}/transfer-certificate`}
+              className="mt-1 inline-block text-xs hover:underline"
+            >
+              Transfer certificate →
+            </Link>
           )}
 
           {canEdit && current.status === "active" && (
@@ -264,6 +275,14 @@ export function StudentEnrollment({
                 <span className="text-gray-500">
                   {labelOf(ENROLLMENT_STATUSES, e.status)}
                   {e.ended_on && ` ${formatDay(e.ended_on)}`}
+                  {e.status === "transferred" && can("enrollment.view") && (
+                    <Link
+                      href={`/admin/enrollments/${e.id}/transfer-certificate`}
+                      className="ml-2 text-gray-900 hover:underline dark:text-gray-100"
+                    >
+                      TC
+                    </Link>
+                  )}
                 </span>
               </li>
             ))}

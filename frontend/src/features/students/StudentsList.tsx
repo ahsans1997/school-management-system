@@ -9,6 +9,7 @@ import { labelOf } from "@/lib/options";
 import * as studentService from "@/services/studentService";
 import type { Paginated } from "@/types/api";
 import { GENDERS, type Student } from "@/types/student";
+import { StudentExportPanel } from "./StudentExportPanel";
 
 const inputClass =
   "rounded-md border border-gray-300 px-2 py-1 text-sm dark:border-gray-700 dark:bg-gray-800";
@@ -23,6 +24,7 @@ export function StudentsList() {
   const [search, setSearch] = useState("");
   const [query, setQuery] = useState(""); // the search the list reflects
   const [archived, setArchived] = useState(false);
+  const [showExport, setShowExport] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -82,14 +84,40 @@ export function StudentsList() {
         <h1 className="text-2xl font-semibold">
           {archived ? "Archived students" : "Students"}
         </h1>
-        {can("student.create") && (
+        <div className="flex flex-wrap gap-2 text-sm">
           <Link
-            href="/admin/students/new"
-            className="rounded-md bg-gray-900 px-4 py-1.5 text-sm text-white dark:bg-gray-100 dark:text-gray-900"
+            href="/admin/id-cards"
+            className="rounded-md border border-gray-300 px-3 py-1.5 dark:border-gray-700"
           >
-            Add student
+            ID cards
           </Link>
-        )}
+          {can("student.export") && (
+            <button
+              type="button"
+              aria-expanded={showExport}
+              onClick={() => setShowExport((v) => !v)}
+              className="rounded-md border border-gray-300 px-3 py-1.5 dark:border-gray-700"
+            >
+              Export
+            </button>
+          )}
+          {can("student.create") && (
+            <>
+              <Link
+                href="/admin/students/import"
+                className="rounded-md border border-gray-300 px-3 py-1.5 dark:border-gray-700"
+              >
+                Import
+              </Link>
+              <Link
+                href="/admin/students/new"
+                className="rounded-md bg-gray-900 px-4 py-1.5 text-white dark:bg-gray-100 dark:text-gray-900"
+              >
+                Add student
+              </Link>
+            </>
+          )}
+        </div>
       </div>
       <p className="mb-6 text-sm text-gray-500 dark:text-gray-400">
         {archived
@@ -102,6 +130,8 @@ export function StudentsList() {
           {error}
         </p>
       )}
+
+      {showExport && <StudentExportPanel search={query} archived={archived} />}
 
       <form
         role="search"

@@ -145,6 +145,14 @@ export function StudentProfile({ studentId }: { studentId: number }) {
                 Edit details
               </Link>
             )}
+            {!archived && student.current_enrollment?.status === "active" && (
+              <Link
+                href={`/admin/students/${student.id}/id-card`}
+                className="rounded-md border border-gray-300 px-3 py-1 dark:border-gray-700"
+              >
+                ID card
+              </Link>
+            )}
             {can("student.delete") &&
               (archived ? (
                 <button

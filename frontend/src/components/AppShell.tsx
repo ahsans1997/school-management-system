@@ -35,8 +35,8 @@ export function AppShell({ children, nav = [] }: AppShellProps) {
   }
 
   return (
-    <div className="flex min-h-screen flex-col bg-gray-50 dark:bg-gray-950">
-      <header className="flex items-center justify-between gap-3 border-b border-gray-200 bg-white px-4 py-3 dark:border-gray-800 dark:bg-gray-900">
+    <div className="flex min-h-screen flex-col bg-gray-50 dark:bg-gray-950 print:bg-white">
+      <header className="flex items-center justify-between gap-3 border-b border-gray-200 bg-white px-4 py-3 dark:border-gray-800 dark:bg-gray-900 print:hidden">
         <span className="font-semibold">School Management</span>
         <div className="flex min-w-0 items-center gap-3 text-sm">
           <span className="truncate text-gray-700 dark:text-gray-300">
@@ -61,7 +61,7 @@ export function AppShell({ children, nav = [] }: AppShellProps) {
         {items.length > 0 && (
           <nav
             aria-label="Main"
-            className="flex gap-1 overflow-x-auto border-b border-gray-200 bg-white px-2 py-2 md:w-56 md:shrink-0 md:flex-col md:border-r md:border-b-0 md:py-4 dark:border-gray-800 dark:bg-gray-900"
+            className="flex gap-1 overflow-x-auto border-b border-gray-200 bg-white px-2 py-2 md:w-56 md:shrink-0 md:flex-col md:border-r md:border-b-0 md:py-4 dark:border-gray-800 dark:bg-gray-900 print:hidden"
           >
             {items.map((item) => {
               const active =

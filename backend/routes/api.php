@@ -11,6 +11,7 @@ use App\Http\Controllers\ExamSubjectController;
 use App\Http\Controllers\GradeScaleController;
 use App\Http\Controllers\GuardianController;
 use App\Http\Controllers\HealthController;
+use App\Http\Controllers\IdCardController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\PrivateFileController;
 use App\Http\Controllers\RoleController;
@@ -21,11 +22,13 @@ use App\Http\Controllers\SectionController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\StudentDocumentController;
 use App\Http\Controllers\StudentGuardianController;
+use App\Http\Controllers\StudentImportExportController;
 use App\Http\Controllers\StudentPhotoController;
 use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\TeacherController;
 use App\Http\Controllers\TeacherFilesController;
 use App\Http\Controllers\TeachingController;
+use App\Http\Controllers\TransferCertificateController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -115,6 +118,10 @@ Route::middleware(['auth:api', 'token.type:access', 'active'])->group(function (
     // viewable but read-only (other routes don't bind trashed records → 404).
     Route::get('students', [StudentController::class, 'index'])->middleware('permission:student.view');
     Route::post('students', [StudentController::class, 'store'])->middleware('permission:student.create');
+    // Module 13b — before students/{student} so the words aren't taken for an id.
+    Route::get('students/export', [StudentImportExportController::class, 'export'])->middleware('permission:student.export');
+    Route::get('students/import/template', [StudentImportExportController::class, 'template'])->middleware('permission:student.create');
+    Route::post('students/import', [StudentImportExportController::class, 'import'])->middleware('permission:student.create');
     Route::get('students/{student}', [StudentController::class, 'show'])->middleware('permission:student.view')->withTrashed();
     Route::put('students/{student}', [StudentController::class, 'update'])->middleware('permission:student.edit');
     Route::delete('students/{student}', [StudentController::class, 'destroy'])->middleware('permission:student.delete');
@@ -153,6 +160,14 @@ Route::middleware(['auth:api', 'token.type:access', 'active'])->group(function (
     Route::get('enrollments/{enrollment}', [EnrollmentController::class, 'show'])->middleware('permission:enrollment.view');
     Route::put('enrollments/{enrollment}', [EnrollmentController::class, 'update'])->middleware('permission:enrollment.edit');
     Route::delete('enrollments/{enrollment}', [EnrollmentController::class, 'destroy'])->middleware('permission:enrollment.delete');
+
+    // Student records tools. Module 13b. ID cards follow the student/section
+    // scope (teachers: their own sections); transfer certificates are only
+    // for transferred enrollments and keep their serial number when reprinted.
+    Route::get('students/{student}/id-card', [IdCardController::class, 'student'])->middleware('permission:student.view');
+    Route::get('sections/{section}/id-cards', [IdCardController::class, 'section'])->middleware('permission:student.view');
+    Route::get('enrollments/{enrollment}/transfer-certificate', [TransferCertificateController::class, 'show'])->middleware('permission:enrollment.view');
+    Route::post('enrollments/{enrollment}/transfer-certificate', [TransferCertificateController::class, 'store'])->middleware('permission:enrollment.edit');
 
     // Attendance. Module 14. Permission AND section scope (TeacherScope) on
     // every endpoint: teachers only reach the sections they teach.

@@ -4,7 +4,7 @@
 
 Legend: ⬜ Not started · 🟡 In progress · 🔵 In review · ✅ Complete · ⏸️ Blocked
 
-**Overall: 17 / 40 modules complete** (13b was split out of Module 13). Phase 1 — Foundation is done; Phase 2 needs only 13b; Phase 3 is up to Module 16.
+**Overall: 18 / 40 modules complete** (13b was split out of Module 13). Phases 1 (Foundation) and 2 (Academic Core) are done; Phase 3 is up to Module 16.
 
 ---
 
@@ -31,7 +31,7 @@ Legend: ⬜ Not started · 🟡 In progress · 🔵 In review · ✅ Complete ·
 | [x] | 11 | Students | ✅ Complete | 2026-10-05 | [11-students.md](modules/11-students.md) |
 | [x] | 12 | Teachers | ✅ Complete | 2026-10-05 | [12-teachers.md](modules/12-teachers.md) |
 | [x] | 13 | Enrollments | ✅ Complete | 2026-10-05 | [13-enrollments.md](modules/13-enrollments.md) |
-| [ ] | 13b | Student ID cards, certificates & import/export | ⬜ Not started | — | [13b-student-records-tools.md](modules/13b-student-records-tools.md) |
+| [x] | 13b | Student ID cards, certificates & import/export | ✅ Complete | 2026-10-06 | [13b-student-records-tools.md](modules/13b-student-records-tools.md) |
 
 ## Phase 3 — Academic Operations
 

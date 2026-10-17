@@ -521,6 +521,14 @@ export function EnrollmentsManager() {
                               {e.exit_reason}
                             </span>
                           )}
+                          {e.status === "transferred" && (
+                            <Link
+                              href={`/admin/enrollments/${e.id}/transfer-certificate`}
+                              className="block text-xs hover:underline"
+                            >
+                              Transfer certificate
+                            </Link>
+                          )}
                         </td>
                         {canEdit && (
                           <td className="py-2 text-right">

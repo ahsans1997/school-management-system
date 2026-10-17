@@ -24,14 +24,24 @@ abstract class StudentRequest extends FormRequest
      */
     public function rules(): array
     {
-        $creating = $this->student() === null;
+        return self::fieldRules($this->student());
+    }
+
+    /**
+     * The student fields' rules, shared with the CSV/Excel import.
+     *
+     * @return array<string, mixed>
+     */
+    public static function fieldRules(?Student $student): array
+    {
+        $creating = $student === null;
 
         // Generated when left blank on create (or typed in, e.g. when migrating
         // existing records). Unique across archived students too.
         $identifier = fn (string $column) => [
             $creating ? 'nullable' : 'required', 'string', 'max:20',
             'regex:/^[A-Za-z0-9][A-Za-z0-9\/-]*$/',
-            Rule::unique('students', $column)->ignore($this->student()),
+            Rule::unique('students', $column)->ignore($student),
         ];
 
         return [
@@ -54,6 +64,14 @@ abstract class StudentRequest extends FormRequest
      * @return array<string, string>
      */
     public function messages(): array
+    {
+        return self::fieldMessages();
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public static function fieldMessages(): array
     {
         return [
             'student_id.regex' => 'Use letters, digits, dashes or slashes.',

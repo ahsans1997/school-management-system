@@ -6,6 +6,7 @@ use App\Enums\BloodGroup;
 use App\Enums\Gender;
 use App\Models\Concerns\HasDocuments;
 use App\Models\Contracts\HasPrivateFiles;
+use App\Support\SignedFileUrl;
 use App\Support\TeacherScope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -38,6 +39,18 @@ class Student extends Model implements HasPrivateFiles
             'gender' => Gender::class,
             'blood_group' => BloodGroup::class,
         ];
+    }
+
+    /**
+     * Expiring signed link to the private photo; the version busts caches
+     * when the photo changes.
+     */
+    public function photoUrl(): ?string
+    {
+        return $this->photo_path === null ? null : SignedFileUrl::to('files.student-photo', [
+            'student' => $this->id,
+            'v' => substr(sha1($this->photo_path), 0, 8),
+        ]);
     }
 
     /**
