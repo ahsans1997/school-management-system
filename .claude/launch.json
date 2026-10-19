@@ -1,0 +1,20 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "api",
+      "runtimeExecutable": "C:/laragon/bin/php/php-8.3.30-Win32-vs16-x64/php.exe",
+      "runtimeArgs": ["artisan", "serve", "--port=8001"],
+      "cwd": "backend",
+      "port": 8001
+    },
+    {
+      "name": "web",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev"],
+      "cwd": "frontend",
+      "env": { "NEXT_PUBLIC_API_BASE_URL": "http://localhost:8001/api" },
+      "port": 3000
+    }
+  ]
+}
