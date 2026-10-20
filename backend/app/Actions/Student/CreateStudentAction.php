@@ -4,6 +4,7 @@ namespace App\Actions\Student;
 
 use App\Models\Student;
 use App\Services\Student\StudentNumberGenerator;
+use App\Support\SchoolClock;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 
@@ -20,7 +21,7 @@ class CreateStudentAction
         return DB::transaction(function () use ($data) {
             $admissionDate = isset($data['admission_date'])
                 ? Carbon::parse($data['admission_date'])
-                : today();
+                : SchoolClock::today();
 
             return Student::create([
                 ...$data,

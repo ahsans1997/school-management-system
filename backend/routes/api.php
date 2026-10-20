@@ -12,6 +12,7 @@ use App\Http\Controllers\GradeScaleController;
 use App\Http\Controllers\GuardianController;
 use App\Http\Controllers\HealthController;
 use App\Http\Controllers\IdCardController;
+use App\Http\Controllers\MarkController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\PrivateFileController;
 use App\Http\Controllers\RoleController;
@@ -201,6 +202,17 @@ Route::middleware(['auth:api', 'token.type:access', 'active'])->group(function (
     Route::get('exams/{exam}/schedule', [ExamController::class, 'schedule'])->middleware('permission:exam.view');
     Route::get('exams/{exam}/classes/{school_class}/subjects', [ExamSubjectController::class, 'show'])->middleware('permission:exam.view');
     Route::put('exams/{exam}/classes/{school_class}/subjects', [ExamSubjectController::class, 'update'])->middleware('permission:exam.edit');
+
+    // Marks. Module 17. A sheet = one paper (exam_subject_id) as sat by one
+    // section (section_id). exam.marks_entry AND the teacher's own teaching
+    // assignment for that subject + section (403). Drafts until submitted;
+    // reopening a submitted sheet needs exam.edit. Never public.
+    Route::get('exams/{exam}/marks', [MarkController::class, 'index'])->middleware('permission:exam.marks_entry');
+    Route::get('exams/{exam}/marks/sheet', [MarkController::class, 'sheet'])->middleware('permission:exam.marks_entry');
+    Route::post('exams/{exam}/marks/bulk', [MarkController::class, 'store'])->middleware('permission:exam.marks_entry');
+    Route::post('exams/{exam}/marks/submit', [MarkController::class, 'submit'])->middleware('permission:exam.marks_entry');
+    Route::post('exams/{exam}/marks/reopen', [MarkController::class, 'reopen'])->middleware('permission:exam.edit');
+    Route::put('marks/{mark}', [MarkController::class, 'update'])->middleware('permission:exam.marks_entry');
 
     // Grade scales. Module 16. Changing one regrades every result, so writes
     // need exam.grading (Admin only by default).

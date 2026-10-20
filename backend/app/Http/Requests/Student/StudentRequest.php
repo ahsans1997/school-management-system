@@ -6,6 +6,7 @@ use App\Enums\BloodGroup;
 use App\Enums\Gender;
 use App\Models\Student;
 use App\Rules\PhoneNumber;
+use App\Support\SchoolClock;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -49,7 +50,7 @@ abstract class StudentRequest extends FormRequest
             'admission_no' => $identifier('admission_no'),
             'admission_date' => [$creating ? 'nullable' : 'required', 'date'],
             'name' => ['required', 'string', 'max:100'],
-            'dob' => ['required', 'date', 'before:today', 'after:1950-01-01'],
+            'dob' => ['required', 'date', 'before:'.SchoolClock::date(), 'after:1950-01-01'],
             'gender' => ['required', Rule::enum(Gender::class)],
             'blood_group' => ['nullable', Rule::enum(BloodGroup::class)],
             'father_name' => ['nullable', 'string', 'max:100'],

@@ -12,6 +12,7 @@ use App\Models\Section;
 use App\Models\Student;
 use App\Models\Teacher;
 use App\Models\User;
+use App\Support\SchoolClock;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 
@@ -47,7 +48,7 @@ class ExamScheduleService
      */
     public function upcoming(AcademicYear $year): Builder
     {
-        $today = today()->toDateString();
+        $today = SchoolClock::date();
 
         return Exam::query()
             ->where('academic_year_id', $year->id)

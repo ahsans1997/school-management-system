@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * One paper of an exam: a class subject with its full/pass marks, the
@@ -17,6 +18,9 @@ class ExamSubject extends Model
 
     /** `section_key` is a generated column — never written by the app. */
     protected $guarded = ['id', 'section_key'];
+
+    /** The parts a paper can be split into (a mark's column => the paper's cap column), in order. */
+    public const PARTS = ['cq' => 'cq_marks', 'mcq' => 'mcq_marks', 'practical' => 'practical_marks'];
 
     /**
      * @return array<string, string>
@@ -64,6 +68,34 @@ class ExamSubject extends Model
     public function section(): BelongsTo
     {
         return $this->belongsTo(Section::class);
+    }
+
+    /**
+     * Students' marks on this paper (Module 17).
+     *
+     * @return HasMany<Mark, $this>
+     */
+    public function marks(): HasMany
+    {
+        return $this->hasMany(Mark::class);
+    }
+
+    /**
+     * The parts this paper is split into, part => cap (e.g. ['cq' => '70.00',
+     * 'mcq' => '30.00']); empty when it's marked as a single figure.
+     *
+     * @return array<string, string>
+     */
+    public function parts(): array
+    {
+        $parts = [];
+        foreach (self::PARTS as $part => $column) {
+            if ($this->{$column} !== null) {
+                $parts[$part] = $this->{$column};
+            }
+        }
+
+        return $parts;
     }
 
     /**

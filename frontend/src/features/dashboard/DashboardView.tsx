@@ -5,6 +5,7 @@ import {
   CalendarCheck,
   CalendarClock,
   ClipboardCheck,
+  ClipboardPen,
   GraduationCap,
   Hourglass,
   NotebookPen,
@@ -31,6 +32,7 @@ import type {
   AttendanceTodayWidgetData,
   ChildAttendanceWidgetData,
   MyAttendanceWidgetData,
+  PendingMarksWidgetData,
   ChildrenWidgetData,
   RecentUsersWidgetData,
   SchoolWidgetData,
@@ -58,6 +60,7 @@ const CUSTOM_KEYS = new Set([
   "todays_classes",
   "my_routine",
   "upcoming_exams",
+  "pending_marks",
 ]);
 
 type Tone =
@@ -522,6 +525,56 @@ function AttendanceTasksCard({ data }: { data: AttendanceTasksWidgetData }) {
   );
 }
 
+/** A teacher's mark sheets still open; links straight to each. */
+function PendingMarksCard({ data }: { data: PendingMarksWidgetData }) {
+  return (
+    <Card
+      title={
+        data.total > 0 ? `Marks to enter (${data.total})` : "Marks to enter"
+      }
+      icon={ClipboardPen}
+      tone="violet"
+      action={
+        <Link href="/teacher/marks" className="link">
+          All sheets →
+        </Link>
+      }
+    >
+      {!data.linked ? (
+        <p className={muted}>
+          Your login isn&apos;t linked to a teacher record yet.
+        </p>
+      ) : data.sheets.length === 0 ? (
+        <p className={muted}>All caught up: no marks waiting.</p>
+      ) : (
+        <ul className={list}>
+          {data.sheets.map((s) => (
+            <li
+              key={`${s.exam_subject_id}-${s.section.id}`}
+              className="flex items-center justify-between gap-3 py-2.5"
+            >
+              <span className="min-w-0">
+                <span className="block truncate font-medium text-slate-800 dark:text-slate-100">
+                  {s.class.name} {s.section.name} · {s.subject.name}
+                </span>
+                <span className="block text-xs text-slate-500 tabular-nums">
+                  {s.exam.name} · {s.entered}/{s.students} entered
+                </span>
+              </span>
+              <Link
+                href={`/teacher/marks/sheet?exam=${s.exam.id}&paper=${s.exam_subject_id}&section=${s.section.id}`}
+                className="btn btn-primary btn-sm"
+              >
+                {s.entered > 0 ? "Continue" : "Enter"}
+              </Link>
+            </li>
+          ))}
+        </ul>
+      )}
+    </Card>
+  );
+}
+
 /** A percentage as a thin coloured bar. */
 function Meter({ value }: { value: number | null }) {
   const width = Math.max(0, Math.min(100, value ?? 0));
@@ -860,6 +913,7 @@ export function DashboardView() {
   const todaysClasses = find<TodaysPeriodsWidgetData>("todays_classes");
   const myRoutine = find<TodaysPeriodsWidgetData>("my_routine");
   const upcomingExams = find<UpcomingExamsWidgetData>("upcoming_exams");
+  const pendingMarks = find<PendingMarksWidgetData>("pending_marks");
   const others = ready.filter((w) => !CUSTOM_KEYS.has(w.key));
 
   const tiles: { key: string; tile: ReactNode }[] = [];
@@ -971,6 +1025,7 @@ export function DashboardView() {
           <UpcomingExamsCard data={upcomingExams} audience={payload.audience} />
         )}
         {attendanceTasks && <AttendanceTasksCard data={attendanceTasks} />}
+        {pendingMarks && <PendingMarksCard data={pendingMarks} />}
         {assigned && <AssignedSubjectsCard data={assigned} />}
         {childAttendance && <ChildAttendanceCard data={childAttendance} />}
         {myAttendance && <MyAttendanceCard data={myAttendance} />}

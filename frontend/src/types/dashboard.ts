@@ -1,4 +1,5 @@
 import type { Audience } from "@/types/auth";
+import type { MarkSheetSummary } from "@/types/marks";
 
 export type WidgetStatus = "ready" | "pending";
 
@@ -97,6 +98,14 @@ export interface AttendanceTasksWidgetData {
     section: string;
     marked: boolean;
   }[];
+}
+
+/** A teacher's mark sheets still to finish (open, not submitted). */
+export interface PendingMarksWidgetData {
+  linked: boolean;
+  /** All pending sheets; `sheets` lists the first few. */
+  total: number;
+  sheets: (MarkSheetSummary & { exam: { id: number; name: string } })[];
 }
 
 export interface ChildAttendanceWidgetData {

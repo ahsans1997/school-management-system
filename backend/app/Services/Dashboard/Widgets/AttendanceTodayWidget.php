@@ -10,6 +10,7 @@ use App\Models\Section;
 use App\Models\User;
 use App\Services\Attendance\AttendanceService;
 use App\Services\Dashboard\Widget;
+use App\Support\SchoolClock;
 
 /** School-wide: how many sections have taken attendance today, and the day's totals. */
 final class AttendanceTodayWidget extends Widget
@@ -36,7 +37,7 @@ final class AttendanceTodayWidget extends Widget
 
     protected function data(User $user): array
     {
-        $today = today()->toDateString();
+        $today = SchoolClock::date();
         $year = AcademicYear::current();
 
         // Sections with at least one active student this year.

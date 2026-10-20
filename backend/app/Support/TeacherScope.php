@@ -23,11 +23,40 @@ final class TeacherScope
      */
     public static function sectionIds(User $user): ?array
     {
-        if (DashboardAudience::forUser($user) !== DashboardAudience::Teacher) {
+        if (! self::applies($user)) {
             return null;
         }
 
         return Teacher::forUser($user)?->sectionIds() ?? [];
+    }
+
+    /** Whether the user is limited to their own teaching (a Teacher-audience login). */
+    public static function applies(User $user): bool
+    {
+        return DashboardAudience::forUser($user) === DashboardAudience::Teacher;
+    }
+
+    /**
+     * Subject-level scope (marks): the teacher teaches this class subject in
+     * this section — their own teaching_assignments row. Being class teacher
+     * of the section isn't enough.
+     */
+    public static function teaches(User $user, Section $section, int $classSubjectId): bool
+    {
+        if (! self::applies($user)) {
+            return true;
+        }
+
+        return (bool) Teacher::forUser($user)?->assignments()
+            ->where('section_id', $section->id)
+            ->where('class_subject_id', $classSubjectId)
+            ->exists();
+    }
+
+    /** 403 unless the user may work with this subject in this section. */
+    public static function authorizeSubject(User $user, Section $section, int $classSubjectId): void
+    {
+        abort_unless(self::teaches($user, $section, $classSubjectId), 403, 'You can only enter marks for the subjects you teach.');
     }
 
     public static function allows(User $user, Section $section): bool

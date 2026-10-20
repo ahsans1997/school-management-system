@@ -48,6 +48,19 @@ class SaveExamSubjects
                 ->keyBy(fn (ExamSubject $s) => $this->key($s->class_subject_id, $s->section_id));
             $wanted = collect($papers)->keyBy(fn (array $p) => $this->key($p['class_subject_id'], $p['section_id']));
 
+            // Marks were entered against the full marks and split, so those
+            // are fixed once a paper has marks (pass marks and dates aren't).
+            $fixed = [];
+            foreach ($papers as $i => $paper) {
+                $current = $existing->get($this->key($paper['class_subject_id'], $paper['section_id']));
+                if ($current !== null && $this->splitChanged($current, $paper) && $current->marks()->exists()) {
+                    $fixed["subjects.{$i}.full_marks"] = 'Marks are already entered for this paper, so its full marks and CQ / MCQ / practical split can\'t change.';
+                }
+            }
+            if ($fixed !== []) {
+                throw ValidationException::withMessages($fixed);
+            }
+
             foreach ($existing->diffKeys($wanted) as $removed) {
                 try {
                     $removed->delete();
@@ -149,6 +162,20 @@ class SaveExamSubjects
         if ($errors !== []) {
             throw ValidationException::withMessages($errors);
         }
+    }
+
+    /**
+     * @param  array<string, mixed>  $paper  in hundredths
+     */
+    private function splitChanged(ExamSubject $current, array $paper): bool
+    {
+        foreach (['full_marks', 'cq_marks', 'mcq_marks', 'practical_marks'] as $column) {
+            if ($this->cents($current->{$column}) !== $paper[$column]) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private function key(int $classSubjectId, ?int $sectionId): string

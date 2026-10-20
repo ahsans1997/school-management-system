@@ -9,6 +9,7 @@ use App\Models\Student;
 use App\Models\User;
 use App\Services\Dashboard\Widget;
 use App\Services\Routine\RoutineService;
+use App\Support\SchoolClock;
 
 /** A student's periods today, from their own section's routine. */
 final class MyRoutineWidget extends Widget
@@ -34,7 +35,7 @@ final class MyRoutineWidget extends Widget
             ? Student::find($user->personable_id)
             : null;
         $year = AcademicYear::current();
-        $today = Weekday::fromDate(today());
+        $today = Weekday::fromDate(SchoolClock::today());
         $enrollment = $student && $year
             ? $student->enrollments()->where('academic_year_id', $year->id)->active()->with('section')->first()
             : null;

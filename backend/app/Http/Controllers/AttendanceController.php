@@ -12,6 +12,7 @@ use App\Models\Section;
 use App\Models\Student;
 use App\Services\Attendance\AttendanceService;
 use App\Support\PerPage;
+use App\Support\SchoolClock;
 use App\Support\TeacherScope;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Validation\Rule;
@@ -30,7 +31,7 @@ class AttendanceController extends Controller
     {
         $ids = TeacherScope::sectionIds(request()->user());
         $year = AcademicYear::current();
-        $today = today()->toDateString();
+        $today = SchoolClock::date();
 
         $sections = Section::query()
             ->with('schoolClass')

@@ -7,7 +7,7 @@ use App\Models\AcademicYear;
 use App\Models\Section;
 use App\Models\Student;
 use App\Models\StudentEnrollment;
-use Illuminate\Support\Carbon;
+use App\Support\SchoolClock;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
@@ -87,7 +87,7 @@ class Enrollments
                 'section_id' => $section->id,
                 'roll' => $roll,
                 'status' => $status,
-                'ended_on' => $status->ends() ? ($endedOn ?? today()->toDateString()) : null,
+                'ended_on' => $status->ends() ? ($endedOn ?? SchoolClock::date()) : null,
                 'exit_reason' => $status->ends() ? $exitReason : null,
             ])->save();
 
@@ -144,7 +144,7 @@ class Enrollments
             $this->ensureSeat($to, $toYear, $current->count());
 
             $roll = $this->nextRoll($to, $toYear);
-            $today = Carbon::today()->toDateString();
+            $today = SchoolClock::date();
             $created = [];
 
             foreach ($current as $enrollment) {

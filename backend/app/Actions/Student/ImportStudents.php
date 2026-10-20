@@ -9,6 +9,7 @@ use App\Models\SchoolClass;
 use App\Models\Section;
 use App\Models\StudentEnrollment;
 use App\Models\User;
+use App\Support\SchoolClock;
 use App\Support\Spreadsheet;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\UploadedFile;
@@ -205,8 +206,8 @@ class ImportStudents
             $messages = Validator::make($data, [
                 ...StudentRequest::fieldRules(null),
                 // The form's date rules, but the format first so one bad date gives one message.
-                'dob' => ['bail', 'required', 'date_format:Y-m-d', 'before:today', 'after:1950-01-01'],
-                'admission_date' => ['bail', 'nullable', 'date_format:Y-m-d', 'before_or_equal:today'],
+                'dob' => ['bail', 'required', 'date_format:Y-m-d', 'before:'.SchoolClock::date(), 'after:1950-01-01'],
+                'admission_date' => ['bail', 'nullable', 'date_format:Y-m-d', 'before_or_equal:'.SchoolClock::date()],
                 'roll' => ['nullable', 'integer', 'between:1,9999'],
             ], [
                 ...StudentRequest::fieldMessages(),

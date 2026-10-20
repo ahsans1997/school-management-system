@@ -7,6 +7,7 @@ use App\Enums\Gender;
 use App\Models\Student;
 use App\Models\User;
 use App\Services\Dashboard\Widget;
+use App\Support\SchoolClock;
 
 /** Student headcount (archived excluded), with this month's admissions and a gender split. */
 final class StudentStatsWidget extends Widget
@@ -41,7 +42,7 @@ final class StudentStatsWidget extends Widget
         return [
             'total' => (int) $counts->sum(),
             'admitted_this_month' => Student::query()
-                ->where('admission_date', '>=', today()->startOfMonth())
+                ->where('admission_date', '>=', SchoolClock::today()->startOfMonth())
                 ->count(),
             'archived' => Student::onlyTrashed()->count(),
             'by_gender' => array_map(fn (Gender $gender) => [

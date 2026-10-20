@@ -40,7 +40,7 @@ Legend: ⬜ Not started · 🟡 In progress · 🔵 In review · ✅ Complete ·
 | [x] | 14 | Attendance | ✅ Complete | 2026-10-05 | [14-attendance.md](modules/14-attendance.md) |
 | [x] | 15 | Class Routine | ✅ Complete | 2026-10-05 | [15-class-routine.md](modules/15-class-routine.md) |
 | [x] | 16 | Exams | ✅ Complete | 2026-10-05 | [16-exams.md](modules/16-exams.md) |
-| [ ] | 17 | Marks Entry | ⬜ Not started | — | [17-marks-entry.md](modules/17-marks-entry.md) |
+| [ ] | 17 | Marks Entry | 🔵 In review | — | [17-marks-entry.md](modules/17-marks-entry.md) |
 | [ ] | 18 | Results | ⬜ Not started | — | [18-results.md](modules/18-results.md) |
 
 ## Phase 4 — Finance

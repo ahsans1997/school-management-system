@@ -7,6 +7,7 @@ import {
   CalendarClock,
   CalendarRange,
   ClipboardList,
+  ClipboardPen,
   GraduationCap,
   IdCard,
   LayoutDashboard,
@@ -90,6 +91,12 @@ const NAV: readonly NavItem[] = [
     label: "Exams",
     permission: "exam.view",
     icon: NotebookPen,
+  },
+  {
+    href: "/admin/marks",
+    label: "Marks entry",
+    permission: "exam.marks_entry",
+    icon: ClipboardPen,
   },
   {
     href: "/admin/grade-scales",

@@ -6,6 +6,7 @@ use App\Models\Attendance;
 use App\Models\Section;
 use App\Models\User;
 use App\Services\Attendance\AttendanceService;
+use App\Support\SchoolClock;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
@@ -28,7 +29,7 @@ class SaveAttendanceSheet
     {
         $day = Carbon::parse($date)->toDateString();
 
-        if ($day > today()->toDateString()) {
+        if ($day > SchoolClock::date()) {
             $this->fail('date', "Attendance can't be taken for a future date.");
         }
         $year = $this->attendance->yearFor($day) ?? $this->fail('date', "No academic year covers {$day}.");

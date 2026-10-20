@@ -37,6 +37,22 @@ class StudentEnrollment extends Model
     }
 
     /**
+     * A section's roll on a day: enrollments for that year still running on
+     * $date (active, or ended after it), of students who aren't archived.
+     * Ordered by roll. Used by attendance sheets and marks sheets.
+     *
+     * @param  Builder<self>  $query
+     */
+    public function scopeOnRoll(Builder $query, Section $section, AcademicYear $year, string $date): void
+    {
+        $query->where('section_id', $section->id)
+            ->where('academic_year_id', $year->id)
+            ->where(fn ($q) => $q->where('status', EnrollmentStatus::Active->value)->orWhereDate('ended_on', '>', $date))
+            ->whereHas('student', fn ($q) => $q->withoutTrashed())
+            ->orderBy('roll');
+    }
+
+    /**
      * @return BelongsTo<Student, $this>
      */
     public function student(): BelongsTo

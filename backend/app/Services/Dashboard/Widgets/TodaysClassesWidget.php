@@ -9,6 +9,7 @@ use App\Models\Teacher;
 use App\Models\User;
 use App\Services\Dashboard\Widget;
 use App\Services\Routine\RoutineService;
+use App\Support\SchoolClock;
 
 /** A teacher's periods today, from their own routine. */
 final class TodaysClassesWidget extends Widget
@@ -32,7 +33,7 @@ final class TodaysClassesWidget extends Widget
     {
         $teacher = Teacher::forUser($user);
         $year = AcademicYear::current();
-        $today = Weekday::fromDate(today());
+        $today = Weekday::fromDate(SchoolClock::today());
 
         if ($teacher === null || $year === null) {
             return ['linked' => $teacher !== null, 'day' => $today->value, 'periods' => []];

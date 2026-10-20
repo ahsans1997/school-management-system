@@ -3,7 +3,6 @@
 namespace App\Services\Attendance;
 
 use App\Enums\AttendanceStatus;
-use App\Enums\EnrollmentStatus;
 use App\Models\AcademicYear;
 use App\Models\AttendanceDetail;
 use App\Models\Section;
@@ -25,22 +24,13 @@ class AttendanceService
     }
 
     /**
-     * The section's roll on $date: enrollments for that year that were still
-     * running that day (active, or ended after it), of students who aren't
-     * archived. Ordered by roll.
+     * The section's roll on $date (StudentEnrollment::onRoll), with students.
      *
      * @return Collection<int, StudentEnrollment>
      */
     public function roster(Section $section, AcademicYear $year, string $date): Collection
     {
-        return StudentEnrollment::query()
-            ->with('student')
-            ->where('section_id', $section->id)
-            ->where('academic_year_id', $year->id)
-            ->where(fn ($q) => $q->where('status', EnrollmentStatus::Active->value)->orWhereDate('ended_on', '>', $date))
-            ->whereHas('student', fn ($q) => $q->withoutTrashed())
-            ->orderBy('roll')
-            ->get();
+        return StudentEnrollment::query()->with('student')->onRoll($section, $year, $date)->get();
     }
 
     /**

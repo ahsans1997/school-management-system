@@ -7,6 +7,7 @@ use App\Models\Section;
 use App\Models\Teacher;
 use App\Models\User;
 use App\Services\Dashboard\Widget;
+use App\Support\SchoolClock;
 
 /** A teacher's own sections and whether today's attendance is taken. */
 final class AttendanceTasksWidget extends Widget
@@ -38,7 +39,7 @@ final class AttendanceTasksWidget extends Widget
             return ['linked' => false, 'sections' => []];
         }
 
-        $today = today()->toDateString();
+        $today = SchoolClock::date();
         $sections = Section::query()
             ->with('schoolClass')
             ->whereKey($teacher->sectionIds())

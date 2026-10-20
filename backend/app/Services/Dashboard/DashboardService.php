@@ -11,6 +11,7 @@ use App\Services\Dashboard\Widgets\ChildAttendanceWidget;
 use App\Services\Dashboard\Widgets\ChildrenWidget;
 use App\Services\Dashboard\Widgets\MyAttendanceWidget;
 use App\Services\Dashboard\Widgets\MyRoutineWidget;
+use App\Services\Dashboard\Widgets\PendingMarksWidget;
 use App\Services\Dashboard\Widgets\PendingWidget;
 use App\Services\Dashboard\Widgets\ProfileWidget;
 use App\Services\Dashboard\Widgets\RecentUsersWidget;
@@ -52,14 +53,12 @@ class DashboardService
             new TodaysClassesWidget,
             new MyRoutineWidget,
             new UpcomingExamsWidget,
+            new PendingMarksWidget,
 
             // Admin / staff — each gated by the permission its data needs.
             new PendingWidget('pending_fees', 'Pending fees', '19 — Fees', $management, 'fee.view'),
             new PendingWidget('monthly_finance', 'Income & expense (this month)', '21 — Expenses & Basic Accounts', $management, 'accounts.view'),
             new PendingWidget('recent_admissions', 'Recent admissions', '31 — Online Admission', $management, 'admission.view'),
-
-            // Teacher — will be scoped to the teacher's assigned classes/subjects.
-            new PendingWidget('pending_marks', 'Marks to enter', '17 — Marks Entry', [A::Teacher]),
 
             // Parent — will be scoped to the guardian's own children only.
             new PendingWidget('child_results', 'Results', '18 — Results', [A::Parent]),

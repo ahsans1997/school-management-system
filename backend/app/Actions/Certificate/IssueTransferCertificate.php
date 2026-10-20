@@ -7,6 +7,7 @@ use App\Enums\EnrollmentStatus;
 use App\Models\Certificate;
 use App\Models\StudentEnrollment;
 use App\Models\User;
+use App\Support\SchoolClock;
 use App\Support\Sequence;
 use Illuminate\Support\Facades\DB;
 
@@ -42,14 +43,14 @@ class IssueTransferCertificate
                 return $certificate;
             }
 
-            $year = (int) today()->format('Y');
+            $year = (int) SchoolClock::today()->format('Y');
 
             return Certificate::create([
                 'type' => CertificateType::Transfer,
                 'serial_no' => sprintf('%s-%d-%04d', CertificateType::Transfer->prefix(), $year, Sequence::next("certificate.transfer.{$year}")),
                 'student_id' => $enrollment->student_id,
                 'student_enrollment_id' => $enrollment->id,
-                'issued_on' => today(),
+                'issued_on' => SchoolClock::today(),
                 'issued_by' => $issuer->id,
                 'conduct' => $conduct ?? 'Good',
             ]);
