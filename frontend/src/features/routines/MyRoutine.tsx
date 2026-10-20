@@ -5,6 +5,7 @@ import { RoutineGrid } from "@/components/RoutineGrid";
 import { errorMessage } from "@/lib/errors";
 import * as routineService from "@/services/routineService";
 import type { MyRoutine as MyRoutineData } from "@/types/routine";
+import { InlineLoader } from "@/components/Loading";
 
 /** The caller's own routine: a teacher's week, a student's section, or each child's. */
 export function MyRoutine() {
@@ -32,28 +33,28 @@ export function MyRoutine() {
       <h1 className="text-2xl font-semibold">
         {data?.type === "parent" ? "Class routines" : "My routine"}
         {data && (
-          <span className="ml-2 text-base font-normal text-gray-500">
+          <span className="ml-2 text-base font-normal text-slate-500">
             {data.academic_year.name}
           </span>
         )}
       </h1>
 
       {error ? (
-        <p role="alert" className="text-sm text-red-600">
+        <p role="alert" className="alert alert-error">
           {error}
         </p>
       ) : !data ? (
-        <p className="text-sm text-gray-500">Loading…</p>
+        <InlineLoader />
       ) : data.type === "teacher" ? (
         data.teacher ? (
           <RoutineGrid slots={data.slots} perspective="teacher" />
         ) : (
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-slate-500">
             Your login isn&apos;t linked to a teacher record yet.
           </p>
         )
       ) : data.type === "none" || data.weeks.length === 0 ? (
-        <p className="text-sm text-gray-500">No routine to show.</p>
+        <p className="text-sm text-slate-500">No routine to show.</p>
       ) : (
         data.weeks.map((w) => (
           <section key={w.student.id}>

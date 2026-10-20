@@ -9,8 +9,7 @@ import { ApiRequestError } from "@/services/apiClient";
 import * as studentToolsService from "@/services/studentToolsService";
 import type { TransferCertificate } from "@/types/studentTools";
 
-const inputClass =
-  "rounded-md border border-gray-300 px-2 py-1 text-sm dark:border-gray-700 dark:bg-gray-800";
+const inputClass = "input input-sm";
 
 /** Words that follow the student's recorded gender. */
 function wordsFor(gender: string) {
@@ -28,8 +27,8 @@ function Certificate({ tc }: { tc: TransferCertificate }) {
     .join(" and ");
 
   return (
-    <article className="mx-auto max-w-[190mm] bg-white p-[12mm] text-[11pt] leading-relaxed text-gray-900 print:p-0">
-      <header className="mb-[8mm] border-b-2 border-gray-900 pb-[4mm] text-center">
+    <article className="mx-auto max-w-[190mm] bg-white p-[12mm] text-[11pt] leading-relaxed text-slate-900 print:p-0">
+      <header className="mb-[8mm] border-b-2 border-slate-900 pb-[4mm] text-center">
         {tc.school.logo_url && (
           // Logo from the API host; plain img prints reliably. A logo that
           // fails to load is hidden rather than printed as a broken image.
@@ -47,7 +46,7 @@ function Certificate({ tc }: { tc: TransferCertificate }) {
         {tc.school.address && (
           <p className="text-[10pt]">{tc.school.address}</p>
         )}
-        <p className="text-[9pt] text-gray-600">
+        <p className="text-[9pt] text-slate-600">
           {[
             tc.school.eiin && `EIIN ${tc.school.eiin}`,
             tc.school.phone,
@@ -94,10 +93,10 @@ function Certificate({ tc }: { tc: TransferCertificate }) {
       <p>We wish {w.them} every success.</p>
 
       <footer className="mt-[28mm] flex justify-between text-[10pt]">
-        <div className="w-[55mm] border-t border-gray-900 pt-[1mm] text-center">
+        <div className="w-[55mm] border-t border-slate-900 pt-[1mm] text-center">
           Class teacher
         </div>
-        <div className="w-[55mm] border-t border-gray-900 pt-[1mm] text-center">
+        <div className="w-[55mm] border-t border-slate-900 pt-[1mm] text-center">
           Principal
           {tc.school.principal_name && (
             <span className="block text-[9pt]">{tc.school.principal_name}</span>
@@ -173,14 +172,14 @@ export function TransferCertificatePage({
         {tc ? (
           <Link
             href={`/admin/students/${tc.student.id}`}
-            className="text-sm text-gray-500 hover:underline"
+            className="text-sm text-slate-500 hover:underline"
           >
             ← {tc.student.name}
           </Link>
         ) : (
           <Link
             href="/admin/enrollments"
-            className="text-sm text-gray-500 hover:underline"
+            className="text-sm text-slate-500 hover:underline"
           >
             ← Enrollments
           </Link>
@@ -191,7 +190,7 @@ export function TransferCertificatePage({
             <button
               type="button"
               onClick={() => window.print()}
-              className="rounded-md bg-gray-900 px-4 py-1.5 text-sm text-white dark:bg-gray-100 dark:text-gray-900"
+              className="btn btn-primary"
             >
               Print
             </button>
@@ -199,11 +198,11 @@ export function TransferCertificatePage({
         </div>
 
         {error && (
-          <p role="alert" className="mt-3 text-sm text-red-600">
+          <p role="alert" className="alert alert-error mt-3">
             {error}
           </p>
         )}
-        {notice && <p className="mt-3 text-sm text-green-600">{notice}</p>}
+        {notice && <p className="alert alert-success mt-3">{notice}</p>}
 
         {(tc || notIssued) && canIssue && (
           <form
@@ -221,22 +220,18 @@ export function TransferCertificatePage({
                 className={`w-56 ${inputClass}`}
               />
             </label>
-            <button
-              type="submit"
-              disabled={busy}
-              className="rounded-md border border-gray-300 px-3 py-1 text-sm disabled:opacity-60 dark:border-gray-700"
-            >
+            <button type="submit" disabled={busy} className="btn btn-secondary">
               {busy ? "Saving…" : tc ? "Update conduct" : "Issue certificate"}
             </button>
             {!tc && (
-              <span className="text-xs text-gray-500">
+              <span className="text-xs text-slate-500">
                 Gets the next serial number; reprints show the same one.
               </span>
             )}
           </form>
         )}
         {notIssued && !canIssue && (
-          <p className="mt-3 text-sm text-gray-500">
+          <p className="mt-3 text-sm text-slate-500">
             No transfer certificate has been issued for this enrollment yet.
           </p>
         )}

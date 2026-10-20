@@ -109,7 +109,7 @@ export function ExamForm({
   return (
     <form onSubmit={submit} className="grid gap-3 sm:grid-cols-2">
       {error && (
-        <p role="alert" className="text-sm text-red-600 sm:col-span-2">
+        <p role="alert" className="alert alert-error sm:col-span-2">
           {error}
         </p>
       )}
@@ -199,18 +199,14 @@ export function ExamForm({
         />
       </FormField>
       <div className="flex gap-2 sm:col-span-2">
-        <button
-          type="submit"
-          disabled={busy}
-          className="rounded-md bg-gray-900 px-4 py-1.5 text-sm text-white disabled:opacity-60 dark:bg-gray-100 dark:text-gray-900"
-        >
+        <button type="submit" disabled={busy} className="btn btn-primary">
           {busy ? "Saving…" : submitLabel}
         </button>
         {onCancel && (
           <button
             type="button"
             onClick={onCancel}
-            className="rounded-md border border-gray-300 px-4 py-1.5 text-sm dark:border-gray-700"
+            className="btn btn-secondary"
           >
             Cancel
           </button>

@@ -1,28 +1,179 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/*
+ * Dark mode follows a `dark` class on <html> (the theme toggle sets it; see
+ * lib/theme.ts), and only on screen: printouts are always light.
+ */
+@custom-variant dark {
+  @media screen {
+    &:where(.dark, .dark *) {
+      @slot;
+    }
+  }
+}
+
+/* Design tokens: a blue brand on cool slate neutrals. */
+@theme {
+  --color-brand-50: #eff6ff;
+  --color-brand-100: #dbeafe;
+  --color-brand-200: #bfdbfe;
+  --color-brand-300: #93c5fd;
+  --color-brand-400: #60a5fa;
+  --color-brand-500: #3b82f6;
+  --color-brand-600: #2563eb;
+  --color-brand-700: #1d4ed8;
+  --color-brand-800: #1e40af;
+  --color-brand-900: #1e3a8a;
+  --color-brand-950: #172554;
+
+  --animate-shimmer: shimmer 1.6s ease-in-out infinite;
+
+  @keyframes shimmer {
+    0% {
+      background-position: 100% 0;
+    }
+    100% {
+      background-position: -100% 0;
+    }
+  }
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
+  --font-sans:
+    var(--font-geist-sans), "Noto Sans Bengali", ui-sans-serif, system-ui,
+    sans-serif;
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+:root {
+  --background: #f5f7fb;
+  --foreground: #0f172a;
+  color-scheme: light;
+}
+
+@media screen {
+  .dark {
+    --background: #0b1120;
+    --foreground: #e2e8f0;
+    color-scheme: dark;
   }
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
+}
+
+@layer base {
+  /* Page titles across every screen. */
+  main h1 {
+    @apply tracking-tight text-slate-900 dark:text-white;
+  }
+
+  ::selection {
+    @apply bg-brand-100 text-brand-900;
+  }
+}
+
+/*
+ * Shared component styles. Screens compose these instead of repeating long
+ * utility strings, so the whole app keeps one look.
+ */
+@layer components {
+  .btn {
+    @apply focus-visible:ring-brand-500/40 inline-flex items-center justify-center gap-1.5 rounded-lg px-3.5 py-2 text-sm font-medium whitespace-nowrap transition duration-150 select-none focus-visible:ring-2 focus-visible:outline-none active:scale-[0.98] disabled:pointer-events-none disabled:opacity-55;
+  }
+  .btn-sm {
+    @apply rounded-md px-2.5 py-1.5 text-xs;
+  }
+  .btn-primary {
+    @apply bg-brand-600 shadow-brand-600/25 hover:bg-brand-700 text-white shadow-sm;
+  }
+  .btn-secondary {
+    @apply border border-slate-200 bg-white text-slate-700 shadow-sm hover:border-slate-300 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700;
+  }
+  .btn-danger {
+    @apply border border-red-200 bg-white text-red-600 hover:bg-red-50 dark:border-red-900/60 dark:bg-transparent dark:text-red-400 dark:hover:bg-red-950/40;
+  }
+  .btn-ghost {
+    @apply text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-white;
+  }
+
+  .input {
+    @apply focus:border-brand-500 focus:ring-brand-500/15 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm transition outline-none placeholder:text-slate-400 hover:border-slate-400 focus:ring-4 disabled:cursor-not-allowed disabled:bg-slate-50 disabled:text-slate-500 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:hover:border-slate-600 dark:disabled:bg-slate-800;
+  }
+  .input-sm {
+    @apply rounded-md px-2 py-1.5 text-sm;
+  }
+
+  .card {
+    @apply rounded-2xl border border-slate-200/80 bg-white shadow-sm shadow-slate-200/40 dark:border-slate-800 dark:bg-slate-900 dark:shadow-none;
+  }
+
+  /* Tables: wrap in .table-wrap; header row .table-head, body rows .table-row. */
+  .table-wrap {
+    @apply overflow-x-auto rounded-2xl border border-slate-200/80 bg-white shadow-sm shadow-slate-200/40 dark:border-slate-800 dark:bg-slate-900 dark:shadow-none;
+  }
+  .table-wrap > table {
+    @apply w-full text-sm;
+  }
+  /* Cells set their own vertical padding; the outer columns get breathing room. */
+  .table-wrap th:first-child,
+  .table-wrap td:first-child {
+    @apply pl-5;
+  }
+  .table-wrap th:last-child,
+  .table-wrap td:last-child {
+    @apply pr-5;
+  }
+  .table-head {
+    @apply border-b border-slate-200 bg-slate-50/80 text-left text-xs font-semibold tracking-wide text-slate-500 uppercase dark:border-slate-800 dark:bg-slate-800/50 dark:text-slate-400;
+  }
+  .table-row {
+    @apply hover:bg-brand-50/40 border-b border-slate-100 transition-colors last:border-0 dark:border-slate-800 dark:hover:bg-slate-800/40;
+  }
+
+  .badge {
+    @apply inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium;
+  }
+  .badge-gray {
+    @apply bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300;
+  }
+  .badge-brand {
+    @apply bg-brand-50 text-brand-700 ring-brand-200 dark:bg-brand-950/60 dark:text-brand-300 dark:ring-brand-900 ring-1 ring-inset;
+  }
+  .badge-green {
+    @apply bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200 ring-inset dark:bg-emerald-950/50 dark:text-emerald-300 dark:ring-emerald-900;
+  }
+  .badge-amber {
+    @apply bg-amber-50 text-amber-700 ring-1 ring-amber-200 ring-inset dark:bg-amber-950/50 dark:text-amber-300 dark:ring-amber-900;
+  }
+  .badge-red {
+    @apply bg-red-50 text-red-700 ring-1 ring-red-200 ring-inset dark:bg-red-950/50 dark:text-red-300 dark:ring-red-900;
+  }
+
+  /* Loading placeholders: a soft light sweep across grey shapes. */
+  .skeleton {
+    @apply animate-shimmer bg-[linear-gradient(90deg,var(--color-slate-200)_25%,var(--color-slate-100)_50%,var(--color-slate-200)_75%)] bg-[length:200%_100%] dark:bg-[linear-gradient(90deg,var(--color-slate-800)_25%,var(--color-slate-700)_50%,var(--color-slate-800)_75%)];
+  }
+
+  /* Page-level messages (role="alert" errors, success notices). */
+  .alert {
+    @apply rounded-xl border px-4 py-2.5 text-sm;
+  }
+  .alert-error {
+    @apply border-red-200 bg-red-50 text-red-700 dark:border-red-900/60 dark:bg-red-950/40 dark:text-red-300;
+  }
+  .alert-success {
+    @apply border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-900/60 dark:bg-emerald-950/40 dark:text-emerald-300;
+  }
+
+  .link {
+    @apply text-brand-600 hover:text-brand-700 dark:text-brand-400 dark:hover:text-brand-300 font-medium hover:underline;
+  }
 }
 
 /*

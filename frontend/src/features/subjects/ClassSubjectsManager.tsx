@@ -15,12 +15,12 @@ import {
   type ClassSubjectPage,
   type Subject,
 } from "@/types/subject";
+import { PageLoader } from "@/components/Loading";
 
 /** The catalogue is loaded in one request for the picker (the API max). */
 const CATALOGUE_SIZE = 100;
 
-const inputClass =
-  "rounded-md border border-gray-300 px-2 py-1 text-sm dark:border-gray-700 dark:bg-gray-800";
+const inputClass = "input input-sm";
 
 const isNotFound = (err: unknown) =>
   err instanceof ApiRequestError && err.error.status === 404;
@@ -136,14 +136,14 @@ export function ClassSubjectsManager({ classId }: { classId: number }) {
   const backLink = (
     <Link
       href="/admin/classes"
-      className="text-sm text-gray-500 hover:underline dark:text-gray-400"
+      className="text-sm text-slate-500 hover:underline dark:text-slate-400"
     >
       ← Classes
     </Link>
   );
 
   if (loading) {
-    return <p className="p-8 text-sm text-gray-500">Loading…</p>;
+    return <PageLoader />;
   }
 
   if (missing) {
@@ -166,20 +166,20 @@ export function ClassSubjectsManager({ classId }: { classId: number }) {
       <h1 className="mt-2 mb-1 text-2xl font-semibold">
         {schoolClass ? `${schoolClass.name} — subjects` : "Subjects"}
       </h1>
-      <p className="mb-6 text-sm text-gray-500 dark:text-gray-400">
+      <p className="mb-6 text-sm text-slate-500 dark:text-slate-400">
         Subjects taught in this class, picked from the subject catalogue.
       </p>
 
       {error && (
-        <p role="alert" className="mb-4 text-sm text-red-600">
+        <p role="alert" className="alert alert-error mb-4">
           {error}
         </p>
       )}
-      {notice && <p className="mb-4 text-sm text-green-600">{notice}</p>}
+      {notice && <p className="alert alert-success mb-4">{notice}</p>}
 
       {canAssign &&
         (catalogue.length === 0 ? (
-          <p className="mb-6 text-sm text-gray-500">
+          <p className="mb-6 text-sm text-slate-500">
             The subject catalogue is empty.{" "}
             <Link href="/admin/subjects" className="underline">
               Add subjects
@@ -189,7 +189,7 @@ export function ClassSubjectsManager({ classId }: { classId: number }) {
         ) : (
           <form
             onSubmit={handleAssign}
-            className="mb-6 flex flex-wrap items-end gap-2 rounded-lg border border-gray-200 p-4 dark:border-gray-800"
+            className="card mb-6 flex flex-wrap items-end gap-2 p-5"
           >
             <label className="min-w-48 flex-1 text-sm">
               <span className="mb-1 block font-medium">Subject</span>
@@ -210,12 +210,12 @@ export function ClassSubjectsManager({ classId }: { classId: number }) {
             <button
               type="submit"
               disabled={busy || !selected}
-              className="rounded-md bg-gray-900 px-4 py-1.5 text-sm text-white disabled:opacity-60 dark:bg-gray-100 dark:text-gray-900"
+              className="btn btn-primary"
             >
               Assign
             </button>
             {catalogueTotal > catalogue.length && (
-              <p className="w-full text-xs text-gray-500">
+              <p className="w-full text-xs text-slate-500">
                 Showing the first {catalogue.length} of {catalogueTotal}{" "}
                 subjects.
               </p>
@@ -224,12 +224,12 @@ export function ClassSubjectsManager({ classId }: { classId: number }) {
         ))}
 
       {assignments.length === 0 ? (
-        <p className="text-sm text-gray-500">No subjects assigned yet.</p>
+        <p className="text-sm text-slate-500">No subjects assigned yet.</p>
       ) : (
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
+        <div className="table-wrap">
+          <table>
             <thead>
-              <tr className="border-b border-gray-200 text-left text-gray-500 dark:border-gray-800 dark:text-gray-400">
+              <tr className="table-head">
                 <th className="py-2 pr-3 font-medium">Subject</th>
                 <th className="py-2 pr-3 font-medium">Code</th>
                 <th className="py-2 pr-3 font-medium">Type</th>
@@ -240,10 +240,7 @@ export function ClassSubjectsManager({ classId }: { classId: number }) {
             </thead>
             <tbody>
               {assignments.map((a) => (
-                <tr
-                  key={a.id}
-                  className="border-b border-gray-100 dark:border-gray-900"
-                >
+                <tr key={a.id} className="table-row">
                   <td className="py-2 pr-3 font-medium">{a.subject.name}</td>
                   <td className="py-2 pr-3 tabular-nums">
                     {a.subject.code ?? "—"}

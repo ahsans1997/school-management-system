@@ -14,6 +14,7 @@ import type { Teacher } from "@/types/teacher";
 import { TeacherLogin } from "./TeacherLogin";
 import { TeacherRoutine } from "./TeacherRoutine";
 import { TeacherTeaching } from "./TeacherTeaching";
+import { PageLoader } from "@/components/Loading";
 
 const isNotFound = (err: unknown) =>
   err instanceof ApiRequestError && err.error.status === 404;
@@ -75,14 +76,14 @@ export function TeacherProfile({ teacherId }: { teacherId: number }) {
   const backLink = (
     <Link
       href="/admin/teachers"
-      className="text-sm text-gray-500 hover:underline dark:text-gray-400"
+      className="text-sm text-slate-500 hover:underline dark:text-slate-400"
     >
       ← Teachers
     </Link>
   );
 
   if (loading) {
-    return <p className="p-8 text-sm text-gray-500">Loading…</p>;
+    return <PageLoader />;
   }
   if (missing || !teacher) {
     return (
@@ -110,11 +111,11 @@ export function TeacherProfile({ teacherId }: { teacherId: number }) {
         </p>
       )}
       {error && (
-        <p role="alert" className="text-sm text-red-600">
+        <p role="alert" className="alert alert-error">
           {error}
         </p>
       )}
-      {notice && <p className="text-sm text-green-600">{notice}</p>}
+      {notice && <p className="alert alert-success">{notice}</p>}
 
       <header className="flex flex-wrap items-start gap-4">
         <PhotoEditor
@@ -139,7 +140,7 @@ export function TeacherProfile({ teacherId }: { teacherId: number }) {
 
         <div className="min-w-0 flex-1">
           <h1 className="text-2xl font-semibold">{teacher.name}</h1>
-          <p className="text-sm text-gray-500 dark:text-gray-400">
+          <p className="text-sm text-slate-500 dark:text-slate-400">
             <span className="tabular-nums">{teacher.employee_id}</span>
             {teacher.designation && ` · ${teacher.designation}`}
             {teacher.department && ` · ${teacher.department}`}
@@ -148,7 +149,7 @@ export function TeacherProfile({ teacherId }: { teacherId: number }) {
             {canEdit && (
               <Link
                 href={`/admin/teachers/${teacher.id}/edit`}
-                className="rounded-md border border-gray-300 px-3 py-1 dark:border-gray-700"
+                className="btn btn-secondary"
               >
                 Edit details
               </Link>
@@ -164,7 +165,7 @@ export function TeacherProfile({ teacherId }: { teacherId: number }) {
                       `${teacher.name} restored.`,
                     )
                   }
-                  className="rounded-md border border-gray-300 px-3 py-1 dark:border-gray-700"
+                  className="btn btn-secondary"
                 >
                   Restore
                 </button>
@@ -189,7 +190,7 @@ export function TeacherProfile({ teacherId }: { teacherId: number }) {
                       };
                     }, `${teacher.name} archived.`);
                   }}
-                  className="rounded-md border border-red-300 px-3 py-1 text-red-600 dark:border-red-900"
+                  className="btn btn-danger"
                 >
                   Archive
                 </button>
@@ -198,7 +199,7 @@ export function TeacherProfile({ teacherId }: { teacherId: number }) {
         </div>
       </header>
 
-      <section className="rounded-lg border border-gray-200 p-4 dark:border-gray-800">
+      <section className="card p-5">
         <h2 className="mb-3 text-sm font-semibold">Details</h2>
         <DetailsList
           rows={[

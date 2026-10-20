@@ -8,11 +8,11 @@ import * as yearService from "@/services/academicYearService";
 import { errorMessage } from "@/lib/errors";
 import type { AcademicYear, AcademicYearInput } from "@/types/academicYear";
 import type { Paginated } from "@/types/api";
+import { PageLoader } from "@/components/Loading";
 
 const EMPTY: AcademicYearInput = { name: "", start_date: "", end_date: "" };
 
-const inputClass =
-  "rounded-md border border-gray-300 px-2 py-1 text-sm dark:border-gray-700 dark:bg-gray-800";
+const inputClass = "input input-sm";
 
 /** Client-side hint mirroring the server rule (the server stays authoritative). */
 function rangeError(input: AcademicYearInput): string | null {
@@ -164,27 +164,27 @@ export function AcademicYearsManager() {
   }
 
   if (loading) {
-    return <p className="p-8 text-sm text-gray-500">Loading…</p>;
+    return <PageLoader />;
   }
 
   return (
     <div className="mx-auto max-w-4xl p-6">
       <h1 className="mb-1 text-2xl font-semibold">Academic years</h1>
-      <p className="mb-6 text-sm text-gray-500 dark:text-gray-400">
+      <p className="mb-6 text-sm text-slate-500 dark:text-slate-400">
         Exactly one year is current; the system defaults to it everywhere.
       </p>
 
       {error && (
-        <p role="alert" className="mb-4 text-sm text-red-600">
+        <p role="alert" className="alert alert-error mb-4">
           {error}
         </p>
       )}
-      {notice && <p className="mb-4 text-sm text-green-600">{notice}</p>}
+      {notice && <p className="alert alert-success mb-4">{notice}</p>}
 
       {canCreate && (
         <form
           onSubmit={handleCreate}
-          className="mb-6 grid gap-2 rounded-lg border border-gray-200 p-4 sm:grid-cols-[1fr_auto_auto_auto] sm:items-end dark:border-gray-800"
+          className="card mb-6 grid gap-2 p-5 sm:grid-cols-[1fr_auto_auto_auto] sm:items-end"
         >
           <label className="text-sm">
             <span className="mb-1 block font-medium">Name</span>
@@ -217,26 +217,22 @@ export function AcademicYearsManager() {
               className={inputClass}
             />
           </label>
-          <button
-            type="submit"
-            disabled={busy}
-            className="rounded-md bg-gray-900 px-4 py-1.5 text-sm text-white disabled:opacity-60 dark:bg-gray-100 dark:text-gray-900"
-          >
+          <button type="submit" disabled={busy} className="btn btn-primary">
             Add year
           </button>
         </form>
       )}
 
       {years.length === 0 ? (
-        <p className="text-sm text-gray-500">
+        <p className="text-sm text-slate-500">
           No academic years yet.
           {canCreate ? " The first one you add becomes current." : ""}
         </p>
       ) : (
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
+        <div className="table-wrap">
+          <table>
             <thead>
-              <tr className="border-b border-gray-200 text-left text-gray-500 dark:border-gray-800 dark:text-gray-400">
+              <tr className="table-head">
                 <th className="py-2 font-medium">Name</th>
                 <th className="py-2 font-medium">Starts</th>
                 <th className="py-2 font-medium">Ends</th>
@@ -246,10 +242,7 @@ export function AcademicYearsManager() {
             <tbody>
               {years.map((year) =>
                 editing?.id === year.id ? (
-                  <tr
-                    key={year.id}
-                    className="border-b border-gray-100 dark:border-gray-900"
-                  >
+                  <tr key={year.id} className="table-row">
                     <td className="py-2 pr-2">
                       <input
                         aria-label="Name"
@@ -295,21 +288,18 @@ export function AcademicYearsManager() {
                       <button
                         type="button"
                         onClick={() => setEditing(null)}
-                        className="text-xs text-gray-500 hover:underline"
+                        className="text-xs text-slate-500 hover:underline"
                       >
                         Cancel
                       </button>
                     </td>
                   </tr>
                 ) : (
-                  <tr
-                    key={year.id}
-                    className="border-b border-gray-100 dark:border-gray-900"
-                  >
+                  <tr key={year.id} className="table-row">
                     <td className="py-2">
                       <span className="font-medium">{year.name}</span>
                       {year.is_current && (
-                        <span className="ml-2 rounded bg-gray-900 px-1.5 py-0.5 text-xs text-white dark:bg-gray-100 dark:text-gray-900">
+                        <span className="ml-2 rounded bg-slate-900 px-1.5 py-0.5 text-xs text-white dark:bg-slate-100 dark:text-slate-900">
                           Current
                         </span>
                       )}
@@ -342,7 +332,7 @@ export function AcademicYearsManager() {
                               end_date: year.end_date,
                             })
                           }
-                          className="text-xs text-gray-600 hover:underline dark:text-gray-300"
+                          className="text-xs text-slate-600 hover:underline dark:text-slate-300"
                         >
                           Edit
                         </button>

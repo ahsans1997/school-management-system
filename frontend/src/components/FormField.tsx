@@ -1,8 +1,7 @@
 import type { ReactNode } from "react";
 
 /** Shared look for text inputs and selects in record forms. */
-export const fieldInputClass =
-  "w-full rounded-md border border-gray-300 px-2 py-1 text-sm dark:border-gray-700 dark:bg-gray-800";
+export const fieldInputClass = "input w-full";
 
 /**
  * Label + control + server error (or hint). Keep it at module level —
@@ -28,7 +27,7 @@ export function FormField({
       {error ? (
         <span className="mt-1 block text-xs text-red-600">{error}</span>
       ) : hint ? (
-        <span className="mt-1 block text-xs text-gray-500">{hint}</span>
+        <span className="mt-1 block text-xs text-slate-500">{hint}</span>
       ) : null}
     </label>
   );

@@ -1,53 +1,128 @@
 "use client";
 
+import {
+  Award,
+  BookOpen,
+  CalendarCheck,
+  CalendarClock,
+  CalendarRange,
+  ClipboardList,
+  GraduationCap,
+  IdCard,
+  LayoutDashboard,
+  NotebookPen,
+  School,
+  Settings,
+  ShieldCheck,
+  UserCog,
+  UserRound,
+  UsersRound,
+} from "lucide-react";
 import type { ReactNode } from "react";
 import { AppShell, type NavItem } from "@/components/AppShell";
 import { RequireAuth } from "@/components/RequireAuth";
 import { AREA_AUDIENCES } from "@/lib/audience";
 
 // Each entry is hidden unless the user holds its permission. Feature modules
-// add their screens here as they land.
+// add their screens here as they land; `section` starts a new menu group.
 const NAV: readonly NavItem[] = [
-  { href: "/admin/dashboard", label: "Dashboard" },
+  { href: "/admin/dashboard", label: "Dashboard", icon: LayoutDashboard },
+
   {
-    href: "/admin/academic-years",
-    label: "Academic years",
-    permission: "academic_year.view",
+    section: "Students",
+    href: "/admin/students",
+    label: "Students",
+    permission: "student.view",
+    icon: GraduationCap,
   },
-  { href: "/admin/classes", label: "Classes", permission: "class.view" },
-  { href: "/admin/subjects", label: "Subjects", permission: "subject.view" },
-  { href: "/admin/students", label: "Students", permission: "student.view" },
-  { href: "/admin/id-cards", label: "ID cards", permission: "student.view" },
   {
     href: "/admin/enrollments",
     label: "Enrollments",
     permission: "enrollment.view",
+    icon: ClipboardList,
   },
-  { href: "/admin/guardians", label: "Guardians", permission: "guardian.view" },
-  { href: "/admin/teachers", label: "Teachers", permission: "teacher.view" },
+  {
+    href: "/admin/guardians",
+    label: "Guardians",
+    permission: "guardian.view",
+    icon: UsersRound,
+  },
   {
     href: "/admin/attendance",
     label: "Attendance",
     permission: "attendance.view",
+    icon: CalendarCheck,
+  },
+  {
+    href: "/admin/id-cards",
+    label: "ID cards",
+    permission: "student.view",
+    icon: IdCard,
+  },
+
+  {
+    section: "Academics",
+    href: "/admin/teachers",
+    label: "Teachers",
+    permission: "teacher.view",
+    icon: UserRound,
+  },
+  {
+    href: "/admin/classes",
+    label: "Classes",
+    permission: "class.view",
+    icon: School,
+  },
+  {
+    href: "/admin/subjects",
+    label: "Subjects",
+    permission: "subject.view",
+    icon: BookOpen,
   },
   {
     href: "/admin/routines",
     label: "Class routine",
     permission: "routine.view",
+    icon: CalendarClock,
   },
-  { href: "/admin/exams", label: "Exams", permission: "exam.view" },
+  {
+    href: "/admin/exams",
+    label: "Exams",
+    permission: "exam.view",
+    icon: NotebookPen,
+  },
   {
     href: "/admin/grade-scales",
     label: "Grade scales",
     permission: "exam.view",
+    icon: Award,
   },
-  { href: "/admin/users", label: "Users", permission: "user.view" },
+  {
+    href: "/admin/academic-years",
+    label: "Academic years",
+    permission: "academic_year.view",
+    icon: CalendarRange,
+  },
+
+  {
+    section: "System",
+    href: "/admin/users",
+    label: "Users",
+    permission: "user.view",
+    icon: UserCog,
+  },
   {
     href: "/admin/roles",
     label: "Roles & permissions",
     permission: "role.view",
+    icon: ShieldCheck,
   },
-  { href: "/admin/settings", label: "Settings", permission: "settings.view" },
+  {
+    href: "/admin/settings",
+    label: "Settings",
+    permission: "settings.view",
+    icon: Settings,
+  },
 ];
 
 export default function AdminLayout({ children }: { children: ReactNode }) {

@@ -16,8 +16,7 @@ import type { SchoolClass } from "@/types/schoolClass";
 import type { Section } from "@/types/section";
 import type { Student } from "@/types/student";
 
-const inputClass =
-  "rounded-md border border-gray-300 px-2 py-1 text-sm dark:border-gray-700 dark:bg-gray-800";
+const inputClass = "input input-sm";
 
 interface Props {
   student: Student;
@@ -100,11 +99,11 @@ export function StudentEnrollment({
   }
 
   return (
-    <section className="rounded-lg border border-gray-200 p-4 dark:border-gray-800">
+    <section className="card p-5">
       <h2 className="mb-3 text-sm font-semibold">Enrollment</h2>
 
       {error && (
-        <p role="alert" className="mb-3 text-sm text-red-600">
+        <p role="alert" className="alert alert-error mb-3">
           {error}
         </p>
       )}
@@ -120,7 +119,7 @@ export function StudentEnrollment({
             {current.ended_on && ` on ${formatDay(current.ended_on)}`}
           </p>
           {current.exit_reason && (
-            <p className="text-xs text-gray-500">{current.exit_reason}</p>
+            <p className="text-xs text-slate-500">{current.exit_reason}</p>
           )}
           {current.status === "transferred" && can("enrollment.view") && (
             <Link
@@ -181,14 +180,14 @@ export function StudentEnrollment({
                           : `${student.name} marked as left.`,
                       )
                     }
-                    className="rounded-md border border-red-300 px-3 py-1 text-sm text-red-600 dark:border-red-900"
+                    className="btn btn-danger"
                   >
                     {ending === "transferred" ? "Confirm transfer" : "Confirm"}
                   </button>
                   <button
                     type="button"
                     onClick={() => setEnding(null)}
-                    className="text-sm text-gray-500 hover:underline"
+                    className="text-sm text-slate-500 hover:underline"
                   >
                     Cancel
                   </button>
@@ -198,7 +197,7 @@ export function StudentEnrollment({
           )}
         </div>
       ) : (
-        <p className="mb-3 text-sm text-gray-500">
+        <p className="mb-3 text-sm text-slate-500">
           Not enrolled for the current year.
         </p>
       )}
@@ -206,11 +205,11 @@ export function StudentEnrollment({
       {showEnroll &&
         currentYear !== undefined &&
         (currentYear === null ? (
-          <p className="text-xs text-gray-500">
+          <p className="text-xs text-slate-500">
             Set a current academic year to enroll students.
           </p>
         ) : (
-          <div className="flex flex-wrap items-center gap-2 border-t border-gray-100 pt-3 dark:border-gray-800">
+          <div className="flex flex-wrap items-center gap-2 border-t border-slate-100 pt-3 dark:border-slate-800">
             <select
               aria-label="Class"
               value={classId}
@@ -253,7 +252,7 @@ export function StudentEnrollment({
                   `${student.name} enrolled for ${currentYear.name}.`,
                 )
               }
-              className="rounded-md bg-gray-900 px-3 py-1 text-sm text-white disabled:opacity-60 dark:bg-gray-100 dark:text-gray-900"
+              className="btn btn-primary"
             >
               Enroll for {currentYear.name}
             </button>
@@ -262,23 +261,23 @@ export function StudentEnrollment({
 
       {history.length > 0 && (
         <details className="mt-3 text-sm">
-          <summary className="cursor-pointer text-gray-500">
+          <summary className="cursor-pointer text-slate-500">
             History ({history.length})
           </summary>
-          <ul className="mt-2 divide-y divide-gray-100 dark:divide-gray-800">
+          <ul className="mt-2 divide-y divide-slate-100 dark:divide-slate-800">
             {history.map((e) => (
               <li key={e.id} className="flex flex-wrap justify-between py-1.5">
                 <span>
                   {e.academic_year?.name} · {e.class?.name} {e.section?.name} ·
                   Roll {e.roll}
                 </span>
-                <span className="text-gray-500">
+                <span className="text-slate-500">
                   {labelOf(ENROLLMENT_STATUSES, e.status)}
                   {e.ended_on && ` ${formatDay(e.ended_on)}`}
                   {e.status === "transferred" && can("enrollment.view") && (
                     <Link
                       href={`/admin/enrollments/${e.id}/transfer-certificate`}
-                      className="ml-2 text-gray-900 hover:underline dark:text-gray-100"
+                      className="ml-2 text-slate-900 hover:underline dark:text-slate-100"
                     >
                       TC
                     </Link>

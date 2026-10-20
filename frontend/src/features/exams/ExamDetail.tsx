@@ -23,9 +23,9 @@ import type { Section } from "@/types/section";
 import { ExamForm } from "./ExamForm";
 import { ExamScheduleTable } from "./ExamScheduleTable";
 import { examDates } from "./ExamsList";
+import { PageLoader } from "@/components/Loading";
 
-const inputClass =
-  "rounded-md border border-gray-300 px-2 py-1 text-sm dark:border-gray-700 dark:bg-gray-800";
+const inputClass = "input input-sm";
 
 /** One exam: header, the classes taking it, and its timetable. */
 export function ExamDetail({ examId }: { examId: number }) {
@@ -133,16 +133,14 @@ export function ExamDetail({ examId }: { examId: number }) {
   }
 
   if (!detail) {
-    return (
-      <div className="p-8 text-sm">
-        {error ? (
-          <p role="alert" className="text-red-600">
-            {error}
-          </p>
-        ) : (
-          <p className="text-gray-500">Loading…</p>
-        )}
+    return error ? (
+      <div className="p-6">
+        <p role="alert" className="alert alert-error">
+          {error}
+        </p>
       </div>
+    ) : (
+      <PageLoader />
     );
   }
 
@@ -156,7 +154,7 @@ export function ExamDetail({ examId }: { examId: number }) {
       <div>
         <Link
           href="/admin/exams"
-          className="text-sm text-gray-500 hover:underline"
+          className="text-sm text-slate-500 hover:underline"
         >
           ← Exams
         </Link>
@@ -164,7 +162,7 @@ export function ExamDetail({ examId }: { examId: number }) {
           <h1 className="text-2xl font-semibold">
             {exam.name}
             {exam.archived && (
-              <span className="ml-2 rounded bg-gray-200 px-2 py-0.5 align-middle text-xs font-normal text-gray-700 dark:bg-gray-800 dark:text-gray-300">
+              <span className="ml-2 rounded bg-slate-200 px-2 py-0.5 align-middle text-xs font-normal text-slate-700 dark:bg-slate-800 dark:text-slate-300">
                 Archived
               </span>
             )}
@@ -177,7 +175,7 @@ export function ExamDetail({ examId }: { examId: number }) {
                   setEditing(true);
                   setNotice(null);
                 }}
-                className="rounded-md border border-gray-300 px-3 py-1 text-sm dark:border-gray-700"
+                className="btn btn-secondary"
               >
                 Edit
               </button>
@@ -187,7 +185,7 @@ export function ExamDetail({ examId }: { examId: number }) {
                 <button
                   type="button"
                   onClick={() => void restore()}
-                  className="rounded-md border border-gray-300 px-3 py-1 text-sm dark:border-gray-700"
+                  className="btn btn-secondary"
                 >
                   Restore
                 </button>
@@ -195,7 +193,7 @@ export function ExamDetail({ examId }: { examId: number }) {
                 <button
                   type="button"
                   onClick={() => void archive()}
-                  className="rounded-md border border-red-300 px-3 py-1 text-sm text-red-700 dark:border-red-800 dark:text-red-400"
+                  className="btn btn-danger"
                 >
                   Archive
                 </button>
@@ -205,13 +203,13 @@ export function ExamDetail({ examId }: { examId: number }) {
       </div>
 
       {error && (
-        <p role="alert" className="text-sm text-red-600">
+        <p role="alert" className="alert alert-error">
           {error}
         </p>
       )}
-      {notice && <p className="text-sm text-green-600">{notice}</p>}
+      {notice && <p className="alert alert-success">{notice}</p>}
 
-      <section className="rounded-lg border border-gray-200 p-4 dark:border-gray-800">
+      <section className="card p-5">
         {editing ? (
           <ExamForm
             exam={exam}
@@ -236,11 +234,11 @@ export function ExamDetail({ examId }: { examId: number }) {
       <section>
         <h2 className="mb-2 text-sm font-semibold">Classes</h2>
         {detail.classes.length === 0 ? (
-          <p className="mb-3 text-sm text-gray-500">
+          <p className="mb-3 text-sm text-slate-500">
             No class takes this exam yet{canEdit ? ": add one below." : "."}
           </p>
         ) : (
-          <ul className="mb-3 divide-y divide-gray-100 rounded-lg border border-gray-200 text-sm dark:divide-gray-800 dark:border-gray-800">
+          <ul className="card mb-3 divide-y divide-slate-100 text-sm dark:divide-slate-800">
             {detail.classes.map((c) => (
               <li
                 key={c.id}
@@ -248,7 +246,7 @@ export function ExamDetail({ examId }: { examId: number }) {
               >
                 <span>
                   <span className="font-medium">{c.name}</span>
-                  <span className="ml-2 text-gray-500">
+                  <span className="ml-2 text-slate-500">
                     {c.papers === 1 ? "1 paper" : `${c.papers} papers`}
                   </span>
                 </span>
@@ -282,7 +280,7 @@ export function ExamDetail({ examId }: { examId: number }) {
             {addClassId && (
               <Link
                 href={`/admin/exams/${exam.id}/classes/${addClassId}`}
-                className="rounded-md bg-gray-900 px-3 py-1 text-sm text-white dark:bg-gray-100 dark:text-gray-900"
+                className="btn btn-primary"
               >
                 Set its papers
               </Link>
@@ -325,7 +323,7 @@ export function ExamDetail({ examId }: { examId: number }) {
             <button
               type="button"
               onClick={() => window.print()}
-              className="rounded-md border border-gray-300 px-3 py-1 text-sm dark:border-gray-700"
+              className="btn btn-secondary"
             >
               Print
             </button>

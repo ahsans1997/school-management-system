@@ -5,6 +5,7 @@ import { RoutineGrid } from "@/components/RoutineGrid";
 import { errorMessage } from "@/lib/errors";
 import * as routineService from "@/services/routineService";
 import type { RoutineSlot } from "@/types/routine";
+import { InlineLoader } from "@/components/Loading";
 
 /** A teacher's week across sections — the same slots as the section routines. */
 export function TeacherRoutine({ teacherId }: { teacherId: number }) {
@@ -28,12 +29,12 @@ export function TeacherRoutine({ teacherId }: { teacherId: number }) {
   }, [teacherId]);
 
   return (
-    <section className="rounded-lg border border-gray-200 p-4 dark:border-gray-800">
+    <section className="card p-5">
       <h2 className="mb-3 text-sm font-semibold">Weekly routine</h2>
       {error ? (
-        <p className="text-sm text-gray-500">{error}</p>
+        <p className="text-sm text-slate-500">{error}</p>
       ) : slots === null ? (
-        <p className="text-sm text-gray-500">Loading…</p>
+        <InlineLoader />
       ) : (
         <RoutineGrid slots={slots} perspective="teacher" />
       )}

@@ -19,8 +19,7 @@ import {
   type Weekday,
 } from "@/types/routine";
 
-const inputClass =
-  "rounded-md border border-gray-300 px-1.5 py-1 text-sm dark:border-gray-700 dark:bg-gray-800";
+const inputClass = "input input-sm";
 
 /** "" option value = a labelled, non-teaching period. */
 interface Row {
@@ -202,18 +201,18 @@ export function RoutineBuilder() {
   return (
     <div className="mx-auto max-w-6xl p-6">
       <h1 className="mb-1 text-2xl font-semibold">Class routine</h1>
-      <p className="mb-6 text-sm text-gray-500 dark:text-gray-400">
+      <p className="mb-6 text-sm text-slate-500 dark:text-slate-400">
         A section&apos;s weekly periods for the current year, built from its
         teaching assignments. A teacher or room booked twice at the same time
         blocks saving.
       </p>
 
       {error && (
-        <p role="alert" className="mb-4 text-sm text-red-600">
+        <p role="alert" className="alert alert-error mb-4">
           {error}
         </p>
       )}
-      {notice && <p className="mb-4 text-sm text-green-600">{notice}</p>}
+      {notice && <p className="alert alert-success mb-4">{notice}</p>}
 
       <div className="mb-4 flex flex-wrap gap-2">
         <select
@@ -244,7 +243,7 @@ export function RoutineBuilder() {
           ))}
         </select>
         {routine && (
-          <span className="self-center text-xs text-gray-500">
+          <span className="self-center text-xs text-slate-500">
             {routine.academic_year.name}
           </span>
         )}
@@ -253,10 +252,10 @@ export function RoutineBuilder() {
       {routine && (
         <>
           {canSave && (
-            <section className="mb-6 rounded-lg border border-gray-200 p-4 dark:border-gray-800">
+            <section className="card mb-6 p-5">
               <h2 className="mb-3 text-sm font-semibold">Periods</h2>
               {routine.options.length === 0 && (
-                <p className="mb-3 text-xs text-gray-500">
+                <p className="mb-3 text-xs text-slate-500">
                   This section has no teaching assignments yet: assign subjects
                   to teachers on their profiles first. Labelled periods (e.g.
                   Break) work meanwhile.
@@ -266,7 +265,7 @@ export function RoutineBuilder() {
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm">
                     <thead>
-                      <tr className="text-left text-xs text-gray-500">
+                      <tr className="text-left text-xs text-slate-500">
                         <th className="pr-2 pb-1 font-medium">Day</th>
                         <th className="pr-2 pb-1 font-medium">#</th>
                         <th className="pr-2 pb-1 font-medium">Start</th>
@@ -409,7 +408,7 @@ export function RoutineBuilder() {
                 <button
                   type="button"
                   onClick={addRow}
-                  className="rounded-md border border-gray-300 px-3 py-1 text-sm dark:border-gray-700"
+                  className="btn btn-secondary"
                 >
                   Add period
                 </button>
@@ -417,7 +416,7 @@ export function RoutineBuilder() {
                   type="button"
                   disabled={busy}
                   onClick={() => void save()}
-                  className="rounded-md bg-gray-900 px-4 py-1 text-sm text-white disabled:opacity-60 dark:bg-gray-100 dark:text-gray-900"
+                  className="btn btn-primary"
                 >
                   {busy ? "Saving…" : "Save routine"}
                 </button>

@@ -9,8 +9,7 @@ import type { Enrollment } from "@/types/enrollment";
 import type { SchoolClass } from "@/types/schoolClass";
 import type { Section } from "@/types/section";
 
-const inputClass =
-  "rounded-md border border-gray-300 px-2 py-1 text-sm dark:border-gray-700 dark:bg-gray-800";
+const inputClass = "input input-sm";
 
 interface Props {
   fromYear: AcademicYear;
@@ -104,24 +103,21 @@ export function PromotePanel({
   }
 
   return (
-    <section
-      aria-label="Promote students"
-      className="mb-6 rounded-lg border border-gray-200 p-4 dark:border-gray-800"
-    >
+    <section aria-label="Promote students" className="card mb-6 p-5">
       <h2 className="mb-1 text-sm font-semibold">Promote to the next class</h2>
-      <p className="mb-3 text-xs text-gray-500">
+      <p className="mb-3 text-xs text-slate-500">
         Selected students get a new enrollment one class up; this year&apos;s is
         marked promoted. Unticked students (e.g. held back) stay as they are.
       </p>
 
       {error && (
-        <p role="alert" className="mb-3 text-sm text-red-600">
+        <p role="alert" className="alert alert-error mb-3">
           {error}
         </p>
       )}
 
       {laterYears.length === 0 || nextClasses.length === 0 ? (
-        <p className="text-sm text-gray-500">
+        <p className="text-sm text-slate-500">
           {laterYears.length === 0
             ? "Add the next academic year first (Academic years)."
             : `There's no class at level ${fromClass.numeric_level + 1} to promote into.`}
@@ -171,7 +167,7 @@ export function PromotePanel({
           </div>
 
           {active.length === 0 ? (
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-slate-500">
               No active students in this section.
             </p>
           ) : (
@@ -184,7 +180,7 @@ export function PromotePanel({
                       checked={selected.has(e.student!.id)}
                       onChange={() => toggle(e.student!.id)}
                     />
-                    <span className="w-8 text-gray-500 tabular-nums">
+                    <span className="w-8 text-slate-500 tabular-nums">
                       {e.roll}
                     </span>
                     {e.student!.name}
@@ -199,14 +195,14 @@ export function PromotePanel({
               type="button"
               disabled={busy || !toSectionId || selected.size === 0}
               onClick={() => void handlePromote()}
-              className="rounded-md bg-gray-900 px-4 py-1.5 text-sm text-white disabled:opacity-60 dark:bg-gray-100 dark:text-gray-900"
+              className="btn btn-primary"
             >
               Promote {selected.size} student(s)
             </button>
             <button
               type="button"
               onClick={onCancel}
-              className="text-sm text-gray-500 hover:underline"
+              className="text-sm text-slate-500 hover:underline"
             >
               Cancel
             </button>

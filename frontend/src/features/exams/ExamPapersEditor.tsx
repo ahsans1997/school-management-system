@@ -9,9 +9,9 @@ import * as examService from "@/services/examService";
 import type { ClassPapers, ExamPaper, ExamPaperInput } from "@/types/exam";
 import { ExamScheduleTable } from "./ExamScheduleTable";
 import { examDates } from "./ExamsList";
+import { PageLoader } from "@/components/Loading";
 
-const inputClass =
-  "rounded-md border border-gray-300 px-1.5 py-1 text-sm dark:border-gray-700 dark:bg-gray-800";
+const inputClass = "input input-sm";
 
 /** A paper as typed; "" means blank (section "" = all sections). */
 interface Row {
@@ -180,16 +180,14 @@ export function ExamPapersEditor({
   }
 
   if (!data) {
-    return (
-      <div className="p-8 text-sm">
-        {error ? (
-          <p role="alert" className="text-red-600">
-            {error}
-          </p>
-        ) : (
-          <p className="text-gray-500">Loading…</p>
-        )}
+    return error ? (
+      <div className="p-6">
+        <p role="alert" className="alert alert-error">
+          {error}
+        </p>
       </div>
+    ) : (
+      <PageLoader />
     );
   }
 
@@ -221,30 +219,30 @@ export function ExamPapersEditor({
     <div className="mx-auto max-w-6xl p-6">
       <Link
         href={`/admin/exams/${examId}`}
-        className="text-sm text-gray-500 hover:underline"
+        className="text-sm text-slate-500 hover:underline"
       >
         ← {data.exam.name}
       </Link>
       <h1 className="mt-1 mb-1 text-2xl font-semibold">
         {data.class.name} papers
       </h1>
-      <p className="mb-6 text-sm text-gray-500 dark:text-gray-400">
+      <p className="mb-6 text-sm text-slate-500 dark:text-slate-400">
         {examDates(data.exam)}. A paper is sat by every section unless you pick
         one. Split the full marks into CQ / MCQ / practical only if the paper
         has parts; they must add up.
       </p>
 
       {error && (
-        <p role="alert" className="mb-4 text-sm text-red-600">
+        <p role="alert" className="alert alert-error mb-4">
           {error}
         </p>
       )}
-      {notice && <p className="mb-4 text-sm text-green-600">{notice}</p>}
+      {notice && <p className="alert alert-success mb-4">{notice}</p>}
 
       {!canEdit ? (
         <ExamScheduleTable papers={data.papers} />
       ) : data.subjects.length === 0 ? (
-        <p className="text-sm text-gray-500">
+        <p className="text-sm text-slate-500">
           {data.class.name} has no subjects yet. Assign them under Classes →
           Subjects first.
         </p>
@@ -254,7 +252,7 @@ export function ExamPapersEditor({
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="text-left text-xs text-gray-500">
+                  <tr className="text-left text-xs text-slate-500">
                     <th className="pr-2 pb-1 font-medium">Subject</th>
                     <th className="pr-2 pb-1 font-medium">Sections</th>
                     <th className="pr-2 pb-1 font-medium">Full</th>
@@ -384,7 +382,7 @@ export function ExamPapersEditor({
             </div>
           )}
           {rows.length === 0 && (
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-slate-500">
               No papers: saving takes {data.class.name} out of this exam.
             </p>
           )}
@@ -392,7 +390,7 @@ export function ExamPapersEditor({
             <button
               type="button"
               onClick={addRow}
-              className="rounded-md border border-gray-300 px-3 py-1 text-sm dark:border-gray-700"
+              className="btn btn-secondary"
             >
               Add paper
             </button>
@@ -400,7 +398,7 @@ export function ExamPapersEditor({
               type="button"
               disabled={busy}
               onClick={() => void save()}
-              className="rounded-md bg-gray-900 px-4 py-1 text-sm text-white disabled:opacity-60 dark:bg-gray-100 dark:text-gray-900"
+              className="btn btn-primary"
             >
               {busy ? "Saving…" : "Save papers"}
             </button>

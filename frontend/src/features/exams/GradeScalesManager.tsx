@@ -6,9 +6,9 @@ import { errorMessage } from "@/lib/errors";
 import { ApiRequestError } from "@/services/apiClient";
 import * as examService from "@/services/examService";
 import { STANDARD_GRADES, type GradeScale } from "@/types/exam";
+import { PageLoader } from "@/components/Loading";
 
-const inputClass =
-  "rounded-md border border-gray-300 px-1.5 py-1 text-sm dark:border-gray-700 dark:bg-gray-800";
+const inputClass = "input input-sm";
 
 interface Row {
   key: number;
@@ -173,7 +173,7 @@ export function GradeScalesManager() {
   }
 
   if (loading) {
-    return <p className="p-8 text-sm text-gray-500">Loading…</p>;
+    return <PageLoader />;
   }
 
   const current =
@@ -185,18 +185,18 @@ export function GradeScalesManager() {
   return (
     <div className="mx-auto max-w-4xl p-6">
       <h1 className="mb-1 text-2xl font-semibold">Grade scales</h1>
-      <p className="mb-6 text-sm text-gray-500 dark:text-gray-400">
+      <p className="mb-6 text-sm text-slate-500 dark:text-slate-400">
         Each band starts at a percentage of the full marks and runs up to the
         next band, so every mark gets exactly one grade. One band must start at
         0 %. Each exam picks the scale its results use.
       </p>
 
       {error && (
-        <p role="alert" className="mb-4 text-sm text-red-600">
+        <p role="alert" className="alert alert-error mb-4">
           {error}
         </p>
       )}
-      {notice && <p className="mb-4 text-sm text-green-600">{notice}</p>}
+      {notice && <p className="alert alert-success mb-4">{notice}</p>}
 
       <div className="mb-4 flex flex-wrap gap-2">
         {scales.map((s) => (
@@ -207,8 +207,8 @@ export function GradeScalesManager() {
             aria-pressed={selected === s.id}
             className={`rounded-md border px-3 py-1 text-sm ${
               selected === s.id
-                ? "border-gray-900 bg-gray-900 text-white dark:border-gray-100 dark:bg-gray-100 dark:text-gray-900"
-                : "border-gray-300 dark:border-gray-700"
+                ? "border-brand-600 bg-brand-600 text-white"
+                : "border-slate-300 dark:border-slate-700"
             }`}
           >
             {s.name}
@@ -219,7 +219,7 @@ export function GradeScalesManager() {
             type="button"
             onClick={() => open(null)}
             aria-pressed={selected === "new"}
-            className="rounded-md border border-dashed border-gray-400 px-3 py-1 text-sm dark:border-gray-600"
+            className="rounded-md border border-dashed border-slate-400 px-3 py-1 text-sm dark:border-slate-600"
           >
             New scale
           </button>
@@ -227,18 +227,18 @@ export function GradeScalesManager() {
       </div>
 
       {selected === null ? (
-        <p className="text-sm text-gray-500">
+        <p className="text-sm text-slate-500">
           No grade scales yet{canEdit ? ": start one with “New scale”." : "."}
         </p>
       ) : (
-        <section className="rounded-lg border border-gray-200 p-4 dark:border-gray-800">
+        <section className="card p-5">
           {selected === "new" && (
-            <p className="mb-3 text-xs text-gray-500">
+            <p className="mb-3 text-xs text-slate-500">
               Starts from the standard GPA 5.00 bands. Change them as needed.
             </p>
           )}
           {current && current.exams_count ? (
-            <p className="mb-3 text-xs text-gray-500">
+            <p className="mb-3 text-xs text-slate-500">
               Used by {current.exams_count}{" "}
               {current.exams_count === 1 ? "exam" : "exams"}.
             </p>
@@ -262,7 +262,7 @@ export function GradeScalesManager() {
 
           <table className="w-full max-w-xl text-sm">
             <thead>
-              <tr className="text-left text-xs text-gray-500">
+              <tr className="text-left text-xs text-slate-500">
                 <th className="pr-2 pb-1 font-medium">Grade</th>
                 <th className="pr-2 pb-1 font-medium">Grade point</th>
                 <th className="pr-2 pb-1 font-medium">From (%)</th>
@@ -327,7 +327,7 @@ export function GradeScalesManager() {
                         className={`w-20 ${inputClass}`}
                       />
                     </td>
-                    <td className="py-1 pr-2 whitespace-nowrap text-gray-500 tabular-nums">
+                    <td className="py-1 pr-2 whitespace-nowrap text-slate-500 tabular-nums">
                       {rangeOf.get(r.key) ?? "—"}
                     </td>
                     <td className="py-1">
@@ -368,7 +368,7 @@ export function GradeScalesManager() {
                     },
                   ])
                 }
-                className="rounded-md border border-gray-300 px-3 py-1 text-sm dark:border-gray-700"
+                className="btn btn-secondary"
               >
                 Add band
               </button>
@@ -376,7 +376,7 @@ export function GradeScalesManager() {
                 type="button"
                 disabled={busy}
                 onClick={() => void save()}
-                className="rounded-md bg-gray-900 px-4 py-1 text-sm text-white disabled:opacity-60 dark:bg-gray-100 dark:text-gray-900"
+                className="btn btn-primary"
               >
                 {busy ? "Saving…" : "Save scale"}
               </button>
@@ -384,7 +384,7 @@ export function GradeScalesManager() {
                 <button
                   type="button"
                   onClick={() => void remove(current)}
-                  className="ml-auto rounded-md border border-red-300 px-3 py-1 text-sm text-red-700 dark:border-red-800 dark:text-red-400"
+                  className="btn btn-danger ml-auto"
                 >
                   Delete scale
                 </button>

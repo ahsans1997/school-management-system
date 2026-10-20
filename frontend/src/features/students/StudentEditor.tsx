@@ -7,6 +7,7 @@ import { errorMessage } from "@/lib/errors";
 import * as studentService from "@/services/studentService";
 import type { Student } from "@/types/student";
 import { StudentForm } from "./StudentForm";
+import { PageLoader } from "@/components/Loading";
 
 /** Admit a new student, or edit one (`studentId`). Lands on the profile afterwards. */
 export function StudentEditor({ studentId }: { studentId?: number }) {
@@ -39,14 +40,14 @@ export function StudentEditor({ studentId }: { studentId?: number }) {
   const back = editing ? `/admin/students/${studentId}` : "/admin/students";
 
   if (loading) {
-    return <p className="p-8 text-sm text-gray-500">Loading…</p>;
+    return <PageLoader />;
   }
 
   return (
     <div className="mx-auto max-w-3xl p-6">
       <Link
         href={back}
-        className="text-sm text-gray-500 hover:underline dark:text-gray-400"
+        className="text-sm text-slate-500 hover:underline dark:text-slate-400"
       >
         ← {editing ? "Back to profile" : "Students"}
       </Link>
@@ -55,7 +56,7 @@ export function StudentEditor({ studentId }: { studentId?: number }) {
       </h1>
 
       {error ? (
-        <p role="alert" className="text-sm text-red-600">
+        <p role="alert" className="alert alert-error">
           {error}
         </p>
       ) : editing && student?.archived_at ? (

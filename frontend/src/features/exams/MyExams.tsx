@@ -7,6 +7,7 @@ import * as examService from "@/services/examService";
 import { EXAM_TYPES, type MyExams as MyExamsData } from "@/types/exam";
 import { ExamScheduleTable } from "./ExamScheduleTable";
 import { examDates } from "./ExamsList";
+import { InlineLoader } from "@/components/Loading";
 
 /**
  * The caller's upcoming exam timetables: a teacher's sections, a
@@ -41,30 +42,30 @@ export function MyExams() {
         <h1 className="text-2xl font-semibold">
           Exams
           {data && (
-            <span className="ml-2 text-base font-normal text-gray-500">
+            <span className="ml-2 text-base font-normal text-slate-500">
               {data.academic_year.name}
             </span>
           )}
         </h1>
-        <p className="text-sm text-gray-500 dark:text-gray-400">
+        <p className="text-sm text-slate-500 dark:text-slate-400">
           Upcoming and current exams.
         </p>
       </div>
 
       {error ? (
-        <p role="alert" className="text-sm text-red-600">
+        <p role="alert" className="alert alert-error">
           {error}
         </p>
       ) : !data ? (
-        <p className="text-sm text-gray-500">Loading…</p>
+        <InlineLoader />
       ) : data.groups.length === 0 ? (
-        <p className="text-sm text-gray-500">
+        <p className="text-sm text-slate-500">
           {data.type === "teacher"
             ? "You don't teach any sections yet."
             : "Your login isn't linked to a student yet."}
         </p>
       ) : !anyExams ? (
-        <p className="text-sm text-gray-500">No upcoming exams.</p>
+        <p className="text-sm text-slate-500">No upcoming exams.</p>
       ) : (
         data.groups.map((g) => (
           <section key={`${g.student?.id ?? "t"}-${g.section?.id ?? "none"}`}>
@@ -75,16 +76,13 @@ export function MyExams() {
                 : "Not enrolled this year"}
             </h2>
             {g.section && g.exams.length === 0 && (
-              <p className="text-sm text-gray-500">No upcoming exams.</p>
+              <p className="text-sm text-slate-500">No upcoming exams.</p>
             )}
             <div className="space-y-4">
               {g.exams.map((e) => (
-                <div
-                  key={e.id}
-                  className="rounded-lg border border-gray-200 p-4 dark:border-gray-800"
-                >
+                <div key={e.id} className="card p-5">
                   <h3 className="font-medium">{e.name}</h3>
-                  <p className="mb-3 text-xs text-gray-500">
+                  <p className="mb-3 text-xs text-slate-500">
                     {labelOf(EXAM_TYPES, e.type)} · {examDates(e)}
                   </p>
                   <ExamScheduleTable papers={e.papers} />

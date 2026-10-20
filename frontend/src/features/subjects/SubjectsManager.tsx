@@ -13,6 +13,7 @@ import {
   type SubjectInput,
   type SubjectType,
 } from "@/types/subject";
+import { PageLoader } from "@/components/Loading";
 
 /** Form fields as typed by the user (the select uses "" for "none"). */
 interface Draft {
@@ -23,8 +24,7 @@ interface Draft {
 
 const EMPTY: Draft = { name: "", code: "", type: "" };
 
-const inputClass =
-  "rounded-md border border-gray-300 px-2 py-1 text-sm dark:border-gray-700 dark:bg-gray-800";
+const inputClass = "input input-sm";
 
 function toInput(draft: Draft): SubjectInput {
   return {
@@ -170,27 +170,27 @@ export function SubjectsManager() {
   }
 
   if (loading) {
-    return <p className="p-8 text-sm text-gray-500">Loading…</p>;
+    return <PageLoader />;
   }
 
   return (
     <div className="mx-auto max-w-4xl p-6">
       <h1 className="mb-1 text-2xl font-semibold">Subjects</h1>
-      <p className="mb-6 text-sm text-gray-500 dark:text-gray-400">
+      <p className="mb-6 text-sm text-slate-500 dark:text-slate-400">
         The subject catalogue. Assign subjects to a class from the Classes page.
       </p>
 
       {error && (
-        <p role="alert" className="mb-4 text-sm text-red-600">
+        <p role="alert" className="alert alert-error mb-4">
           {error}
         </p>
       )}
-      {notice && <p className="mb-4 text-sm text-green-600">{notice}</p>}
+      {notice && <p className="alert alert-success mb-4">{notice}</p>}
 
       {canCreate && (
         <form
           onSubmit={handleCreate}
-          className="mb-6 grid gap-2 rounded-lg border border-gray-200 p-4 sm:grid-cols-[1fr_7rem_auto_auto] sm:items-end dark:border-gray-800"
+          className="card mb-6 grid gap-2 p-5 sm:grid-cols-[1fr_7rem_auto_auto] sm:items-end"
         >
           <label className="text-sm">
             <span className="mb-1 block font-medium">Name</span>
@@ -217,23 +217,19 @@ export function SubjectsManager() {
             value={form.type}
             onChange={(type) => setForm({ ...form, type })}
           />
-          <button
-            type="submit"
-            disabled={busy}
-            className="rounded-md bg-gray-900 px-4 py-1.5 text-sm text-white disabled:opacity-60 dark:bg-gray-100 dark:text-gray-900"
-          >
+          <button type="submit" disabled={busy} className="btn btn-primary">
             Add subject
           </button>
         </form>
       )}
 
       {subjects.length === 0 ? (
-        <p className="text-sm text-gray-500">No subjects yet.</p>
+        <p className="text-sm text-slate-500">No subjects yet.</p>
       ) : (
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
+        <div className="table-wrap">
+          <table>
             <thead>
-              <tr className="border-b border-gray-200 text-left text-gray-500 dark:border-gray-800 dark:text-gray-400">
+              <tr className="table-head">
                 <th className="py-2 pr-3 font-medium">Name</th>
                 <th className="py-2 pr-3 font-medium">Code</th>
                 <th className="py-2 pr-3 font-medium">Type</th>
@@ -244,10 +240,7 @@ export function SubjectsManager() {
             <tbody>
               {subjects.map((s) =>
                 editing?.id === s.id ? (
-                  <tr
-                    key={s.id}
-                    className="border-b border-gray-100 dark:border-gray-900"
-                  >
+                  <tr key={s.id} className="table-row">
                     <td className="py-2 pr-2">
                       <input
                         aria-label="Name"
@@ -291,17 +284,14 @@ export function SubjectsManager() {
                       <button
                         type="button"
                         onClick={() => setEditing(null)}
-                        className="text-xs text-gray-500 hover:underline"
+                        className="text-xs text-slate-500 hover:underline"
                       >
                         Cancel
                       </button>
                     </td>
                   </tr>
                 ) : (
-                  <tr
-                    key={s.id}
-                    className="border-b border-gray-100 dark:border-gray-900"
-                  >
+                  <tr key={s.id} className="table-row">
                     <td className="py-2 pr-3 font-medium">{s.name}</td>
                     <td className="py-2 pr-3 tabular-nums">{s.code ?? "—"}</td>
                     <td className="py-2 pr-3">
@@ -319,7 +309,7 @@ export function SubjectsManager() {
                           onClick={() =>
                             setEditing({ ...toDraft(s), id: s.id })
                           }
-                          className="text-xs text-gray-600 hover:underline dark:text-gray-300"
+                          className="text-xs text-slate-600 hover:underline dark:text-slate-300"
                         >
                           Edit
                         </button>

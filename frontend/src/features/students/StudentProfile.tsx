@@ -15,6 +15,7 @@ import { BLOOD_GROUPS, GENDERS, type Student } from "@/types/student";
 import { StudentAttendanceSummary } from "./StudentAttendanceSummary";
 import { StudentEnrollment } from "./StudentEnrollment";
 import { StudentGuardians } from "./StudentGuardians";
+import { PageLoader } from "@/components/Loading";
 
 const isNotFound = (err: unknown) =>
   err instanceof ApiRequestError && err.error.status === 404;
@@ -71,14 +72,14 @@ export function StudentProfile({ studentId }: { studentId: number }) {
   const backLink = (
     <Link
       href="/admin/students"
-      className="text-sm text-gray-500 hover:underline dark:text-gray-400"
+      className="text-sm text-slate-500 hover:underline dark:text-slate-400"
     >
       ← Students
     </Link>
   );
 
   if (loading) {
-    return <p className="p-8 text-sm text-gray-500">Loading…</p>;
+    return <PageLoader />;
   }
   if (missing || !student) {
     return (
@@ -103,11 +104,11 @@ export function StudentProfile({ studentId }: { studentId: number }) {
         </p>
       )}
       {error && (
-        <p role="alert" className="text-sm text-red-600">
+        <p role="alert" className="alert alert-error">
           {error}
         </p>
       )}
-      {notice && <p className="text-sm text-green-600">{notice}</p>}
+      {notice && <p className="alert alert-success">{notice}</p>}
 
       <header className="flex flex-wrap items-start gap-4">
         <PhotoEditor
@@ -132,7 +133,7 @@ export function StudentProfile({ studentId }: { studentId: number }) {
 
         <div className="min-w-0 flex-1">
           <h1 className="text-2xl font-semibold">{student.name}</h1>
-          <p className="text-sm text-gray-500 tabular-nums dark:text-gray-400">
+          <p className="text-sm text-slate-500 tabular-nums dark:text-slate-400">
             Student ID {student.student_id} · Admission no.{" "}
             {student.admission_no}
           </p>
@@ -140,7 +141,7 @@ export function StudentProfile({ studentId }: { studentId: number }) {
             {canEdit && (
               <Link
                 href={`/admin/students/${student.id}/edit`}
-                className="rounded-md border border-gray-300 px-3 py-1 dark:border-gray-700"
+                className="btn btn-secondary"
               >
                 Edit details
               </Link>
@@ -148,7 +149,7 @@ export function StudentProfile({ studentId }: { studentId: number }) {
             {!archived && student.current_enrollment?.status === "active" && (
               <Link
                 href={`/admin/students/${student.id}/id-card`}
-                className="rounded-md border border-gray-300 px-3 py-1 dark:border-gray-700"
+                className="btn btn-secondary"
               >
                 ID card
               </Link>
@@ -164,7 +165,7 @@ export function StudentProfile({ studentId }: { studentId: number }) {
                       `${student.name} restored.`,
                     )
                   }
-                  className="rounded-md border border-gray-300 px-3 py-1 dark:border-gray-700"
+                  className="btn btn-secondary"
                 >
                   Restore
                 </button>
@@ -184,7 +185,7 @@ export function StudentProfile({ studentId }: { studentId: number }) {
                       return { archived_at: new Date().toISOString() };
                     }, `${student.name} archived.`);
                   }}
-                  className="rounded-md border border-red-300 px-3 py-1 text-red-600 dark:border-red-900"
+                  className="btn btn-danger"
                 >
                   Archive
                 </button>
@@ -193,7 +194,7 @@ export function StudentProfile({ studentId }: { studentId: number }) {
         </div>
       </header>
 
-      <section className="rounded-lg border border-gray-200 p-4 dark:border-gray-800">
+      <section className="card p-5">
         <h2 className="mb-3 text-sm font-semibold">Details</h2>
         <DetailsList
           rows={[

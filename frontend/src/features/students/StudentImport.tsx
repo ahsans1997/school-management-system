@@ -82,40 +82,40 @@ export function StudentImport() {
     <div className="mx-auto max-w-5xl p-6">
       <Link
         href="/admin/students"
-        className="text-sm text-gray-500 hover:underline"
+        className="text-sm text-slate-500 hover:underline"
       >
         ← Students
       </Link>
       <h1 className="mt-1 mb-1 text-2xl font-semibold">Import students</h1>
-      <p className="mb-6 text-sm text-gray-500 dark:text-gray-400">
+      <p className="mb-6 text-sm text-slate-500 dark:text-slate-400">
         Upload a CSV or Excel file with one student per row. Every row is
         checked first; if any row has a problem, nothing is imported. Rows with
         a class and section are enrolled for the current year.
       </p>
 
-      <section className="mb-6 rounded-lg border border-gray-200 p-4 dark:border-gray-800">
+      <section className="card mb-6 p-5">
         <div className="mb-3 flex flex-wrap items-center gap-2 text-sm">
           <span className="font-semibold">Template:</span>
           <button
             type="button"
             onClick={() => void template("xlsx")}
-            className="rounded-md border border-gray-300 px-3 py-1 dark:border-gray-700"
+            className="btn btn-secondary"
           >
             Excel (.xlsx)
           </button>
           <button
             type="button"
             onClick={() => void template("csv")}
-            className="rounded-md border border-gray-300 px-3 py-1 dark:border-gray-700"
+            className="btn btn-secondary"
           >
             CSV
           </button>
-          <span className="text-xs text-gray-500">
+          <span className="text-xs text-slate-500">
             An export from the Students page also works as an import file.
           </span>
         </div>
         <details className="text-sm">
-          <summary className="cursor-pointer text-gray-600 dark:text-gray-400">
+          <summary className="cursor-pointer text-slate-600 dark:text-slate-400">
             Columns
           </summary>
           <table className="mt-2 text-xs">
@@ -123,7 +123,7 @@ export function StudentImport() {
               {IMPORT_COLUMNS.map((c) => (
                 <tr key={c.name}>
                   <td className="py-0.5 pr-4 font-medium">{c.name}</td>
-                  <td className="py-0.5 text-gray-500">{c.note}</td>
+                  <td className="py-0.5 text-slate-500">{c.note}</td>
                 </tr>
               ))}
             </tbody>
@@ -148,7 +148,7 @@ export function StudentImport() {
         <button
           type="submit"
           disabled={!file || busy}
-          className="rounded-md border border-gray-300 px-3 py-1 text-sm disabled:opacity-50 dark:border-gray-700"
+          className="btn btn-secondary"
         >
           {busy && !checked ? "Checking…" : "Check file"}
         </button>
@@ -157,7 +157,7 @@ export function StudentImport() {
             type="button"
             disabled={busy}
             onClick={() => void run(false)}
-            className="rounded-md bg-gray-900 px-4 py-1 text-sm text-white disabled:opacity-60 dark:bg-gray-100 dark:text-gray-900"
+            className="btn btn-primary"
           >
             {busy
               ? "Importing…"
@@ -167,7 +167,7 @@ export function StudentImport() {
       </form>
 
       {error && (
-        <p role="alert" className="mb-3 text-sm text-red-600">
+        <p role="alert" className="alert alert-error mb-3">
           {rowErrors.length > 0
             ? `${rowErrors.length} ${rowErrors.length === 1 ? "row has" : "rows have"} problems. Nothing was imported; fix them and check again.`
             : error}
@@ -177,17 +177,14 @@ export function StudentImport() {
       {rowErrors.length > 0 && (
         <table className="mb-6 w-full text-sm">
           <thead>
-            <tr className="border-b border-gray-200 text-left text-gray-500 dark:border-gray-800">
+            <tr className="table-head">
               <th className="py-1 pr-3 font-medium">Row</th>
               <th className="py-1 font-medium">Problem</th>
             </tr>
           </thead>
           <tbody>
             {rowErrors.map((r) => (
-              <tr
-                key={r.row}
-                className="border-b border-gray-100 align-top dark:border-gray-900"
-              >
+              <tr key={r.row} className="table-row align-top">
                 <td className="py-1 pr-3 tabular-nums">{r.row}</td>
                 <td className="py-1">
                   {r.errors.map((m) => (
@@ -203,14 +200,14 @@ export function StudentImport() {
       )}
 
       {checked && (
-        <p className="mb-6 text-sm text-green-600">
+        <p className="alert alert-success mb-6">
           All {checked.rows} {checked.rows === 1 ? "row is" : "rows are"} ready
           to import
           {checked.enrolling > 0 &&
             `; ${checked.enrolling} will be enrolled in their class`}
           .
           {checked.ignored_columns.length > 0 && (
-            <span className="block text-gray-500">
+            <span className="block text-slate-500">
               Ignored columns: {checked.ignored_columns.join(", ")}.
             </span>
           )}
@@ -219,15 +216,15 @@ export function StudentImport() {
 
       {done?.students && (
         <section>
-          <p className="mb-3 text-sm text-green-600">
+          <p className="alert alert-success mb-3">
             Imported {done.students.length}{" "}
             {done.students.length === 1 ? "student" : "students"}
             {done.enrolling > 0 && `, ${done.enrolling} enrolled`}.
           </p>
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
+          <div className="table-wrap">
+            <table>
               <thead>
-                <tr className="border-b border-gray-200 text-left text-gray-500 dark:border-gray-800">
+                <tr className="table-head">
                   <th className="py-1 pr-3 font-medium">Row</th>
                   <th className="py-1 pr-3 font-medium">Student</th>
                   <th className="py-1 pr-3 font-medium">Student ID</th>
@@ -237,10 +234,7 @@ export function StudentImport() {
               </thead>
               <tbody>
                 {done.students.map((s) => (
-                  <tr
-                    key={s.id}
-                    className="border-b border-gray-100 dark:border-gray-900"
-                  >
+                  <tr key={s.id} className="table-row">
                     <td className="py-1 pr-3 tabular-nums">{s.row}</td>
                     <td className="py-1 pr-3">
                       <Link

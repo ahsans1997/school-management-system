@@ -9,6 +9,7 @@ import { ApiRequestError } from "@/services/apiClient";
 import * as sectionService from "@/services/sectionService";
 import type { SchoolClass } from "@/types/schoolClass";
 import type { Section, SectionInput, SectionPage } from "@/types/section";
+import { PageLoader } from "@/components/Loading";
 
 /** Form fields as typed by the user. */
 interface Draft {
@@ -18,8 +19,7 @@ interface Draft {
 
 const EMPTY: Draft = { name: "", capacity: "" };
 
-const inputClass =
-  "rounded-md border border-gray-300 px-2 py-1 text-sm dark:border-gray-700 dark:bg-gray-800";
+const inputClass = "input input-sm";
 
 function toInput(draft: Draft): SectionInput {
   return { name: draft.name.trim(), capacity: Number(draft.capacity) };
@@ -149,14 +149,14 @@ export function SectionsManager({ classId }: { classId: number }) {
   const backLink = (
     <Link
       href="/admin/classes"
-      className="text-sm text-gray-500 hover:underline dark:text-gray-400"
+      className="text-sm text-slate-500 hover:underline dark:text-slate-400"
     >
       ← Classes
     </Link>
   );
 
   if (loading) {
-    return <p className="p-8 text-sm text-gray-500">Loading…</p>;
+    return <PageLoader />;
   }
 
   if (missing) {
@@ -174,21 +174,21 @@ export function SectionsManager({ classId }: { classId: number }) {
       <h1 className="mt-2 mb-1 text-2xl font-semibold">
         {schoolClass ? `${schoolClass.name} — sections` : "Sections"}
       </h1>
-      <p className="mb-6 text-sm text-gray-500 dark:text-gray-400">
+      <p className="mb-6 text-sm text-slate-500 dark:text-slate-400">
         Capacity is the number of seats; it caps enrollment in the section.
       </p>
 
       {error && (
-        <p role="alert" className="mb-4 text-sm text-red-600">
+        <p role="alert" className="alert alert-error mb-4">
           {error}
         </p>
       )}
-      {notice && <p className="mb-4 text-sm text-green-600">{notice}</p>}
+      {notice && <p className="alert alert-success mb-4">{notice}</p>}
 
       {canCreate && (
         <form
           onSubmit={handleCreate}
-          className="mb-6 grid gap-2 rounded-lg border border-gray-200 p-4 sm:grid-cols-[1fr_8rem_auto] sm:items-end dark:border-gray-800"
+          className="card mb-6 grid gap-2 p-5 sm:grid-cols-[1fr_8rem_auto] sm:items-end"
         >
           <label className="text-sm">
             <span className="mb-1 block font-medium">Name</span>
@@ -215,23 +215,19 @@ export function SectionsManager({ classId }: { classId: number }) {
               className={`w-full ${inputClass}`}
             />
           </label>
-          <button
-            type="submit"
-            disabled={busy}
-            className="rounded-md bg-gray-900 px-4 py-1.5 text-sm text-white disabled:opacity-60 dark:bg-gray-100 dark:text-gray-900"
-          >
+          <button type="submit" disabled={busy} className="btn btn-primary">
             Add section
           </button>
         </form>
       )}
 
       {sections.length === 0 ? (
-        <p className="text-sm text-gray-500">No sections yet.</p>
+        <p className="text-sm text-slate-500">No sections yet.</p>
       ) : (
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
+        <div className="table-wrap">
+          <table>
             <thead>
-              <tr className="border-b border-gray-200 text-left text-gray-500 dark:border-gray-800 dark:text-gray-400">
+              <tr className="table-head">
                 <th className="py-2 pr-3 font-medium">Section</th>
                 <th className="py-2 pr-3 font-medium">Capacity</th>
                 <th className="py-2 pr-3 font-medium">Class teacher</th>
@@ -241,10 +237,7 @@ export function SectionsManager({ classId }: { classId: number }) {
             <tbody>
               {sections.map((section) =>
                 editing?.id === section.id ? (
-                  <tr
-                    key={section.id}
-                    className="border-b border-gray-100 dark:border-gray-900"
-                  >
+                  <tr key={section.id} className="table-row">
                     <td className="py-2 pr-2">
                       <input
                         aria-label="Name"
@@ -284,17 +277,14 @@ export function SectionsManager({ classId }: { classId: number }) {
                       <button
                         type="button"
                         onClick={() => setEditing(null)}
-                        className="text-xs text-gray-500 hover:underline"
+                        className="text-xs text-slate-500 hover:underline"
                       >
                         Cancel
                       </button>
                     </td>
                   </tr>
                 ) : (
-                  <tr
-                    key={section.id}
-                    className="border-b border-gray-100 dark:border-gray-900"
-                  >
+                  <tr key={section.id} className="table-row">
                     <td className="py-2 pr-3 font-medium">{section.name}</td>
                     <td className="py-2 pr-3 tabular-nums">
                       {section.capacity}
@@ -322,7 +312,7 @@ export function SectionsManager({ classId }: { classId: number }) {
                               capacity: String(section.capacity),
                             })
                           }
-                          className="text-xs text-gray-600 hover:underline dark:text-gray-300"
+                          className="text-xs text-slate-600 hover:underline dark:text-slate-300"
                         >
                           Edit
                         </button>

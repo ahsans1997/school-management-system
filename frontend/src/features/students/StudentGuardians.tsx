@@ -14,8 +14,7 @@ import {
   type Student,
 } from "@/types/student";
 
-const inputClass =
-  "rounded-md border border-gray-300 px-2 py-1 text-sm dark:border-gray-700 dark:bg-gray-800";
+const inputClass = "input input-sm";
 
 interface Props {
   student: Student;
@@ -123,19 +122,19 @@ export function StudentGuardians({
   const linkedIds = new Set(links.map((l) => l.id));
 
   return (
-    <section className="rounded-lg border border-gray-200 p-4 dark:border-gray-800">
+    <section className="card p-5">
       <h2 className="mb-3 text-sm font-semibold">Guardians</h2>
 
       {error && (
-        <p role="alert" className="mb-3 text-sm text-red-600">
+        <p role="alert" className="alert alert-error mb-3">
           {error}
         </p>
       )}
 
       {links.length === 0 ? (
-        <p className="mb-3 text-sm text-gray-500">No guardians linked yet.</p>
+        <p className="mb-3 text-sm text-slate-500">No guardians linked yet.</p>
       ) : (
-        <ul className="mb-4 divide-y divide-gray-100 dark:divide-gray-800">
+        <ul className="mb-4 divide-y divide-slate-100 dark:divide-slate-800">
           {links.map((link) => (
             <li
               key={link.id}
@@ -144,11 +143,11 @@ export function StudentGuardians({
               <span className="min-w-0 flex-1">
                 <span className="font-medium">{link.name}</span>
                 {link.is_primary && (
-                  <span className="ml-2 rounded bg-gray-900 px-1.5 py-0.5 text-xs text-white dark:bg-gray-100 dark:text-gray-900">
+                  <span className="ml-2 rounded bg-slate-900 px-1.5 py-0.5 text-xs text-white dark:bg-slate-100 dark:text-slate-900">
                     Primary
                   </span>
                 )}
-                <span className="block text-xs text-gray-500 tabular-nums">
+                <span className="block text-xs text-slate-500 tabular-nums">
                   {link.phone}
                 </span>
               </span>
@@ -196,7 +195,7 @@ export function StudentGuardians({
                   </button>
                 </>
               ) : (
-                <span className="text-gray-500">
+                <span className="text-slate-500">
                   {labelOf(RELATIONSHIPS, link.relationship)}
                 </span>
               )}
@@ -206,7 +205,7 @@ export function StudentGuardians({
       )}
 
       {canEdit && canSearch && (
-        <div className="border-t border-gray-100 pt-3 dark:border-gray-800">
+        <div className="border-t border-slate-100 pt-3 dark:border-slate-800">
           <form
             role="search"
             onSubmit={handleSearch}
@@ -220,10 +219,7 @@ export function StudentGuardians({
               onChange={(e) => setSearch(e.target.value)}
               className={`min-w-48 flex-1 ${inputClass}`}
             />
-            <button
-              type="submit"
-              className="rounded-md border border-gray-300 px-3 py-1 text-sm dark:border-gray-700"
-            >
+            <button type="submit" className="btn btn-secondary">
               Find
             </button>
           </form>
@@ -231,7 +227,7 @@ export function StudentGuardians({
           {results !== null && (
             <ul className="mt-2 text-sm">
               {results.length === 0 && (
-                <li className="py-1 text-gray-500">
+                <li className="py-1 text-slate-500">
                   No match.{" "}
                   <Link href="/admin/guardians" className="underline">
                     Add the guardian first
@@ -243,12 +239,12 @@ export function StudentGuardians({
                 <li key={g.id} className="flex items-center gap-2 py-1">
                   <span className="flex-1">
                     {g.name}{" "}
-                    <span className="text-xs text-gray-500 tabular-nums">
+                    <span className="text-xs text-slate-500 tabular-nums">
                       {g.phone}
                     </span>
                   </span>
                   {linkedIds.has(g.id) ? (
-                    <span className="text-xs text-gray-500">Linked</span>
+                    <span className="text-xs text-slate-500">Linked</span>
                   ) : (
                     <button
                       type="button"
@@ -267,7 +263,7 @@ export function StudentGuardians({
             <form
               onSubmit={handleLink}
               aria-label="Link guardian"
-              className="mt-3 flex flex-wrap items-center gap-2 rounded-md bg-gray-50 p-3 text-sm dark:bg-gray-900"
+              className="mt-3 flex flex-wrap items-center gap-2 rounded-md bg-slate-50 p-3 text-sm dark:bg-slate-900"
             >
               <span className="font-medium">{picked.name}</span>
               <RelationshipSelect
@@ -287,14 +283,14 @@ export function StudentGuardians({
               <button
                 type="submit"
                 disabled={busy || !relationship}
-                className="rounded-md bg-gray-900 px-3 py-1 text-white disabled:opacity-60 dark:bg-gray-100 dark:text-gray-900"
+                className="btn btn-primary"
               >
                 Link
               </button>
               <button
                 type="button"
                 onClick={() => setPicked(null)}
-                className="text-gray-500 hover:underline"
+                className="text-slate-500 hover:underline"
               >
                 Cancel
               </button>

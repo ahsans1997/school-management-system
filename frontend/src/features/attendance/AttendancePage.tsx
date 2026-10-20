@@ -6,6 +6,7 @@ import * as attendanceService from "@/services/attendanceService";
 import type { AttendanceSection } from "@/types/attendance";
 import { AttendanceTaker } from "./AttendanceTaker";
 import { MonthlyAttendance } from "./MonthlyAttendance";
+import { InlineLoader } from "@/components/Loading";
 
 /** Attendance for admins and teachers alike — the API limits teachers to their sections. */
 export function AttendancePage({
@@ -34,17 +35,17 @@ export function AttendancePage({
   }, []);
 
   const tabClass = (on: boolean) =>
-    `rounded-md px-3 py-1 text-sm ${on ? "bg-gray-900 text-white dark:bg-gray-100 dark:text-gray-900" : "border border-gray-300 dark:border-gray-700"}`;
+    `rounded-md px-3 py-1 text-sm ${on ? "bg-brand-600 text-white" : "border border-slate-300 dark:border-slate-700"}`;
 
   return (
     <div className="mx-auto max-w-5xl p-6">
       <h1 className="mb-1 text-2xl font-semibold">Attendance</h1>
-      <p className="mb-4 text-sm text-gray-500 dark:text-gray-400">
+      <p className="mb-4 text-sm text-slate-500 dark:text-slate-400">
         Daily attendance per section: Present, Absent, Late or Leave.
       </p>
 
       {error && (
-        <p role="alert" className="mb-4 text-sm text-red-600">
+        <p role="alert" className="alert alert-error mb-4">
           {error}
         </p>
       )}
@@ -71,7 +72,7 @@ export function AttendancePage({
       </div>
 
       {sections === null ? (
-        !error && <p className="text-sm text-gray-500">Loading…</p>
+        !error && <InlineLoader />
       ) : tab === "take" ? (
         <AttendanceTaker
           sections={sections}

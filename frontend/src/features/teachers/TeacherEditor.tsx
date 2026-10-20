@@ -7,6 +7,7 @@ import { errorMessage } from "@/lib/errors";
 import * as teacherService from "@/services/teacherService";
 import type { Teacher } from "@/types/teacher";
 import { TeacherForm } from "./TeacherForm";
+import { PageLoader } from "@/components/Loading";
 
 /** Add a teacher, or edit one (`teacherId`). Lands on the profile afterwards. */
 export function TeacherEditor({ teacherId }: { teacherId?: number }) {
@@ -39,14 +40,14 @@ export function TeacherEditor({ teacherId }: { teacherId?: number }) {
   const back = editing ? `/admin/teachers/${teacherId}` : "/admin/teachers";
 
   if (loading) {
-    return <p className="p-8 text-sm text-gray-500">Loading…</p>;
+    return <PageLoader />;
   }
 
   return (
     <div className="mx-auto max-w-3xl p-6">
       <Link
         href={back}
-        className="text-sm text-gray-500 hover:underline dark:text-gray-400"
+        className="text-sm text-slate-500 hover:underline dark:text-slate-400"
       >
         ← {editing ? "Back to profile" : "Teachers"}
       </Link>
@@ -55,7 +56,7 @@ export function TeacherEditor({ teacherId }: { teacherId?: number }) {
       </h1>
 
       {error ? (
-        <p role="alert" className="text-sm text-red-600">
+        <p role="alert" className="alert alert-error">
           {error}
         </p>
       ) : editing && teacher?.archived_at ? (

@@ -5,6 +5,7 @@ import { useAuth } from "@/features/auth/AuthContext";
 import { ApiRequestError } from "@/services/apiClient";
 import * as roleService from "@/services/roleService";
 import type { PermissionGroup, Role } from "@/types/role";
+import { PageLoader } from "@/components/Loading";
 
 function messageOf(error: unknown): string {
   if (error instanceof ApiRequestError) {
@@ -127,7 +128,7 @@ export function RolesManager() {
   }
 
   if (loading) {
-    return <p className="p-8 text-sm text-gray-500">Loading…</p>;
+    return <PageLoader />;
   }
 
   return (
@@ -135,11 +136,11 @@ export function RolesManager() {
       <h1 className="mb-6 text-2xl font-semibold">Roles &amp; Permissions</h1>
 
       {error && (
-        <p role="alert" className="mb-4 text-sm text-red-600">
+        <p role="alert" className="alert alert-error mb-4">
           {error}
         </p>
       )}
-      {notice && <p className="mb-4 text-sm text-green-600">{notice}</p>}
+      {notice && <p className="alert alert-success mb-4">{notice}</p>}
 
       <div className="grid gap-6 md:grid-cols-[260px_1fr]">
         {/* Roles list */}
@@ -151,23 +152,22 @@ export function RolesManager() {
                 placeholder="New role name"
                 value={newName}
                 onChange={(e) => setNewName(e.target.value)}
-                className="w-full rounded-md border border-gray-300 px-2 py-1 text-sm dark:border-gray-700 dark:bg-gray-800"
+                className="input input-sm w-full"
               />
-              <button
-                type="submit"
-                className="rounded-md bg-gray-900 px-3 py-1 text-sm text-white dark:bg-gray-100 dark:text-gray-900"
-              >
+              <button type="submit" className="btn btn-primary">
                 Add
               </button>
             </form>
           )}
 
-          <ul className="divide-y divide-gray-200 rounded-md border border-gray-200 dark:divide-gray-800 dark:border-gray-800">
+          <ul className="divide-y divide-slate-200 rounded-md border border-slate-200 dark:divide-slate-800 dark:border-slate-800">
             {roles.map((role) => (
               <li
                 key={role.id}
                 className={`flex items-center justify-between px-3 py-2 text-sm ${
-                  selected?.id === role.id ? "bg-gray-100 dark:bg-gray-800" : ""
+                  selected?.id === role.id
+                    ? "bg-slate-100 dark:bg-slate-800"
+                    : ""
                 }`}
               >
                 <button
@@ -177,7 +177,7 @@ export function RolesManager() {
                 >
                   {role.name}
                   {role.is_system && (
-                    <span className="ml-2 rounded bg-gray-200 px-1.5 py-0.5 text-xs text-gray-600 dark:bg-gray-700 dark:text-gray-300">
+                    <span className="ml-2 rounded bg-slate-200 px-1.5 py-0.5 text-xs text-slate-600 dark:bg-slate-700 dark:text-slate-300">
                       system
                     </span>
                   )}
@@ -199,7 +199,7 @@ export function RolesManager() {
         {/* Permission editor */}
         <section>
           {!selected ? (
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-slate-500">
               Select a role to view and edit its permissions.
             </p>
           ) : (
@@ -211,7 +211,7 @@ export function RolesManager() {
                     type="button"
                     onClick={save}
                     disabled={saving}
-                    className="rounded-md bg-gray-900 px-4 py-1.5 text-sm text-white disabled:opacity-60 dark:bg-gray-100 dark:text-gray-900"
+                    className="btn btn-primary"
                   >
                     {saving ? "Saving…" : "Save"}
                   </button>
@@ -219,7 +219,7 @@ export function RolesManager() {
               </div>
 
               {adminLocked && (
-                <p className="text-sm text-gray-500">
+                <p className="text-sm text-slate-500">
                   The Admin role always holds every permission.
                 </p>
               )}
@@ -228,9 +228,9 @@ export function RolesManager() {
                 {groups.map((group) => (
                   <fieldset
                     key={group.group}
-                    className="rounded-md border border-gray-200 p-3 dark:border-gray-800"
+                    className="rounded-md border border-slate-200 p-3 dark:border-slate-800"
                   >
-                    <legend className="px-1 text-xs font-semibold text-gray-500 uppercase">
+                    <legend className="px-1 text-xs font-semibold text-slate-500 uppercase">
                       {group.group}
                     </legend>
                     <div className="space-y-1">

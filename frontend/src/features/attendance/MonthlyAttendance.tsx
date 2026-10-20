@@ -10,8 +10,7 @@ import {
   type MonthlyAttendance as Monthly,
 } from "@/types/attendance";
 
-const inputClass =
-  "rounded-md border border-gray-300 px-2 py-1 text-sm dark:border-gray-700 dark:bg-gray-800";
+const inputClass = "input input-sm";
 
 const CODE: Record<string, string> = Object.fromEntries(
   ATTENDANCE_STATUSES.map((s) => [s.value, s.short]),
@@ -81,26 +80,26 @@ export function MonthlyAttendance({
       </div>
 
       {error && (
-        <p role="alert" className="mb-4 text-sm text-red-600">
+        <p role="alert" className="alert alert-error mb-4">
           {error}
         </p>
       )}
 
       {!sectionId || !data ? (
-        <p className="text-sm text-gray-500">Choose a section and month.</p>
+        <p className="text-sm text-slate-500">Choose a section and month.</p>
       ) : data.students.length === 0 ? (
-        <p className="text-sm text-gray-500">No students for this month.</p>
+        <p className="text-sm text-slate-500">No students for this month.</p>
       ) : (
         <>
-          <p className="mb-2 text-xs text-gray-500">
+          <p className="mb-2 text-xs text-slate-500">
             {data.days.length} day(s) taken. P present · A absent · L late · Lv
             leave. Percentage = (present + late) ÷ days marked.
           </p>
           <div className="overflow-x-auto">
             <table className="text-sm">
               <thead>
-                <tr className="border-b border-gray-200 text-left text-gray-500 dark:border-gray-800 dark:text-gray-400">
-                  <th className="sticky left-0 bg-gray-50 py-2 pr-3 font-medium dark:bg-gray-950">
+                <tr className="table-head">
+                  <th className="sticky left-0 bg-slate-50 py-2 pr-3 font-medium dark:bg-slate-950">
                     Student
                   </th>
                   {data.days.map((d) => (
@@ -116,12 +115,9 @@ export function MonthlyAttendance({
               </thead>
               <tbody>
                 {data.students.map((s) => (
-                  <tr
-                    key={s.student_id}
-                    className="border-b border-gray-100 dark:border-gray-900"
-                  >
-                    <td className="sticky left-0 bg-gray-50 py-1.5 pr-3 whitespace-nowrap dark:bg-gray-950">
-                      <span className="mr-1 text-xs text-gray-500 tabular-nums">
+                  <tr key={s.student_id} className="table-row">
+                    <td className="sticky left-0 bg-slate-50 py-1.5 pr-3 whitespace-nowrap dark:bg-slate-950">
+                      <span className="mr-1 text-xs text-slate-500 tabular-nums">
                         {s.roll ?? "—"}
                       </span>
                       {s.name}

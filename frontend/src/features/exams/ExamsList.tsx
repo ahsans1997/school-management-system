@@ -19,9 +19,9 @@ import {
   type GradeScale,
 } from "@/types/exam";
 import { ExamForm } from "./ExamForm";
+import { PageLoader } from "@/components/Loading";
 
-const inputClass =
-  "rounded-md border border-gray-300 px-2 py-1 text-sm dark:border-gray-700 dark:bg-gray-800";
+const inputClass = "input input-sm";
 
 interface Filters {
   yearId: string;
@@ -115,7 +115,7 @@ export function ExamsList() {
   }
 
   if (loading) {
-    return <p className="p-8 text-sm text-gray-500">Loading…</p>;
+    return <PageLoader />;
   }
 
   return (
@@ -131,26 +131,26 @@ export function ExamsList() {
               setCreating(true);
               setNotice(null);
             }}
-            className="rounded-md bg-gray-900 px-4 py-1.5 text-sm text-white dark:bg-gray-100 dark:text-gray-900"
+            className="btn btn-primary"
           >
             New exam
           </button>
         )}
       </div>
-      <p className="mb-6 text-sm text-gray-500 dark:text-gray-400">
+      <p className="mb-6 text-sm text-slate-500 dark:text-slate-400">
         Each exam lists the subjects every class sits, with full and pass marks
         and the date. Marks entry and results build on these papers.
       </p>
 
       {error && (
-        <p role="alert" className="mb-4 text-sm text-red-600">
+        <p role="alert" className="alert alert-error mb-4">
           {error}
         </p>
       )}
-      {notice && <p className="mb-4 text-sm text-green-600">{notice}</p>}
+      {notice && <p className="alert alert-success mb-4">{notice}</p>}
 
       {creating && (
-        <section className="mb-6 rounded-lg border border-gray-200 p-4 dark:border-gray-800">
+        <section className="card mb-6 p-5">
           <h2 className="mb-3 text-sm font-semibold">New exam</h2>
           <ExamForm
             exam={null}
@@ -205,14 +205,14 @@ export function ExamsList() {
       </div>
 
       {exams.length === 0 ? (
-        <p className="text-sm text-gray-500">
+        <p className="text-sm text-slate-500">
           {filters.archived ? "No archived exams." : "No exams yet."}
         </p>
       ) : (
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
+        <div className="table-wrap">
+          <table>
             <thead>
-              <tr className="border-b border-gray-200 text-left text-gray-500 dark:border-gray-800 dark:text-gray-400">
+              <tr className="table-head">
                 <th className="py-2 pr-3 font-medium">Exam</th>
                 <th className="py-2 pr-3 font-medium">Type</th>
                 <th className="py-2 pr-3 font-medium">Year</th>
@@ -223,10 +223,7 @@ export function ExamsList() {
             </thead>
             <tbody>
               {exams.map((e) => (
-                <tr
-                  key={e.id}
-                  className="border-b border-gray-100 dark:border-gray-900"
-                >
+                <tr key={e.id} className="table-row">
                   <td className="py-2 pr-3">
                     <Link
                       href={`/admin/exams/${e.id}`}

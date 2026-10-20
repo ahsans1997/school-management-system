@@ -43,13 +43,13 @@ export function TeacherLogin({ teacher, canCreate, onChange }: Props) {
   }
 
   return (
-    <section className="rounded-lg border border-gray-200 p-4 dark:border-gray-800">
+    <section className="card p-5">
       <h2 className="mb-3 text-sm font-semibold">Portal login</h2>
       {account ? (
         <p className="text-sm">
           {account.email}{" "}
           {account.is_active ? (
-            <span className="text-gray-500">· active</span>
+            <span className="text-slate-500">· active</span>
           ) : (
             <span className="text-red-600">
               · disabled (reactivate under Users)
@@ -58,7 +58,7 @@ export function TeacherLogin({ teacher, canCreate, onChange }: Props) {
         </p>
       ) : !open ? (
         <div className="flex items-center gap-3 text-sm">
-          <span className="text-gray-500">No login yet.</span>
+          <span className="text-slate-500">No login yet.</span>
           {canCreate && (
             <button
               type="button"
@@ -76,7 +76,7 @@ export function TeacherLogin({ teacher, canCreate, onChange }: Props) {
           className="grid gap-3 sm:grid-cols-[1fr_1fr_auto] sm:items-end"
         >
           {error && (
-            <p role="alert" className="text-sm text-red-600 sm:col-span-3">
+            <p role="alert" className="alert alert-error sm:col-span-3">
               {error}
             </p>
           )}
@@ -105,17 +105,13 @@ export function TeacherLogin({ teacher, canCreate, onChange }: Props) {
             />
           </label>
           <div className="flex gap-3">
-            <button
-              type="submit"
-              disabled={busy}
-              className="rounded-md bg-gray-900 px-3 py-1.5 text-sm text-white disabled:opacity-60 dark:bg-gray-100 dark:text-gray-900"
-            >
+            <button type="submit" disabled={busy} className="btn btn-primary">
               Create
             </button>
             <button
               type="button"
               onClick={() => setOpen(false)}
-              className="text-sm text-gray-500 hover:underline"
+              className="text-sm text-slate-500 hover:underline"
             >
               Cancel
             </button>

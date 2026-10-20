@@ -21,9 +21,9 @@ import type { SchoolClass } from "@/types/schoolClass";
 import type { Section } from "@/types/section";
 import type { Student } from "@/types/student";
 import { PromotePanel } from "./PromotePanel";
+import { PageLoader } from "@/components/Loading";
 
-const inputClass =
-  "rounded-md border border-gray-300 px-2 py-1 text-sm dark:border-gray-700 dark:bg-gray-800";
+const inputClass = "input input-sm";
 
 interface RowDraft {
   id: number;
@@ -200,7 +200,7 @@ export function EnrollmentsManager() {
   }
 
   if (loading) {
-    return <p className="p-8 text-sm text-gray-500">Loading…</p>;
+    return <PageLoader />;
   }
 
   const year = years.find((y) => y.id === Number(yearId)) ?? null;
@@ -211,17 +211,17 @@ export function EnrollmentsManager() {
   return (
     <div className="mx-auto max-w-5xl p-6">
       <h1 className="mb-1 text-2xl font-semibold">Enrollments</h1>
-      <p className="mb-6 text-sm text-gray-500 dark:text-gray-400">
+      <p className="mb-6 text-sm text-slate-500 dark:text-slate-400">
         Each student&apos;s section and roll for a year. Pick a class and
         section to enroll students or promote them at year end.
       </p>
 
       {error && (
-        <p role="alert" className="mb-4 text-sm text-red-600">
+        <p role="alert" className="alert alert-error mb-4">
           {error}
         </p>
       )}
-      {notice && <p className="mb-4 text-sm text-green-600">{notice}</p>}
+      {notice && <p className="alert alert-success mb-4">{notice}</p>}
 
       {years.length === 0 ? (
         <p className="text-sm">
@@ -276,7 +276,7 @@ export function EnrollmentsManager() {
             </select>
             {seats && (
               <span
-                className={`ml-auto text-sm tabular-nums ${seats.taken >= seats.capacity ? "text-red-600" : "text-gray-500"}`}
+                className={`ml-auto text-sm tabular-nums ${seats.taken >= seats.capacity ? "text-red-600" : "text-slate-500"}`}
               >
                 {seats.taken} / {seats.capacity} seats taken
               </span>
@@ -284,14 +284,14 @@ export function EnrollmentsManager() {
           </div>
 
           {sectionId && canCreate && year && (
-            <div className="mb-6 rounded-lg border border-gray-200 p-4 dark:border-gray-800">
+            <div className="card mb-6 p-5">
               <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
                 <h2 className="text-sm font-semibold">Enroll a student</h2>
                 {cls && !promoting && (
                   <button
                     type="button"
                     onClick={() => setPromoting(true)}
-                    className="rounded-md border border-gray-300 px-3 py-1 text-sm dark:border-gray-700"
+                    className="btn btn-secondary"
                   >
                     Promote this section…
                   </button>
@@ -310,23 +310,20 @@ export function EnrollmentsManager() {
                   onChange={(e) => setSearch(e.target.value)}
                   className={`min-w-48 flex-1 ${inputClass}`}
                 />
-                <button
-                  type="submit"
-                  className="rounded-md border border-gray-300 px-3 py-1 text-sm dark:border-gray-700"
-                >
+                <button type="submit" className="btn btn-secondary">
                   Find
                 </button>
               </form>
               {found !== null && (
                 <ul className="mt-2 text-sm">
                   {found.length === 0 && (
-                    <li className="py-1 text-gray-500">No match.</li>
+                    <li className="py-1 text-slate-500">No match.</li>
                   )}
                   {found.map((s) => (
                     <li key={s.id} className="flex items-center gap-2 py-1">
                       <span className="flex-1">
                         {s.name}{" "}
-                        <span className="text-xs text-gray-500 tabular-nums">
+                        <span className="text-xs text-slate-500 tabular-nums">
                           {s.student_id}
                           {s.current_enrollment &&
                             ` · ${s.current_enrollment.class?.name} ${s.current_enrollment.section?.name} this year`}
@@ -347,7 +344,7 @@ export function EnrollmentsManager() {
                 <form
                   onSubmit={handleEnroll}
                   aria-label="Enroll student"
-                  className="mt-3 flex flex-wrap items-center gap-2 rounded-md bg-gray-50 p-3 text-sm dark:bg-gray-900"
+                  className="mt-3 flex flex-wrap items-center gap-2 rounded-md bg-slate-50 p-3 text-sm dark:bg-slate-900"
                 >
                   <span className="font-medium">{picked.name}</span>
                   <input
@@ -363,14 +360,14 @@ export function EnrollmentsManager() {
                   <button
                     type="submit"
                     disabled={busy}
-                    className="rounded-md bg-gray-900 px-3 py-1 text-white disabled:opacity-60 dark:bg-gray-100 dark:text-gray-900"
+                    className="btn btn-primary"
                   >
                     Enroll for {year.name}
                   </button>
                   <button
                     type="button"
                     onClick={() => setPicked(null)}
-                    className="text-gray-500 hover:underline"
+                    className="text-slate-500 hover:underline"
                   >
                     Cancel
                   </button>
@@ -397,14 +394,14 @@ export function EnrollmentsManager() {
           )}
 
           {enrollments.length === 0 ? (
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-slate-500">
               No enrollments for this selection yet.
             </p>
           ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
+            <div className="table-wrap">
+              <table>
                 <thead>
-                  <tr className="border-b border-gray-200 text-left text-gray-500 dark:border-gray-800 dark:text-gray-400">
+                  <tr className="table-head">
                     <th className="py-2 pr-3 font-medium">Class</th>
                     <th className="py-2 pr-3 font-medium">Roll</th>
                     <th className="py-2 pr-3 font-medium">Student</th>
@@ -417,10 +414,7 @@ export function EnrollmentsManager() {
                 <tbody>
                   {enrollments.map((e) =>
                     editing?.id === e.id ? (
-                      <tr
-                        key={e.id}
-                        className="border-b border-gray-100 dark:border-gray-900"
-                      >
+                      <tr key={e.id} className="table-row">
                         <td className="py-2 pr-3 whitespace-nowrap">
                           {e.class?.name} {e.section?.name}
                         </td>
@@ -484,17 +478,14 @@ export function EnrollmentsManager() {
                           <button
                             type="button"
                             onClick={() => setEditing(null)}
-                            className="text-xs text-gray-500 hover:underline"
+                            className="text-xs text-slate-500 hover:underline"
                           >
                             Cancel
                           </button>
                         </td>
                       </tr>
                     ) : (
-                      <tr
-                        key={e.id}
-                        className="border-b border-gray-100 dark:border-gray-900"
-                      >
+                      <tr key={e.id} className="table-row">
                         <td className="py-2 pr-3 whitespace-nowrap">
                           {e.class?.name} {e.section?.name}
                         </td>
@@ -509,7 +500,7 @@ export function EnrollmentsManager() {
                             </Link>
                           )}
                           {e.student?.archived && (
-                            <span className="ml-1 text-xs text-gray-500">
+                            <span className="ml-1 text-xs text-slate-500">
                               (archived)
                             </span>
                           )}
@@ -517,7 +508,7 @@ export function EnrollmentsManager() {
                         <td className="py-2 pr-3">
                           {labelOf(ENROLLMENT_STATUSES, e.status)}
                           {e.exit_reason && (
-                            <span className="block text-xs text-gray-500">
+                            <span className="block text-xs text-slate-500">
                               {e.exit_reason}
                             </span>
                           )}
@@ -542,7 +533,7 @@ export function EnrollmentsManager() {
                                   exit_reason: e.exit_reason ?? "",
                                 })
                               }
-                              className="text-xs text-gray-600 hover:underline dark:text-gray-300"
+                              className="text-xs text-slate-600 hover:underline dark:text-slate-300"
                             >
                               Edit
                             </button>
@@ -556,7 +547,7 @@ export function EnrollmentsManager() {
             </div>
           )}
           {page && page.meta.total > enrollments.length && (
-            <p className="mt-3 text-xs text-gray-500">
+            <p className="mt-3 text-xs text-slate-500">
               Showing the first {enrollments.length} of {page.meta.total}.
               Narrow by class or section to see the rest.
             </p>

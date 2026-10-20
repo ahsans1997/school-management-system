@@ -13,8 +13,7 @@ import type { SchoolClass } from "@/types/schoolClass";
 import type { Section } from "@/types/section";
 import type { SheetFormat } from "@/types/studentTools";
 
-const inputClass =
-  "rounded-md border border-gray-300 px-2 py-1 text-sm dark:border-gray-700 dark:bg-gray-800";
+const inputClass = "input input-sm";
 
 /**
  * Download the student register as CSV or Excel, with each student's
@@ -95,15 +94,15 @@ export function StudentExportPanel({
   }
 
   return (
-    <section className="mb-4 rounded-lg border border-gray-200 p-4 dark:border-gray-800">
+    <section className="card mb-4 p-5">
       <h2 className="mb-1 text-sm font-semibold">Export</h2>
-      <p className="mb-3 text-xs text-gray-500">
+      <p className="mb-3 text-xs text-slate-500">
         {search || archived
           ? `Uses the list's ${[search && `search “${search}”`, archived && "archived view"].filter(Boolean).join(" and ")}.`
           : "Every student, with their place in the chosen year."}
       </p>
       {error && (
-        <p role="alert" className="mb-3 text-sm text-red-600">
+        <p role="alert" className="alert alert-error mb-3">
           {error}
         </p>
       )}
@@ -175,7 +174,7 @@ export function StudentExportPanel({
           type="button"
           disabled={busy}
           onClick={() => void download()}
-          className="rounded-md bg-gray-900 px-4 py-1 text-sm text-white disabled:opacity-60 dark:bg-gray-100 dark:text-gray-900"
+          className="btn btn-primary"
         >
           {busy ? "Preparing…" : "Download"}
         </button>

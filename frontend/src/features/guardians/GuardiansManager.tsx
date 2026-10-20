@@ -13,6 +13,7 @@ import { errorMessage } from "@/lib/errors";
 import * as guardianService from "@/services/guardianService";
 import type { Paginated } from "@/types/api";
 import type { AccountInput, Guardian, GuardianInput } from "@/types/guardian";
+import { PageLoader } from "@/components/Loading";
 
 /** Profile fields as typed by the user. */
 interface Draft {
@@ -32,10 +33,8 @@ const EMPTY: Draft = {
 };
 const NO_ACCOUNT: AccountInput = { email: "", password: "" };
 
-const inputClass =
-  "w-full rounded-md border border-gray-300 px-2 py-1 text-sm dark:border-gray-700 dark:bg-gray-800";
-const primaryButton =
-  "rounded-md bg-gray-900 px-4 py-1.5 text-sm text-white disabled:opacity-60 dark:bg-gray-100 dark:text-gray-900";
+const inputClass = "w-full input input-sm";
+const primaryButton = "btn btn-primary";
 
 const orNull = (value: string) => value.trim() || null;
 
@@ -255,30 +254,30 @@ export function GuardiansManager() {
   }
 
   if (loading) {
-    return <p className="p-8 text-sm text-gray-500">Loading…</p>;
+    return <PageLoader />;
   }
 
   return (
     <div className="mx-auto max-w-5xl p-6">
       <h1 className="mb-1 text-2xl font-semibold">Guardians</h1>
-      <p className="mb-6 text-sm text-gray-500 dark:text-gray-400">
+      <p className="mb-6 text-sm text-slate-500 dark:text-slate-400">
         Parents and guardians. Search by phone before adding one, so the same
         person isn&apos;t entered twice. Link children from each student&apos;s
         profile.
       </p>
 
       {error && (
-        <p role="alert" className="mb-4 text-sm text-red-600">
+        <p role="alert" className="alert alert-error mb-4">
           {error}
         </p>
       )}
-      {notice && <p className="mb-4 text-sm text-green-600">{notice}</p>}
+      {notice && <p className="alert alert-success mb-4">{notice}</p>}
 
       {showForm && (
         <form
           onSubmit={handleSubmit}
           aria-label={editingId !== null ? "Edit guardian" : "Add guardian"}
-          className="mb-6 rounded-lg border border-gray-200 p-4 dark:border-gray-800"
+          className="card mb-6 p-5"
         >
           <h2 className="mb-3 text-sm font-semibold">
             {editingId !== null
@@ -340,7 +339,7 @@ export function GuardiansManager() {
           </div>
 
           {editingId === null && canEdit && (
-            <div className="mt-4 border-t border-gray-100 pt-3 dark:border-gray-800">
+            <div className="mt-4 border-t border-slate-100 pt-3 dark:border-slate-800">
               <label className="flex items-center gap-2 text-sm">
                 <input
                   type="checkbox"
@@ -369,7 +368,7 @@ export function GuardiansManager() {
               <button
                 type="button"
                 onClick={resetForm}
-                className="text-sm text-gray-500 hover:underline"
+                className="text-sm text-slate-500 hover:underline"
               >
                 Cancel
               </button>
@@ -382,7 +381,7 @@ export function GuardiansManager() {
         <form
           onSubmit={handleCreateAccount}
           aria-label="Create parent login"
-          className="mb-6 rounded-lg border border-gray-200 p-4 dark:border-gray-800"
+          className="card mb-6 p-5"
         >
           <h2 className="mb-3 text-sm font-semibold">
             Parent login for {accountFor.name}
@@ -397,7 +396,7 @@ export function GuardiansManager() {
             <button
               type="button"
               onClick={() => setAccountFor(null)}
-              className="text-sm text-gray-500 hover:underline"
+              className="text-sm text-slate-500 hover:underline"
             >
               Cancel
             </button>
@@ -421,23 +420,20 @@ export function GuardiansManager() {
           onChange={(e) => setSearch(e.target.value)}
           className={`max-w-xs ${inputClass}`}
         />
-        <button
-          type="submit"
-          className="rounded-md border border-gray-300 px-3 py-1 text-sm dark:border-gray-700"
-        >
+        <button type="submit" className="btn btn-secondary">
           Search
         </button>
       </form>
 
       {guardians.length === 0 ? (
-        <p className="text-sm text-gray-500">
+        <p className="text-sm text-slate-500">
           {query ? `No guardians match “${query}”.` : "No guardians yet."}
         </p>
       ) : (
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
+        <div className="table-wrap">
+          <table>
             <thead>
-              <tr className="border-b border-gray-200 text-left text-gray-500 dark:border-gray-800 dark:text-gray-400">
+              <tr className="table-head">
                 <th className="py-2 pr-3 font-medium">Name</th>
                 <th className="py-2 pr-3 font-medium">Phone</th>
                 <th className="py-2 pr-3 font-medium">Email</th>
@@ -449,10 +445,7 @@ export function GuardiansManager() {
             </thead>
             <tbody>
               {guardians.map((g) => (
-                <tr
-                  key={g.id}
-                  className="border-b border-gray-100 dark:border-gray-900"
-                >
+                <tr key={g.id} className="table-row">
                   <td className="py-2 pr-3 font-medium">{g.name}</td>
                   <td className="py-2 pr-3 whitespace-nowrap tabular-nums">
                     {g.phone}
@@ -489,7 +482,7 @@ export function GuardiansManager() {
                       <button
                         type="button"
                         onClick={() => startEdit(g)}
-                        className="text-xs text-gray-600 hover:underline dark:text-gray-300"
+                        className="text-xs text-slate-600 hover:underline dark:text-slate-300"
                       >
                         Edit
                       </button>

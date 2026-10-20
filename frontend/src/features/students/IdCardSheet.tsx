@@ -21,8 +21,8 @@ function Card({
   validUntil: string;
 }) {
   return (
-    <article className="flex h-[54mm] w-[85.6mm] break-inside-avoid flex-col overflow-hidden rounded-[3mm] border border-gray-400 bg-white text-gray-900">
-      <header className="flex items-center gap-[2mm] bg-gray-900 px-[3mm] py-[1.5mm] text-white">
+    <article className="flex h-[54mm] w-[85.6mm] break-inside-avoid flex-col overflow-hidden rounded-[3mm] border border-slate-400 bg-white text-slate-900">
+      <header className="from-brand-700 flex items-center gap-[2mm] bg-linear-to-r to-indigo-600 px-[3mm] py-[1.5mm] text-white">
         {school.logo_url && (
           // Logo from the API host; plain img prints reliably. A logo that
           // fails to load is hidden rather than printed as a broken image.
@@ -51,10 +51,10 @@ function Card({
           <img
             src={card.photo_url}
             alt=""
-            className="h-[26mm] w-[21mm] shrink-0 rounded-sm border border-gray-300 object-cover"
+            className="h-[26mm] w-[21mm] shrink-0 rounded-sm border border-slate-300 object-cover"
           />
         ) : (
-          <div className="flex h-[26mm] w-[21mm] shrink-0 items-center justify-center rounded-sm border border-dashed border-gray-400 text-[6pt] text-gray-500">
+          <div className="flex h-[26mm] w-[21mm] shrink-0 items-center justify-center rounded-sm border border-dashed border-slate-400 text-[6pt] text-slate-500">
             No photo
           </div>
         )}
@@ -62,17 +62,17 @@ function Card({
           <dt className="sr-only">Name</dt>
           <dd className="truncate text-[9pt] font-semibold">{card.name}</dd>
           <div className="mt-[0.5mm] flex gap-[1mm]">
-            <dt className="text-gray-500">ID</dt>
+            <dt className="text-slate-500">ID</dt>
             <dd className="font-mono">{card.id_no}</dd>
           </div>
           <div className="flex gap-[1mm]">
-            <dt className="text-gray-500">Class</dt>
+            <dt className="text-slate-500">Class</dt>
             <dd>
               {card.class} · {card.section} · Roll {card.roll}
             </dd>
           </div>
           <div className="flex gap-[1mm]">
-            <dt className="text-gray-500">Born</dt>
+            <dt className="text-slate-500">Born</dt>
             <dd>
               {formatDay(card.dob)}
               {card.blood_group && ` · ${card.blood_group}`}
@@ -80,16 +80,16 @@ function Card({
           </div>
           {card.contact_phone && (
             <div className="flex gap-[1mm]">
-              <dt className="text-gray-500">Contact</dt>
+              <dt className="text-slate-500">Contact</dt>
               <dd>{card.contact_phone}</dd>
             </div>
           )}
         </dl>
       </div>
 
-      <footer className="flex items-end justify-between border-t border-gray-200 px-[3mm] py-[1mm] text-[6pt] text-gray-600">
+      <footer className="flex items-end justify-between border-t border-slate-200 px-[3mm] py-[1mm] text-[6pt] text-slate-600">
         <span>Valid until {formatDay(validUntil)}</span>
-        <span className="border-t border-gray-500 px-[2mm] pt-[0.3mm]">
+        <span className="border-t border-slate-500 px-[2mm] pt-[0.3mm]">
           Principal
         </span>
       </footer>
@@ -101,7 +101,7 @@ function Card({
 export function IdCardSheet({ sheet }: { sheet: Sheet }) {
   if (sheet.cards.length === 0) {
     return (
-      <p className="text-sm text-gray-500">
+      <p className="text-sm text-slate-500">
         No students are actively enrolled here for {sheet.academic_year.name}.
       </p>
     );

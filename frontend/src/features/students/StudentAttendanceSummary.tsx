@@ -9,6 +9,7 @@ import {
   ATTENDANCE_STATUSES,
   type StudentAttendanceReport,
 } from "@/types/attendance";
+import { InlineLoader } from "@/components/Loading";
 
 /** This year's attendance for one student: totals, % and the days they weren't present. */
 export function StudentAttendanceSummary({ studentId }: { studentId: number }) {
@@ -32,23 +33,23 @@ export function StudentAttendanceSummary({ studentId }: { studentId: number }) {
   }, [studentId]);
 
   return (
-    <section className="rounded-lg border border-gray-200 p-4 dark:border-gray-800">
+    <section className="card p-5">
       <h2 className="mb-3 text-sm font-semibold">
         Attendance{report ? ` · ${report.academic_year.name}` : ""}
       </h2>
       {error ? (
-        <p className="text-sm text-gray-500">{error}</p>
+        <p className="text-sm text-slate-500">{error}</p>
       ) : !report ? (
-        <p className="text-sm text-gray-500">Loading…</p>
+        <InlineLoader />
       ) : report.summary.marked === 0 ? (
-        <p className="text-sm text-gray-500">No attendance taken yet.</p>
+        <p className="text-sm text-slate-500">No attendance taken yet.</p>
       ) : (
         <div className="space-y-2 text-sm">
           <p>
             <span className="text-lg font-semibold tabular-nums">
               {report.summary.percentage}%
             </span>{" "}
-            <span className="text-gray-500 tabular-nums">
+            <span className="text-slate-500 tabular-nums">
               · {report.summary.present} present, {report.summary.late} late,{" "}
               {report.summary.absent} absent, {report.summary.leave} leave of{" "}
               {report.summary.marked}{" "}
@@ -57,14 +58,14 @@ export function StudentAttendanceSummary({ studentId }: { studentId: number }) {
           </p>
           {report.exceptions.length > 0 && (
             <details>
-              <summary className="cursor-pointer text-gray-500">
+              <summary className="cursor-pointer text-slate-500">
                 Days not present ({report.exceptions.length})
               </summary>
-              <ul className="mt-1 divide-y divide-gray-100 dark:divide-gray-800">
+              <ul className="mt-1 divide-y divide-slate-100 dark:divide-slate-800">
                 {report.exceptions.map((x) => (
                   <li key={x.date} className="flex justify-between py-1">
                     <span>{formatDay(x.date)}</span>
-                    <span className="text-gray-500">
+                    <span className="text-slate-500">
                       {labelOf(ATTENDANCE_STATUSES, x.status)}
                       {x.remark && ` · ${x.remark}`}
                     </span>

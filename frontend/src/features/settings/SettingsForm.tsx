@@ -11,6 +11,7 @@ import { useAuth } from "@/features/auth/AuthContext";
 import { ApiRequestError } from "@/services/apiClient";
 import * as settingsService from "@/services/settingsService";
 import type { SchoolSettings, SecretGroupName } from "@/types/settings";
+import { PageLoader } from "@/components/Loading";
 
 function messageOf(error: unknown): string {
   if (error instanceof ApiRequestError) {
@@ -87,13 +88,12 @@ const GROUPS: { name: SecretGroupName; title: string; fields: FieldDef[] }[] = [
 type Flat = Record<string, string>;
 type Groups = Record<SecretGroupName, Flat>;
 
-const inputClass =
-  "w-full rounded-md border border-gray-300 px-2 py-1.5 text-sm disabled:opacity-60 dark:border-gray-700 dark:bg-gray-800";
+const inputClass = "w-full input input-sm";
 
 function Field({ label, children }: { label: string; children: ReactNode }) {
   return (
     <label className="block text-sm">
-      <span className="mb-1 block font-medium text-gray-700 dark:text-gray-300">
+      <span className="mb-1 block font-medium text-slate-700 dark:text-slate-300">
         {label}
       </span>
       {children}
@@ -103,7 +103,7 @@ function Field({ label, children }: { label: string; children: ReactNode }) {
 
 function Section({ title, children }: { title: string; children: ReactNode }) {
   return (
-    <fieldset className="rounded-lg border border-gray-200 p-4 dark:border-gray-800">
+    <fieldset className="card p-5">
       <legend className="px-1 text-sm font-semibold">{title}</legend>
       <div className="grid gap-3 sm:grid-cols-2">{children}</div>
     </fieldset>
@@ -224,7 +224,15 @@ export function SettingsForm() {
   }
 
   if (!settings || !groups) {
-    return <p className="p-8 text-sm text-gray-500">{error ?? "Loading…"}</p>;
+    return error ? (
+      <div className="p-6">
+        <p role="alert" className="alert alert-error">
+          {error}
+        </p>
+      </div>
+    ) : (
+      <PageLoader />
+    );
   }
 
   return (
@@ -232,27 +240,23 @@ export function SettingsForm() {
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-semibold">School Settings</h1>
         {canManage && (
-          <button
-            type="submit"
-            disabled={saving}
-            className="rounded-md bg-gray-900 px-4 py-1.5 text-sm text-white disabled:opacity-60 dark:bg-gray-100 dark:text-gray-900"
-          >
+          <button type="submit" disabled={saving} className="btn btn-primary">
             {saving ? "Saving…" : "Save"}
           </button>
         )}
       </div>
 
       {!canManage && (
-        <p className="text-sm text-gray-500">
+        <p className="text-sm text-slate-500">
           Read-only — you need the settings.manage permission to edit.
         </p>
       )}
       {error && (
-        <p role="alert" className="text-sm text-red-600">
+        <p role="alert" className="alert alert-error">
           {error}
         </p>
       )}
-      {notice && <p className="text-sm text-green-600">{notice}</p>}
+      {notice && <p className="alert alert-success">{notice}</p>}
 
       <Section title="Branding">
         {(["logo", "favicon"] as const).map((kind) => {
@@ -261,7 +265,7 @@ export function SettingsForm() {
           const rule = settingsService.UPLOAD_RULES[kind];
           return (
             <div key={kind} className="space-y-2 text-sm">
-              <span className="block font-medium text-gray-700 capitalize dark:text-gray-300">
+              <span className="block font-medium text-slate-700 capitalize dark:text-slate-300">
                 {kind}
               </span>
               <div className="flex h-16 items-center">
@@ -274,7 +278,7 @@ export function SettingsForm() {
                     className="max-h-16 max-w-40 object-contain"
                   />
                 ) : (
-                  <span className="text-gray-400">None uploaded</span>
+                  <span className="text-slate-400">None uploaded</span>
                 )}
               </div>
               {canManage && (
@@ -286,7 +290,7 @@ export function SettingsForm() {
                     onChange={(e) => handleUpload(kind, e)}
                     className="block text-xs"
                   />
-                  <p className="text-xs text-gray-500">
+                  <p className="text-xs text-slate-500">
                     {rule.accept} · max {rule.maxKb} KB
                   </p>
                 </>

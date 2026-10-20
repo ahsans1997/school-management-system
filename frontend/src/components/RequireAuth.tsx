@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/features/auth/AuthContext";
 import { homePathFor } from "@/lib/audience";
 import type { Audience } from "@/types/auth";
+import { AppLoader } from "@/components/Loading";
 
 interface RequireAuthProps {
   children: ReactNode;
@@ -40,7 +41,7 @@ export function RequireAuth({
   }, [loading, user, wrongArea, router]);
 
   if (loading) {
-    return <div className="p-8 text-sm text-gray-500">Loading…</div>;
+    return <AppLoader />;
   }
 
   if (!user || wrongArea) {
@@ -49,8 +50,10 @@ export function RequireAuth({
 
   if (permission && !can(permission)) {
     return (
-      <div className="p-8 text-sm text-red-600">
-        You don’t have permission to view this page.
+      <div className="p-6">
+        <p role="alert" className="alert alert-error">
+          You don’t have permission to view this page.
+        </p>
       </div>
     );
   }

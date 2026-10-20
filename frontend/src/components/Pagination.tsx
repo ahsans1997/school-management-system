@@ -10,8 +10,7 @@ interface PaginationProps {
 export function Pagination({ page, lastPage, onPage }: PaginationProps) {
   if (lastPage <= 1) return null;
 
-  const button =
-    "rounded-md border border-gray-300 px-3 py-1 disabled:opacity-50 dark:border-gray-700";
+  const button = "btn btn-secondary";
 
   return (
     <nav
@@ -26,7 +25,7 @@ export function Pagination({ page, lastPage, onPage }: PaginationProps) {
       >
         Prev
       </button>
-      <span className="text-gray-500">
+      <span className="text-slate-500">
         Page {page} of {lastPage}
       </span>
       <button

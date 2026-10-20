@@ -11,10 +11,8 @@ import type { Section } from "@/types/section";
 import type { ClassSubject } from "@/types/subject";
 import type { Teacher } from "@/types/teacher";
 
-const inputClass =
-  "rounded-md border border-gray-300 px-2 py-1 text-sm dark:border-gray-700 dark:bg-gray-800";
-const button =
-  "rounded-md border border-gray-300 px-3 py-1 text-sm disabled:opacity-50 dark:border-gray-700";
+const inputClass = "input input-sm";
+const button = "btn btn-secondary";
 
 interface Props {
   teacher: Teacher;
@@ -101,24 +99,24 @@ export function TeacherTeaching({ teacher, canAssign, onChange }: Props) {
   }
 
   return (
-    <section className="rounded-lg border border-gray-200 p-4 dark:border-gray-800">
+    <section className="card p-5">
       <h2 className="mb-3 text-sm font-semibold">Teaching</h2>
 
       {error && (
-        <p role="alert" className="mb-3 text-sm text-red-600">
+        <p role="alert" className="alert alert-error mb-3">
           {error}
         </p>
       )}
 
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
-          <h3 className="mb-1 text-xs font-medium text-gray-500 uppercase">
+          <h3 className="mb-1 text-xs font-medium text-slate-500 uppercase">
             Subjects
           </h3>
           {assignments.length === 0 ? (
-            <p className="text-sm text-gray-500">No subjects assigned yet.</p>
+            <p className="text-sm text-slate-500">No subjects assigned yet.</p>
           ) : (
-            <ul className="divide-y divide-gray-100 text-sm dark:divide-gray-800">
+            <ul className="divide-y divide-slate-100 text-sm dark:divide-slate-800">
               {assignments.map((a) => (
                 <li key={a.id} className="flex items-center gap-2 py-1.5">
                   <span className="flex-1">
@@ -146,13 +144,13 @@ export function TeacherTeaching({ teacher, canAssign, onChange }: Props) {
         </div>
 
         <div>
-          <h3 className="mb-1 text-xs font-medium text-gray-500 uppercase">
+          <h3 className="mb-1 text-xs font-medium text-slate-500 uppercase">
             Class teacher of
           </h3>
           {classTeacherOf.length === 0 ? (
-            <p className="text-sm text-gray-500">No section.</p>
+            <p className="text-sm text-slate-500">No section.</p>
           ) : (
-            <ul className="divide-y divide-gray-100 text-sm dark:divide-gray-800">
+            <ul className="divide-y divide-slate-100 text-sm dark:divide-slate-800">
               {classTeacherOf.map((c) => (
                 <li
                   key={c.section.id}
@@ -186,7 +184,7 @@ export function TeacherTeaching({ teacher, canAssign, onChange }: Props) {
       </div>
 
       {canAssign && (
-        <div className="mt-4 flex flex-wrap items-center gap-2 border-t border-gray-100 pt-3 dark:border-gray-800">
+        <div className="mt-4 flex flex-wrap items-center gap-2 border-t border-slate-100 pt-3 dark:border-slate-800">
           <select
             aria-label="Class"
             value={classId}
@@ -249,12 +247,12 @@ export function TeacherTeaching({ teacher, canAssign, onChange }: Props) {
             Make class teacher
           </button>
           {classId && sections.length === 0 && (
-            <p className="w-full text-xs text-gray-500">
+            <p className="w-full text-xs text-slate-500">
               This class has no sections yet.
             </p>
           )}
           {classId && subjects.length === 0 && (
-            <p className="w-full text-xs text-gray-500">
+            <p className="w-full text-xs text-slate-500">
               No subjects are assigned to this class yet.
             </p>
           )}

@@ -121,7 +121,7 @@ export function StudentForm({
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       {error && (
-        <p role="alert" className="text-sm text-red-600">
+        <p role="alert" className="alert alert-error">
           {error}
         </p>
       )}
@@ -235,18 +235,14 @@ export function StudentForm({
       </fieldset>
 
       <div className="flex gap-3">
-        <button
-          type="submit"
-          disabled={busy}
-          className="rounded-md bg-gray-900 px-4 py-1.5 text-sm text-white disabled:opacity-60 dark:bg-gray-100 dark:text-gray-900"
-        >
+        <button type="submit" disabled={busy} className="btn btn-primary">
           {busy ? "Saving…" : submitLabel}
         </button>
         {onCancel && (
           <button
             type="button"
             onClick={onCancel}
-            className="text-sm text-gray-500 hover:underline"
+            className="text-sm text-slate-500 hover:underline"
           >
             Cancel
           </button>

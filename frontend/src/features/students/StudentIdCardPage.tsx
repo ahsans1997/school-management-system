@@ -6,6 +6,7 @@ import { errorMessage } from "@/lib/errors";
 import * as studentToolsService from "@/services/studentToolsService";
 import type { IdCardSheet as Sheet } from "@/types/studentTools";
 import { IdCardSheet } from "./IdCardSheet";
+import { InlineLoader } from "@/components/Loading";
 
 /** One student's ID card, ready to print. */
 export function StudentIdCardPage({ studentId }: { studentId: number }) {
@@ -33,7 +34,7 @@ export function StudentIdCardPage({ studentId }: { studentId: number }) {
       <div className="mb-6 print:hidden">
         <Link
           href={`/admin/students/${studentId}`}
-          className="text-sm text-gray-500 hover:underline"
+          className="text-sm text-slate-500 hover:underline"
         >
           ← Student profile
         </Link>
@@ -43,7 +44,7 @@ export function StudentIdCardPage({ studentId }: { studentId: number }) {
             <button
               type="button"
               onClick={() => window.print()}
-              className="rounded-md bg-gray-900 px-4 py-1.5 text-sm text-white dark:bg-gray-100 dark:text-gray-900"
+              className="btn btn-primary"
             >
               Print
             </button>
@@ -52,11 +53,11 @@ export function StudentIdCardPage({ studentId }: { studentId: number }) {
       </div>
 
       {error ? (
-        <p role="alert" className="text-sm text-red-600">
+        <p role="alert" className="alert alert-error">
           {error}
         </p>
       ) : !sheet ? (
-        <p className="text-sm text-gray-500">Loading…</p>
+        <InlineLoader />
       ) : (
         <IdCardSheet sheet={sheet} />
       )}

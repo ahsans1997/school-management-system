@@ -39,14 +39,14 @@ export function ExamScheduleTable({
   showClass?: boolean;
 }) {
   if (papers.length === 0) {
-    return <p className="text-sm text-gray-500">No papers yet.</p>;
+    return <p className="text-sm text-slate-500">No papers yet.</p>;
   }
 
   return (
-    <div className="overflow-x-auto">
-      <table className="w-full text-sm">
+    <div className="table-wrap">
+      <table>
         <thead>
-          <tr className="border-b border-gray-200 text-left text-gray-500 dark:border-gray-800 dark:text-gray-400">
+          <tr className="table-head">
             <th className="py-2 pr-3 font-medium">Date</th>
             <th className="py-2 pr-3 font-medium">Time</th>
             {showClass && <th className="py-2 pr-3 font-medium">Class</th>}
@@ -59,10 +59,7 @@ export function ExamScheduleTable({
             const repeatDay = i > 0 && papers[i - 1].exam_date === p.exam_date;
             const split = splitOf(p);
             return (
-              <tr
-                key={p.id}
-                className="border-b border-gray-100 align-top dark:border-gray-900"
-              >
+              <tr key={p.id} className="table-row align-top">
                 <td className="py-2 pr-3 whitespace-nowrap">
                   {repeatDay ? (
                     <span className="sr-only">
@@ -73,7 +70,7 @@ export function ExamScheduleTable({
                   ) : p.exam_date ? (
                     formatPaperDay(p.exam_date)
                   ) : (
-                    <span className="text-gray-500">Date to be set</span>
+                    <span className="text-slate-500">Date to be set</span>
                   )}
                 </td>
                 <td className="py-2 pr-3 whitespace-nowrap tabular-nums">
@@ -87,12 +84,14 @@ export function ExamScheduleTable({
                 <td className="py-2 pr-3">
                   <span className="font-medium">{p.subject?.name}</span>
                   {p.section && (
-                    <span className="ml-1 text-xs text-gray-500">
+                    <span className="ml-1 text-xs text-slate-500">
                       Section {p.section.name} only
                     </span>
                   )}
                   {split && (
-                    <span className="block text-xs text-gray-500">{split}</span>
+                    <span className="block text-xs text-slate-500">
+                      {split}
+                    </span>
                   )}
                 </td>
                 <td className="py-2 pr-3 whitespace-nowrap tabular-nums">

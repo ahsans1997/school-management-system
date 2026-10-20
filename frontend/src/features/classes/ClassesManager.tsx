@@ -16,6 +16,7 @@ import {
   type SchoolClassInput,
   type Shift,
 } from "@/types/schoolClass";
+import { PageLoader } from "@/components/Loading";
 
 /** Form fields as typed by the user (selects use "" for "none"). */
 interface Draft {
@@ -27,8 +28,7 @@ interface Draft {
 
 const EMPTY: Draft = { name: "", numeric_level: "", shift: "", medium: "" };
 
-const inputClass =
-  "rounded-md border border-gray-300 px-2 py-1 text-sm dark:border-gray-700 dark:bg-gray-800";
+const inputClass = "input input-sm";
 
 function toInput(draft: Draft): SchoolClassInput {
   return {
@@ -195,28 +195,28 @@ export function ClassesManager() {
   }
 
   if (loading) {
-    return <p className="p-8 text-sm text-gray-500">Loading…</p>;
+    return <PageLoader />;
   }
 
   return (
     <div className="mx-auto max-w-4xl p-6">
       <h1 className="mb-1 text-2xl font-semibold">Classes</h1>
-      <p className="mb-6 text-sm text-gray-500 dark:text-gray-400">
+      <p className="mb-6 text-sm text-slate-500 dark:text-slate-400">
         The class catalogue, shared across academic years. Level sets the order
         and drives promotion (Class 1 = 1; use 0 or below for pre-primary).
       </p>
 
       {error && (
-        <p role="alert" className="mb-4 text-sm text-red-600">
+        <p role="alert" className="alert alert-error mb-4">
           {error}
         </p>
       )}
-      {notice && <p className="mb-4 text-sm text-green-600">{notice}</p>}
+      {notice && <p className="alert alert-success mb-4">{notice}</p>}
 
       {canCreate && (
         <form
           onSubmit={handleCreate}
-          className="mb-6 grid gap-2 rounded-lg border border-gray-200 p-4 sm:grid-cols-[1fr_6rem_auto_auto_auto] sm:items-end dark:border-gray-800"
+          className="card mb-6 grid gap-2 p-5 sm:grid-cols-[1fr_6rem_auto_auto_auto] sm:items-end"
         >
           <label className="text-sm">
             <span className="mb-1 block font-medium">Name</span>
@@ -245,23 +245,19 @@ export function ClassesManager() {
             />
           </label>
           <ShiftMediumFields draft={form} onChange={setForm} />
-          <button
-            type="submit"
-            disabled={busy}
-            className="rounded-md bg-gray-900 px-4 py-1.5 text-sm text-white disabled:opacity-60 dark:bg-gray-100 dark:text-gray-900"
-          >
+          <button type="submit" disabled={busy} className="btn btn-primary">
             Add class
           </button>
         </form>
       )}
 
       {classes.length === 0 ? (
-        <p className="text-sm text-gray-500">No classes yet.</p>
+        <p className="text-sm text-slate-500">No classes yet.</p>
       ) : (
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
+        <div className="table-wrap">
+          <table>
             <thead>
-              <tr className="border-b border-gray-200 text-left text-gray-500 dark:border-gray-800 dark:text-gray-400">
+              <tr className="table-head">
                 <th className="py-2 pr-3 font-medium">Level</th>
                 <th className="py-2 pr-3 font-medium">Name</th>
                 <th className="py-2 pr-3 font-medium">Shift</th>
@@ -278,10 +274,7 @@ export function ClassesManager() {
             <tbody>
               {classes.map((c) =>
                 editing?.id === c.id ? (
-                  <tr
-                    key={c.id}
-                    className="border-b border-gray-100 dark:border-gray-900"
-                  >
+                  <tr key={c.id} className="table-row">
                     <td className="py-2 pr-2">
                       <input
                         type="number"
@@ -342,17 +335,14 @@ export function ClassesManager() {
                       <button
                         type="button"
                         onClick={() => setEditing(null)}
-                        className="text-xs text-gray-500 hover:underline"
+                        className="text-xs text-slate-500 hover:underline"
                       >
                         Cancel
                       </button>
                     </td>
                   </tr>
                 ) : (
-                  <tr
-                    key={c.id}
-                    className="border-b border-gray-100 dark:border-gray-900"
-                  >
+                  <tr key={c.id} className="table-row">
                     <td className="py-2 pr-3 tabular-nums">
                       {c.numeric_level}
                     </td>
@@ -390,7 +380,7 @@ export function ClassesManager() {
                           onClick={() =>
                             setEditing({ ...toDraft(c), id: c.id })
                           }
-                          className="text-xs text-gray-600 hover:underline dark:text-gray-300"
+                          className="text-xs text-slate-600 hover:underline dark:text-slate-300"
                         >
                           Edit
                         </button>

@@ -42,10 +42,10 @@ export function PhotoEditor({
         <img
           src={photoUrl}
           alt={alt}
-          className="h-28 w-24 rounded-md border border-gray-200 object-cover dark:border-gray-800"
+          className="h-28 w-24 rounded-md border border-slate-200 object-cover dark:border-slate-800"
         />
       ) : (
-        <div className="flex h-28 w-24 items-center justify-center rounded-md border border-dashed border-gray-300 text-xs text-gray-500 dark:border-gray-700">
+        <div className="flex h-28 w-24 items-center justify-center rounded-md border border-dashed border-slate-300 text-xs text-slate-500 dark:border-slate-700">
           No photo
         </div>
       )}

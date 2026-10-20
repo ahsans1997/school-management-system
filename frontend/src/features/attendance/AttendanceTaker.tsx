@@ -12,8 +12,7 @@ import {
   type AttendanceStatus,
 } from "@/types/attendance";
 
-const inputClass =
-  "rounded-md border border-gray-300 px-2 py-1 text-sm dark:border-gray-700 dark:bg-gray-800";
+const inputClass = "input input-sm";
 
 const STATUS_STYLE: Record<AttendanceStatus, string> = {
   present: "bg-green-600 text-white border-green-600",
@@ -163,26 +162,26 @@ export function AttendanceTaker({
       </div>
 
       {error && (
-        <p role="alert" className="mb-4 text-sm text-red-600">
+        <p role="alert" className="alert alert-error mb-4">
           {error}
         </p>
       )}
-      {notice && <p className="mb-4 text-sm text-green-600">{notice}</p>}
+      {notice && <p className="alert alert-success mb-4">{notice}</p>}
 
       {!sectionId ? (
-        <p className="text-sm text-gray-500">
+        <p className="text-sm text-slate-500">
           {sections.length === 0
             ? "You have no sections to take attendance for."
             : "Choose a section to take attendance."}
         </p>
       ) : sheet === null ? null : sheet.students.length === 0 ? (
-        <p className="text-sm text-gray-500">
+        <p className="text-sm text-slate-500">
           No students are enrolled in this section for{" "}
           {sheet.academic_year.name}.
         </p>
       ) : (
         <>
-          <p className="mb-3 text-xs text-gray-500">
+          <p className="mb-3 text-xs text-slate-500">
             {existing
               ? `Taken by ${existing.taken_by ?? "someone"}${existing.updated_by && existing.updated_by !== existing.taken_by ? `, last changed by ${existing.updated_by}` : ""}.`
               : "Not taken yet: everyone starts as Present, so change the exceptions."}
@@ -190,13 +189,13 @@ export function AttendanceTaker({
 
           {canSave && (
             <div className="mb-3 flex flex-wrap gap-2 text-xs">
-              <span className="self-center text-gray-500">Mark all:</span>
+              <span className="self-center text-slate-500">Mark all:</span>
               {ATTENDANCE_STATUSES.map((s) => (
                 <button
                   key={s.value}
                   type="button"
                   onClick={() => setAll(s.value)}
-                  className="rounded border border-gray-300 px-2 py-0.5 dark:border-gray-700"
+                  className="rounded border border-slate-300 px-2 py-0.5 dark:border-slate-700"
                 >
                   {s.label}
                 </button>
@@ -204,10 +203,10 @@ export function AttendanceTaker({
             </div>
           )}
 
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
+          <div className="table-wrap">
+            <table>
               <thead>
-                <tr className="border-b border-gray-200 text-left text-gray-500 dark:border-gray-800 dark:text-gray-400">
+                <tr className="table-head">
                   <th className="py-2 pr-3 font-medium">Roll</th>
                   <th className="py-2 pr-3 font-medium">Student</th>
                   <th className="py-2 pr-3 font-medium">Status</th>
@@ -218,10 +217,7 @@ export function AttendanceTaker({
                 {sheet.students.map((row) => {
                   const mark = marks[row.student_id];
                   return (
-                    <tr
-                      key={row.student_id}
-                      className="border-b border-gray-100 dark:border-gray-900"
-                    >
+                    <tr key={row.student_id} className="table-row">
                       <td className="py-2 pr-3 tabular-nums">
                         {row.roll ?? "—"}
                       </td>
@@ -243,7 +239,7 @@ export function AttendanceTaker({
                               className={`min-w-8 rounded border px-1.5 py-0.5 text-xs ${
                                 mark?.status === s.value
                                   ? STATUS_STYLE[s.value]
-                                  : "border-gray-300 dark:border-gray-700"
+                                  : "border-slate-300 dark:border-slate-700"
                               }`}
                             >
                               {s.short}
@@ -282,7 +278,7 @@ export function AttendanceTaker({
                 type="button"
                 disabled={busy}
                 onClick={() => void save()}
-                className="rounded-md bg-gray-900 px-4 py-1.5 text-sm text-white disabled:opacity-60 dark:bg-gray-100 dark:text-gray-900"
+                className="btn btn-primary"
               >
                 {busy
                   ? "Saving…"
@@ -291,7 +287,7 @@ export function AttendanceTaker({
                     : "Save attendance"}
               </button>
             )}
-            <span className="text-xs text-gray-500 tabular-nums">
+            <span className="text-xs text-slate-500 tabular-nums">
               {ATTENDANCE_STATUSES.map(
                 (s) => `${s.label} ${counts[s.value] ?? 0}`,
               ).join(" · ")}

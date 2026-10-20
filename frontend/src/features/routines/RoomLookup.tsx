@@ -27,7 +27,7 @@ export function RoomLookup() {
   }
 
   return (
-    <section className="mt-8 rounded-lg border border-gray-200 p-4 dark:border-gray-800">
+    <section className="card mt-8 p-5">
       <h2 className="mb-3 text-sm font-semibold">Room timetable</h2>
       <form role="search" onSubmit={lookup} className="mb-3 flex gap-2">
         <input
@@ -37,23 +37,20 @@ export function RoomLookup() {
           maxLength={50}
           value={room}
           onChange={(e) => setRoom(e.target.value)}
-          className="rounded-md border border-gray-300 px-2 py-1 text-sm dark:border-gray-700 dark:bg-gray-800"
+          className="input input-sm"
         />
-        <button
-          type="submit"
-          className="rounded-md border border-gray-300 px-3 py-1 text-sm dark:border-gray-700"
-        >
+        <button type="submit" className="btn btn-secondary">
           Show
         </button>
       </form>
       {error && (
-        <p role="alert" className="text-sm text-red-600">
+        <p role="alert" className="alert alert-error">
           {error}
         </p>
       )}
       {shown !== null && (
         <>
-          <p className="mb-2 text-xs text-gray-500">Room {shown}</p>
+          <p className="mb-2 text-xs text-slate-500">Room {shown}</p>
           <RoutineGrid slots={slots} perspective="room" />
         </>
       )}

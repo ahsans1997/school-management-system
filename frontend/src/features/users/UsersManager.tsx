@@ -6,6 +6,7 @@ import { ApiRequestError } from "@/services/apiClient";
 import * as roleService from "@/services/roleService";
 import * as userService from "@/services/userService";
 import type { ManagedUser } from "@/types/user";
+import { PageLoader } from "@/components/Loading";
 
 function messageOf(error: unknown): string {
   if (error instanceof ApiRequestError) {
@@ -129,7 +130,7 @@ export function UsersManager() {
   }
 
   if (loading) {
-    return <p className="p-8 text-sm text-gray-500">Loading…</p>;
+    return <PageLoader />;
   }
 
   const canEdit = can("user.edit");
@@ -140,16 +141,16 @@ export function UsersManager() {
       <h1 className="mb-6 text-2xl font-semibold">Users</h1>
 
       {error && (
-        <p role="alert" className="mb-4 text-sm text-red-600">
+        <p role="alert" className="alert alert-error mb-4">
           {error}
         </p>
       )}
-      {notice && <p className="mb-4 text-sm text-green-600">{notice}</p>}
+      {notice && <p className="alert alert-success mb-4">{notice}</p>}
 
       {can("user.create") && (
         <form
           onSubmit={handleCreate}
-          className="mb-6 grid gap-2 rounded-md border border-gray-200 p-4 sm:grid-cols-5 dark:border-gray-800"
+          className="mb-6 grid gap-2 rounded-md border border-slate-200 p-4 sm:grid-cols-5 dark:border-slate-800"
         >
           <input
             aria-label="Name"
@@ -157,7 +158,7 @@ export function UsersManager() {
             required
             value={form.name}
             onChange={(e) => setForm({ ...form, name: e.target.value })}
-            className="rounded-md border border-gray-300 px-2 py-1 text-sm dark:border-gray-700 dark:bg-gray-800"
+            className="input input-sm"
           />
           <input
             aria-label="Email"
@@ -166,7 +167,7 @@ export function UsersManager() {
             required
             value={form.email}
             onChange={(e) => setForm({ ...form, email: e.target.value })}
-            className="rounded-md border border-gray-300 px-2 py-1 text-sm dark:border-gray-700 dark:bg-gray-800"
+            className="input input-sm"
           />
           <input
             aria-label="Password"
@@ -175,13 +176,13 @@ export function UsersManager() {
             required
             value={form.password}
             onChange={(e) => setForm({ ...form, password: e.target.value })}
-            className="rounded-md border border-gray-300 px-2 py-1 text-sm dark:border-gray-700 dark:bg-gray-800"
+            className="input input-sm"
           />
           <select
             aria-label="Role"
             value={form.role}
             onChange={(e) => setForm({ ...form, role: e.target.value })}
-            className="rounded-md border border-gray-300 px-2 py-1 text-sm dark:border-gray-700 dark:bg-gray-800"
+            className="input input-sm"
           >
             <option value="">No role</option>
             {roleNames.map((name) => (
@@ -190,10 +191,7 @@ export function UsersManager() {
               </option>
             ))}
           </select>
-          <button
-            type="submit"
-            className="rounded-md bg-gray-900 px-3 py-1 text-sm text-white dark:bg-gray-100 dark:text-gray-900"
-          >
+          <button type="submit" className="btn btn-primary">
             Create
           </button>
         </form>
@@ -205,12 +203,12 @@ export function UsersManager() {
           placeholder="Search name or email…"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-64 rounded-md border border-gray-300 px-2 py-1 text-sm dark:border-gray-700 dark:bg-gray-800"
+          className="input input-sm w-64"
         />
         <button
           type="button"
           onClick={() => loadUsers(1, search)}
-          className="rounded-md border border-gray-300 px-3 py-1 text-sm dark:border-gray-700"
+          className="btn btn-secondary"
         >
           Search
         </button>
@@ -218,7 +216,7 @@ export function UsersManager() {
 
       <table className="w-full border-collapse text-sm">
         <thead>
-          <tr className="border-b border-gray-200 text-left dark:border-gray-800">
+          <tr className="border-b border-slate-200 text-left dark:border-slate-800">
             <th className="py-2">Name</th>
             <th>Email</th>
             <th>Role</th>
@@ -230,10 +228,7 @@ export function UsersManager() {
           {users.map((u) => {
             const isSelf = u.id === currentUser?.id;
             return (
-              <tr
-                key={u.id}
-                className="border-b border-gray-100 dark:border-gray-900"
-              >
+              <tr key={u.id} className="table-row">
                 <td className="py-2">{u.name}</td>
                 <td>{u.email}</td>
                 <td>
@@ -242,7 +237,7 @@ export function UsersManager() {
                       aria-label={`Role for ${u.email}`}
                       value={u.roles[0] ?? ""}
                       onChange={(e) => changeRole(u, e.target.value)}
-                      className="rounded-md border border-gray-300 px-1 py-0.5 text-xs dark:border-gray-700 dark:bg-gray-800"
+                      className="input input-sm text-xs"
                     >
                       <option value="">—</option>
                       {roleNames.map((name) => (
@@ -257,7 +252,9 @@ export function UsersManager() {
                 </td>
                 <td>
                   <span
-                    className={u.is_active ? "text-green-600" : "text-gray-400"}
+                    className={
+                      u.is_active ? "text-green-600" : "text-slate-400"
+                    }
                   >
                     {u.is_active ? "active" : "disabled"}
                   </span>
@@ -267,7 +264,7 @@ export function UsersManager() {
                     <button
                       type="button"
                       onClick={() => toggle(u)}
-                      className="text-xs text-gray-600 hover:underline dark:text-gray-300"
+                      className="text-xs text-slate-600 hover:underline dark:text-slate-300"
                     >
                       {u.is_active ? "deactivate" : "activate"}
                     </button>
@@ -276,7 +273,7 @@ export function UsersManager() {
                     <button
                       type="button"
                       onClick={() => reset(u)}
-                      className="text-xs text-gray-600 hover:underline dark:text-gray-300"
+                      className="text-xs text-slate-600 hover:underline dark:text-slate-300"
                     >
                       reset pw
                     </button>
@@ -302,18 +299,18 @@ export function UsersManager() {
           type="button"
           disabled={page <= 1}
           onClick={() => loadUsers(page - 1, search)}
-          className="rounded-md border border-gray-300 px-3 py-1 disabled:opacity-50 dark:border-gray-700"
+          className="btn btn-secondary"
         >
           Prev
         </button>
-        <span className="text-gray-500">
+        <span className="text-slate-500">
           Page {page} of {lastPage}
         </span>
         <button
           type="button"
           disabled={page >= lastPage}
           onClick={() => loadUsers(page + 1, search)}
-          className="rounded-md border border-gray-300 px-3 py-1 disabled:opacity-50 dark:border-gray-700"
+          className="btn btn-secondary"
         >
           Next
         </button>

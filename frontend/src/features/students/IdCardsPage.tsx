@@ -10,8 +10,7 @@ import type { Section } from "@/types/section";
 import type { IdCardSheet as Sheet } from "@/types/studentTools";
 import { IdCardSheet } from "./IdCardSheet";
 
-const inputClass =
-  "rounded-md border border-gray-300 px-2 py-1 text-sm dark:border-gray-700 dark:bg-gray-800";
+const inputClass = "input input-sm";
 
 /** A whole section's ID cards for the current year, ready to print. */
 export function IdCardsPage() {
@@ -65,13 +64,13 @@ export function IdCardsPage() {
     <div className="mx-auto max-w-5xl p-6 print:p-0">
       <div className="print:hidden">
         <h1 className="mb-1 text-2xl font-semibold">ID cards</h1>
-        <p className="mb-6 text-sm text-gray-500 dark:text-gray-400">
+        <p className="mb-6 text-sm text-slate-500 dark:text-slate-400">
           A section&apos;s cards for the current year, two to a row on A4. A
           single student&apos;s card is on their profile.
         </p>
 
         {error && (
-          <p role="alert" className="mb-4 text-sm text-red-600">
+          <p role="alert" className="alert alert-error mb-4">
             {error}
           </p>
         )}
@@ -106,7 +105,7 @@ export function IdCardsPage() {
           </select>
           {sheet && sheet.cards.length > 0 && (
             <>
-              <span className="text-sm text-gray-500">
+              <span className="text-sm text-slate-500">
                 {sheet.cards.length}{" "}
                 {sheet.cards.length === 1 ? "card" : "cards"} ·{" "}
                 {sheet.academic_year.name}
@@ -114,7 +113,7 @@ export function IdCardsPage() {
               <button
                 type="button"
                 onClick={() => window.print()}
-                className="ml-auto rounded-md bg-gray-900 px-4 py-1.5 text-sm text-white dark:bg-gray-100 dark:text-gray-900"
+                className="btn btn-primary ml-auto"
               >
                 Print
               </button>

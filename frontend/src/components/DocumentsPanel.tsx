@@ -5,8 +5,7 @@ import { errorMessage } from "@/lib/errors";
 import { formatBytes, formatDate } from "@/lib/format";
 import type { StoredDocument } from "@/types/document";
 
-const inputClass =
-  "rounded-md border border-gray-300 px-2 py-1 text-sm dark:border-gray-700 dark:bg-gray-800";
+const inputClass = "input input-sm";
 
 /** Matches the API: PDF or image, up to 5 MB. */
 const ACCEPT = "application/pdf,image/jpeg,image/png,image/webp";
@@ -72,19 +71,19 @@ export function DocumentsPanel({
   }
 
   return (
-    <section className="rounded-lg border border-gray-200 p-4 dark:border-gray-800">
+    <section className="card p-5">
       <h2 className="mb-3 text-sm font-semibold">Documents</h2>
 
       {error && (
-        <p role="alert" className="mb-3 text-sm text-red-600">
+        <p role="alert" className="alert alert-error mb-3">
           {error}
         </p>
       )}
 
       {documents.length === 0 ? (
-        <p className="mb-3 text-sm text-gray-500">No documents yet.</p>
+        <p className="mb-3 text-sm text-slate-500">No documents yet.</p>
       ) : (
-        <ul className="mb-4 divide-y divide-gray-100 dark:divide-gray-800">
+        <ul className="mb-4 divide-y divide-slate-100 dark:divide-slate-800">
           {documents.map((doc) => (
             <li
               key={doc.id}
@@ -97,7 +96,7 @@ export function DocumentsPanel({
                 >
                   {doc.title}
                 </a>
-                <span className="block truncate text-xs text-gray-500">
+                <span className="block truncate text-xs text-slate-500">
                   {doc.original_name} · {formatBytes(doc.size)} ·{" "}
                   {formatDate(doc.created_at)}
                 </span>
@@ -121,7 +120,7 @@ export function DocumentsPanel({
         <form
           onSubmit={handleUpload}
           aria-label="Upload document"
-          className="flex flex-wrap items-center gap-2 border-t border-gray-100 pt-3 dark:border-gray-800"
+          className="flex flex-wrap items-center gap-2 border-t border-slate-100 pt-3 dark:border-slate-800"
         >
           <input
             required
@@ -140,14 +139,10 @@ export function DocumentsPanel({
             aria-label="Document file"
             className="max-w-full text-sm"
           />
-          <button
-            type="submit"
-            disabled={busy}
-            className="rounded-md bg-gray-900 px-3 py-1 text-sm text-white disabled:opacity-60 dark:bg-gray-100 dark:text-gray-900"
-          >
+          <button type="submit" disabled={busy} className="btn btn-primary">
             Upload
           </button>
-          <span className="w-full text-xs text-gray-500">
+          <span className="w-full text-xs text-slate-500">
             PDF or image, up to 5 MB.
           </span>
         </form>

@@ -8,9 +8,9 @@ import { errorMessage } from "@/lib/errors";
 import * as teacherService from "@/services/teacherService";
 import type { Paginated } from "@/types/api";
 import type { Teacher } from "@/types/teacher";
+import { PageLoader } from "@/components/Loading";
 
-const inputClass =
-  "rounded-md border border-gray-300 px-2 py-1 text-sm dark:border-gray-700 dark:bg-gray-800";
+const inputClass = "input input-sm";
 
 /** The teacher register: search, archived toggle, links to each profile. */
 export function TeachersList() {
@@ -72,7 +72,7 @@ export function TeachersList() {
   }, [applyPage]);
 
   if (loading) {
-    return <p className="p-8 text-sm text-gray-500">Loading…</p>;
+    return <PageLoader />;
   }
 
   return (
@@ -82,22 +82,19 @@ export function TeachersList() {
           {archived ? "Archived teachers" : "Teachers"}
         </h1>
         {can("teacher.create") && (
-          <Link
-            href="/admin/teachers/new"
-            className="rounded-md bg-gray-900 px-4 py-1.5 text-sm text-white dark:bg-gray-100 dark:text-gray-900"
-          >
+          <Link href="/admin/teachers/new" className="btn btn-primary">
             Add teacher
           </Link>
         )}
       </div>
-      <p className="mb-6 text-sm text-gray-500 dark:text-gray-400">
+      <p className="mb-6 text-sm text-slate-500 dark:text-slate-400">
         {archived
           ? "Teachers who have left. Their records are kept and can be restored."
           : "Assign subjects and class-teacher duties from each teacher's profile."}
       </p>
 
       {error && (
-        <p role="alert" className="mb-4 text-sm text-red-600">
+        <p role="alert" className="alert alert-error mb-4">
           {error}
         </p>
       )}
@@ -118,10 +115,7 @@ export function TeachersList() {
           onChange={(e) => setSearch(e.target.value)}
           className={`w-full max-w-xs ${inputClass}`}
         />
-        <button
-          type="submit"
-          className="rounded-md border border-gray-300 px-3 py-1 text-sm dark:border-gray-700"
-        >
+        <button type="submit" className="btn btn-secondary">
           Search
         </button>
         <label className="ml-auto flex items-center gap-2 text-sm">
@@ -135,7 +129,7 @@ export function TeachersList() {
       </form>
 
       {teachers.length === 0 ? (
-        <p className="text-sm text-gray-500">
+        <p className="text-sm text-slate-500">
           {query
             ? `No teachers match “${query}”.`
             : archived
@@ -144,13 +138,13 @@ export function TeachersList() {
         </p>
       ) : (
         <>
-          <p className="mb-2 text-xs text-gray-500">
+          <p className="mb-2 text-xs text-slate-500">
             {total} {total === 1 ? "teacher" : "teachers"}
           </p>
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
+          <div className="table-wrap">
+            <table>
               <thead>
-                <tr className="border-b border-gray-200 text-left text-gray-500 dark:border-gray-800 dark:text-gray-400">
+                <tr className="table-head">
                   <th className="py-2 pr-3 font-medium">Teacher</th>
                   <th className="py-2 pr-3 font-medium">Employee ID</th>
                   <th className="py-2 pr-3 font-medium">Designation</th>
@@ -161,10 +155,7 @@ export function TeachersList() {
               </thead>
               <tbody>
                 {teachers.map((t) => (
-                  <tr
-                    key={t.id}
-                    className="border-b border-gray-100 dark:border-gray-900"
-                  >
+                  <tr key={t.id} className="table-row">
                     <td className="py-2 pr-3">
                       <Link
                         href={`/admin/teachers/${t.id}`}
@@ -180,7 +171,7 @@ export function TeachersList() {
                         ) : (
                           <span
                             aria-hidden
-                            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gray-200 text-xs text-gray-600 dark:bg-gray-800 dark:text-gray-300"
+                            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-slate-200 text-xs text-slate-600 dark:bg-slate-800 dark:text-slate-300"
                           >
                             {t.name.charAt(0)}
                           </span>
