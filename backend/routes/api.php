@@ -8,6 +8,9 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EnrollmentController;
 use App\Http\Controllers\ExamController;
 use App\Http\Controllers\ExamSubjectController;
+use App\Http\Controllers\FeeInvoiceController;
+use App\Http\Controllers\FeeStructureController;
+use App\Http\Controllers\FeeTypeController;
 use App\Http\Controllers\GradeScaleController;
 use App\Http\Controllers\GuardianController;
 use App\Http\Controllers\HealthController;
@@ -232,6 +235,27 @@ Route::middleware(['auth:api', 'token.type:access', 'active'])->group(function (
     Route::post('exams/{exam}/results/unpublish', [ResultController::class, 'unpublish'])->middleware('permission:result.publish');
     Route::get('results/me', [ResultController::class, 'me']);
     Route::get('results/{result}/report-card', [ResultController::class, 'reportCard'])->middleware('permission:result.view');
+
+    // Fees. Module 19. Fee types and per class + year structures, monthly
+    // invoices generated in the background (202 + a run to poll), voided
+    // rather than deleted. /fees/me: a student's or parent's own invoices.
+    Route::get('fee-types', [FeeTypeController::class, 'index'])->middleware('permission:fee.view');
+    Route::post('fee-types', [FeeTypeController::class, 'store'])->middleware('permission:fee.create');
+    Route::put('fee-types/{fee_type}', [FeeTypeController::class, 'update'])->middleware('permission:fee.create');
+    Route::delete('fee-types/{fee_type}', [FeeTypeController::class, 'destroy'])->middleware('permission:fee.create');
+    Route::get('fee-structures', [FeeStructureController::class, 'index'])->middleware('permission:fee.view');
+    Route::post('fee-structures', [FeeStructureController::class, 'store'])->middleware('permission:fee.create');
+    Route::put('fee-structures/{fee_structure}', [FeeStructureController::class, 'update'])->middleware('permission:fee.create');
+    Route::delete('fee-structures/{fee_structure}', [FeeStructureController::class, 'destroy'])->middleware('permission:fee.create');
+    Route::get('fee-invoices', [FeeInvoiceController::class, 'index'])->middleware('permission:fee.view');
+    Route::post('fee-invoices/generate', [FeeInvoiceController::class, 'generate'])->middleware('permission:fee.create');
+    Route::get('fee-invoices/runs', [FeeInvoiceController::class, 'runs'])->middleware('permission:fee.view');
+    Route::get('fee-invoices/runs/{fee_invoice_run}', [FeeInvoiceController::class, 'run'])->middleware('permission:fee.view');
+    Route::get('fee-invoices/{fee_invoice}', [FeeInvoiceController::class, 'show'])->middleware('permission:fee.view')->whereNumber('fee_invoice');
+    Route::post('fee-invoices/{fee_invoice}/void', [FeeInvoiceController::class, 'void'])->middleware('permission:fee.create')->whereNumber('fee_invoice');
+    Route::get('fees/reports/due', [FeeInvoiceController::class, 'dues'])->middleware('permission:fee.report');
+    Route::get('fees/options', [FeeInvoiceController::class, 'options'])->middleware('permission:fee.view');
+    Route::get('fees/me', [FeeInvoiceController::class, 'me']);
 
     // Grade scales. Module 16. Changing one regrades every result, so writes
     // need exam.grading (Admin only by default).

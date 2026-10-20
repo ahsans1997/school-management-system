@@ -127,6 +127,29 @@ export interface PublishedResultsWidgetData {
   }[];
 }
 
+/** `pending_fees` (admin/staff with fee.view): this year's fees. Money as "1500.00". */
+export interface FeeSummaryWidgetData {
+  academic_year: string | null;
+  billed: string;
+  collected: string;
+  due: string;
+  invoices: number;
+  overdue: number;
+  overdue_amount: string;
+  currency: string;
+}
+
+/** `my_fees` (student) / `child_fees` (parent). */
+export interface MyFeesWidgetData {
+  linked: boolean;
+  currency: string;
+  students: {
+    student: { id: number; name: string };
+    due: string;
+    unpaid: { id: number; period: string; due: string; due_date: string }[];
+  }[];
+}
+
 export interface ChildAttendanceWidgetData {
   linked: boolean;
   academic_year?: string;

@@ -18,6 +18,38 @@ export function localToday(): string {
   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
 }
 
+/**
+ * Money for display: "1500.00" → "৳1,500.00" (South Asian grouping, so
+ * 1,00,000). Amounts arrive as decimal strings and are only formatted here,
+ * never added up on the client.
+ */
+export function formatMoney(
+  amount: string | null | undefined,
+  currency = "BDT",
+): string {
+  if (amount === null || amount === undefined || amount === "") return "—";
+  try {
+    return new Intl.NumberFormat("en-IN", {
+      style: "currency",
+      currency,
+      currencyDisplay: "narrowSymbol",
+      minimumFractionDigits: 2,
+    }).format(Number(amount));
+  } catch {
+    return `${currency} ${amount}`;
+  }
+}
+
+/** "2026-03" → "March 2026". */
+export function formatPeriod(period: string | null | undefined): string {
+  if (!period) return "—";
+  const [y, m] = period.split("-").map(Number);
+  return new Date(y, m - 1, 1).toLocaleDateString("en-GB", {
+    month: "long",
+    year: "numeric",
+  });
+}
+
 /** File size for humans: 512 B, 84 KB, 1.2 MB. */
 export function formatBytes(bytes: number): string {
   if (bytes < 1024) return `${bytes} B`;

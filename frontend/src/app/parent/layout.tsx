@@ -1,6 +1,12 @@
 "use client";
 
-import { CalendarClock, House, NotebookPen, Trophy } from "lucide-react";
+import {
+  CalendarClock,
+  House,
+  NotebookPen,
+  Trophy,
+  Wallet,
+} from "lucide-react";
 import type { ReactNode } from "react";
 import type { NavItem } from "@/components/AppShell";
 import { PortalLayout } from "@/components/PortalLayout";
@@ -11,6 +17,7 @@ const NAV: readonly NavItem[] = [
   { href: "/parent/routine", label: "Class routines", icon: CalendarClock },
   { href: "/parent/exams", label: "Exams", icon: NotebookPen },
   { href: "/parent/results", label: "Results", icon: Trophy },
+  { href: "/parent/fees", label: "Fees", icon: Wallet },
 ];
 
 export default function ParentLayout({ children }: { children: ReactNode }) {

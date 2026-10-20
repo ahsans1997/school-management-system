@@ -69,3 +69,20 @@ Excludes: invoice generation and fee structures (Module 19); income/expense ledg
 ## Notes
 
 Every payment and refund writes an audit log entry (spec §43) — user, action, record, old/new value, IP, timestamp. Amount is validated against the invoice's outstanding due; over-payment is rejected. Partial payments set invoice status `partial`; a fully-settled invoice becomes `paid`. Online-gateway capture is V2 (spec §66).
+
+## Notes from Module 19 (2026-10-21)
+
+Already in place:
+- `fee_invoices` has a DB CHECK `total > 0 AND paid >= 0 AND paid <= total AND due = total - paid` (MySQL/MariaDB).
+- `InvoiceStatus::for($totalCents, $paidCents)` derives the status and throws on overpayment or negative amounts.
+- `App\Support\Money` does exact hundredths maths.
+- Use `FeeStructureRequest::MONEY` (`numeric` + `^\d{1,13}(\.\d{1,2})?$`) to validate amounts.
+- `App\Support\Audit` writes the audit trail.
+- Invoice lines are RESTRICT, and invoices are never deleted.
+
+To do here:
+- In the payment transaction, `lockForUpdate()` the invoice and re-check it isn't void before changing `paid`.
+- Voiding (`VoidInvoice`) already locks the same row and refuses once anything is paid.
+- Add an idempotency key, and make the payments FKs RESTRICT.
+- Use DATETIME (not TIMESTAMP) for NOT NULL event columns such as `payment_date`/`paid_at`.
+- Mirror `FeeInvoicePolicy` (staff audience + permission) for payment records.

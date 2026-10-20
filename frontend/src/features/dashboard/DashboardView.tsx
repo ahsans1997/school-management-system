@@ -17,11 +17,18 @@ import {
   UserRound,
   Users,
   UserX,
+  Wallet,
   type LucideIcon,
 } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState, type ReactNode } from "react";
-import { formatCount, formatDate, formatDay } from "@/lib/format";
+import {
+  formatCount,
+  formatDate,
+  formatDay,
+  formatMoney,
+  formatPeriod,
+} from "@/lib/format";
 import { ApiRequestError } from "@/services/apiClient";
 import { getDashboard } from "@/services/dashboardService";
 import type {
@@ -36,6 +43,8 @@ import type {
   PendingMarksWidgetData,
   PublishedResultsWidgetData,
   ChildrenWidgetData,
+  FeeSummaryWidgetData,
+  MyFeesWidgetData,
   RecentUsersWidgetData,
   SchoolWidgetData,
   StudentStatsWidgetData,
@@ -65,6 +74,9 @@ const CUSTOM_KEYS = new Set([
   "pending_marks",
   "my_results",
   "child_results",
+  "pending_fees",
+  "my_fees",
+  "child_fees",
 ]);
 
 type Tone =
@@ -644,6 +656,72 @@ function PublishedResultsCard({
   );
 }
 
+/** A student's (or each child's) fees: what's due and the unpaid months. */
+function MyFeesCard({
+  data,
+  parent,
+}: {
+  data: MyFeesWidgetData;
+  parent: boolean;
+}) {
+  const href = parent ? "/parent/fees" : "/student/fees";
+  return (
+    <Card
+      title={parent ? "Fees & dues" : "My fees"}
+      icon={Wallet}
+      tone="rose"
+      action={
+        <Link href={href} className="link">
+          All invoices →
+        </Link>
+      }
+    >
+      {!data.linked ? (
+        <p className={muted}>
+          Your login isn&apos;t linked to a {parent ? "guardian" : "student"}{" "}
+          record yet.
+        </p>
+      ) : (
+        <ul className="space-y-4">
+          {data.students.map((s) => (
+            <li key={s.student.id}>
+              <div className="mb-1.5 flex items-baseline justify-between gap-3 text-sm">
+                <span className="font-medium text-slate-800 dark:text-slate-100">
+                  {parent ? s.student.name : "Due now"}
+                </span>
+                <span
+                  className={`text-lg font-bold tabular-nums ${Number(s.due) > 0 ? "text-rose-600 dark:text-rose-400" : "text-emerald-600 dark:text-emerald-400"}`}
+                >
+                  {formatMoney(s.due, data.currency)}
+                </span>
+              </div>
+              {s.unpaid.length === 0 ? (
+                <p className={muted}>All paid up.</p>
+              ) : (
+                <ul className="text-xs text-slate-500">
+                  {s.unpaid.map((u) => (
+                    <li
+                      key={u.id}
+                      className="flex justify-between gap-3 py-0.5"
+                    >
+                      <span>
+                        {formatPeriod(u.period)} · due {formatDay(u.due_date)}
+                      </span>
+                      <span className="tabular-nums">
+                        {formatMoney(u.due, data.currency)}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </li>
+          ))}
+        </ul>
+      )}
+    </Card>
+  );
+}
+
 /** A percentage as a thin coloured bar. */
 function Meter({ value }: { value: number | null }) {
   const width = Math.max(0, Math.min(100, value ?? 0));
@@ -985,6 +1063,9 @@ export function DashboardView() {
   const pendingMarks = find<PendingMarksWidgetData>("pending_marks");
   const myResults = find<PublishedResultsWidgetData>("my_results");
   const childResults = find<PublishedResultsWidgetData>("child_results");
+  const feeSummary = find<FeeSummaryWidgetData>("pending_fees");
+  const myFees = find<MyFeesWidgetData>("my_fees");
+  const childFees = find<MyFeesWidgetData>("child_fees");
   const others = ready.filter((w) => !CUSTOM_KEYS.has(w.key));
 
   const tiles: { key: string; tile: ReactNode }[] = [];
@@ -1048,6 +1129,20 @@ export function DashboardView() {
       },
     );
   }
+  if (feeSummary) {
+    tiles.push({
+      key: "fees",
+      tile: (
+        <StatTile
+          label="Fees outstanding"
+          value={formatMoney(feeSummary.due, feeSummary.currency)}
+          icon={Wallet}
+          tone="amber"
+          hint={`${formatMoney(feeSummary.collected, feeSummary.currency)} collected of ${formatMoney(feeSummary.billed, feeSummary.currency)}${feeSummary.overdue > 0 ? ` · ${feeSummary.overdue} overdue` : ""}`}
+        />
+      ),
+    });
+  }
   if (stats) {
     tiles.push({
       key: "users",
@@ -1099,6 +1194,8 @@ export function DashboardView() {
         {pendingMarks && <PendingMarksCard data={pendingMarks} />}
         {myResults && <PublishedResultsCard data={myResults} parent={false} />}
         {childResults && <PublishedResultsCard data={childResults} parent />}
+        {myFees && <MyFeesCard data={myFees} parent={false} />}
+        {childFees && <MyFeesCard data={childFees} parent />}
         {assigned && <AssignedSubjectsCard data={assigned} />}
         {childAttendance && <ChildAttendanceCard data={childAttendance} />}
         {myAttendance && <MyAttendanceCard data={myAttendance} />}

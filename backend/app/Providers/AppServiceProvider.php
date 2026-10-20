@@ -4,6 +4,10 @@ namespace App\Providers;
 
 use App\Models\Exam;
 use App\Models\ExamSubject;
+use App\Models\FeeInvoice;
+use App\Models\FeeInvoiceRun;
+use App\Models\FeeStructure;
+use App\Models\FeeType;
 use App\Models\Guardian;
 use App\Models\Mark;
 use App\Models\Result;
@@ -41,6 +45,10 @@ class AppServiceProvider extends ServiceProvider
             'exam_subject' => ExamSubject::class,
             'mark' => Mark::class,
             'result' => Result::class,
+            'fee_type' => FeeType::class,
+            'fee_structure' => FeeStructure::class,
+            'fee_invoice' => FeeInvoice::class,
+            'fee_invoice_run' => FeeInvoiceRun::class,
         ]);
 
         // Brute-force protection on login: 5 attempts/min keyed by email + IP.

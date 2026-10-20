@@ -4,7 +4,7 @@
 
 Legend: ⬜ Not started · 🟡 In progress · 🔵 In review · ✅ Complete · ⏸️ Blocked
 
-**Overall: 20 / 40 modules complete** (13b was split out of Module 13). Phases 1 (Foundation), 2 (Academic Core) and 3 (Academic Operations) are done; next is Phase 4 (Finance), starting with Module 19.
+**Overall: 21 / 40 modules complete** (13b was split out of Module 13). Phases 1 (Foundation), 2 (Academic Core) and 3 (Academic Operations) are done; Phase 4 (Finance) is up to Module 19, next is 20 (Payments).
 
 ---
 
@@ -47,7 +47,7 @@ Legend: ⬜ Not started · 🟡 In progress · 🔵 In review · ✅ Complete ·
 
 | ✔ | # | Module | Status | Completed | Doc |
 |---|---|--------|--------|-----------|-----|
-| [ ] | 19 | Fees | ⬜ Not started | — | [19-fees.md](modules/19-fees.md) |
+| [x] | 19 | Fees | ✅ Complete | 2026-10-21 | [19-fees.md](modules/19-fees.md) |
 | [ ] | 20 | Payments | ⬜ Not started | — | [20-payments.md](modules/20-payments.md) |
 | [ ] | 21 | Expenses & Basic Accounts | ⬜ Not started | — | [21-expenses-accounts.md](modules/21-expenses-accounts.md) |
 

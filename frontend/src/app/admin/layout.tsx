@@ -8,10 +8,12 @@ import {
   CalendarRange,
   ClipboardList,
   ClipboardPen,
+  FileText,
   GraduationCap,
   IdCard,
   LayoutDashboard,
   NotebookPen,
+  ReceiptText,
   School,
   Settings,
   ShieldCheck,
@@ -19,6 +21,7 @@ import {
   UserCog,
   UserRound,
   UsersRound,
+  Wallet,
 } from "lucide-react";
 import type { ReactNode } from "react";
 import { AppShell, type NavItem } from "@/components/AppShell";
@@ -116,6 +119,27 @@ const NAV: readonly NavItem[] = [
     label: "Academic years",
     permission: "academic_year.view",
     icon: CalendarRange,
+  },
+
+  {
+    section: "Finance",
+    href: "/admin/fees/invoices",
+    label: "Invoices",
+    permission: "fee.view",
+    icon: ReceiptText,
+  },
+  {
+    href: "/admin/fees/dues",
+    label: "Due report",
+    permission: "fee.report",
+    icon: FileText,
+  },
+  {
+    href: "/admin/fees",
+    label: "Fee setup",
+    permission: "fee.view",
+    icon: Wallet,
+    exact: true,
   },
 
   {

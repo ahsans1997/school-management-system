@@ -9,7 +9,9 @@ use App\Services\Dashboard\Widgets\AttendanceTasksWidget;
 use App\Services\Dashboard\Widgets\AttendanceTodayWidget;
 use App\Services\Dashboard\Widgets\ChildAttendanceWidget;
 use App\Services\Dashboard\Widgets\ChildrenWidget;
+use App\Services\Dashboard\Widgets\FeeSummaryWidget;
 use App\Services\Dashboard\Widgets\MyAttendanceWidget;
+use App\Services\Dashboard\Widgets\MyFeesWidget;
 use App\Services\Dashboard\Widgets\MyRoutineWidget;
 use App\Services\Dashboard\Widgets\PendingMarksWidget;
 use App\Services\Dashboard\Widgets\PendingWidget;
@@ -57,17 +59,13 @@ class DashboardService
             new PendingMarksWidget,
             new PublishedResultsWidget(A::Parent),
             new PublishedResultsWidget(A::Student),
+            new FeeSummaryWidget,
+            new MyFeesWidget(A::Parent),
+            new MyFeesWidget(A::Student),
 
             // Admin / staff — each gated by the permission its data needs.
-            new PendingWidget('pending_fees', 'Pending fees', '19 — Fees', $management, 'fee.view'),
             new PendingWidget('monthly_finance', 'Income & expense (this month)', '21 — Expenses & Basic Accounts', $management, 'accounts.view'),
             new PendingWidget('recent_admissions', 'Recent admissions', '31 — Online Admission', $management, 'admission.view'),
-
-            // Parent — will be scoped to the guardian's own children only.
-            new PendingWidget('child_fees', 'Fees & dues', '19 — Fees', [A::Parent]),
-
-            // Student — will be scoped to the student's own record only.
-            new PendingWidget('my_fees', 'My fees', '19 — Fees', [A::Student]),
 
             // Shared.
             new PendingWidget('homework', 'Homework', '34 — Teacher Portal', [A::Teacher, A::Parent, A::Student]),
