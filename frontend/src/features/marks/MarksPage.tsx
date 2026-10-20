@@ -36,7 +36,7 @@ export function sheetHref(
 }
 
 /** The exam to open first: the latest one that has started, else the newest. */
-function defaultExam(exams: Exam[], wanted?: number): Exam | undefined {
+export function defaultExam(exams: Exam[], wanted?: number): Exam | undefined {
   const today = localToday();
   return (
     exams.find((e) => e.id === wanted) ??

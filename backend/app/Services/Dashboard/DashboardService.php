@@ -14,6 +14,7 @@ use App\Services\Dashboard\Widgets\MyRoutineWidget;
 use App\Services\Dashboard\Widgets\PendingMarksWidget;
 use App\Services\Dashboard\Widgets\PendingWidget;
 use App\Services\Dashboard\Widgets\ProfileWidget;
+use App\Services\Dashboard\Widgets\PublishedResultsWidget;
 use App\Services\Dashboard\Widgets\RecentUsersWidget;
 use App\Services\Dashboard\Widgets\SchoolWidget;
 use App\Services\Dashboard\Widgets\StudentStatsWidget;
@@ -54,6 +55,8 @@ class DashboardService
             new MyRoutineWidget,
             new UpcomingExamsWidget,
             new PendingMarksWidget,
+            new PublishedResultsWidget(A::Parent),
+            new PublishedResultsWidget(A::Student),
 
             // Admin / staff — each gated by the permission its data needs.
             new PendingWidget('pending_fees', 'Pending fees', '19 — Fees', $management, 'fee.view'),
@@ -61,11 +64,9 @@ class DashboardService
             new PendingWidget('recent_admissions', 'Recent admissions', '31 — Online Admission', $management, 'admission.view'),
 
             // Parent — will be scoped to the guardian's own children only.
-            new PendingWidget('child_results', 'Results', '18 — Results', [A::Parent]),
             new PendingWidget('child_fees', 'Fees & dues', '19 — Fees', [A::Parent]),
 
             // Student — will be scoped to the student's own record only.
-            new PendingWidget('my_results', 'My results', '18 — Results', [A::Student]),
             new PendingWidget('my_fees', 'My fees', '19 — Fees', [A::Student]),
 
             // Shared.

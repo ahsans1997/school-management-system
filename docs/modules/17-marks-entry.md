@@ -1,8 +1,8 @@
 # Module 17 — Marks Entry
 
-- **Status:** 🔵 In review
+- **Status:** ✅ Complete
 - **Phase:** Phase 3 — Academic Operations
-- **Completed on:** —
+- **Completed on:** 2026-10-20
 - **Owner agent:** `module-builder`
 
 > Teacher marks entry (CQ / MCQ / practical) per exam-subject, with server-computed totals validated against full marks; marks are stored as DRAFT and never exposed publicly until results are published.
@@ -37,7 +37,8 @@ Uses `exam.marks_entry` (already in the catalogue: Admin, Teacher). Reopening a 
 - The permission gates the route.
 - Then `TeacherScope::authorizeSubject()` requires the teacher's own `teaching_assignments` row for that class subject in that section (403).
 - Being class teacher of the section is not enough.
-- Non-teacher audiences (admin/staff) are not subject-scoped.
+- The scope fails closed: only exam admins (`exam.edit`) are unscoped (`TeacherScope::subjectScoped`). Any other role given `exam.marks_entry` still needs a linked teacher record and the matching assignment, and a teacher who also holds Principal stays scoped.
+- Teaching assignments carry no year, so scoped teachers work only on the **current year's** exams (403 otherwise); older papers belong to exam admins.
 - The doc's `MarksPolicy` is this helper, in line with the existing `TeacherScope` pattern.
 
 ## API endpoints
@@ -104,8 +105,14 @@ A **sheet** is one paper (`exam_subject_id`) as sat by one section (`section_id`
 - [x] Marks remain in DRAFT and are not exposed publicly until Module 18 publishes results
 - [x] Bulk entry covers a whole class-subject in one request
 - [x] Tests written and passing:
-  - 7 marks tests: 403 scope, over-max guard, server total, submit/reopen lock, fixed split, opening day in school time, widget, draft invisibility.
-- [ ] Security review passed (two-layer ownership, no draft leakage, no client-trusted totals)
+  - 11 marks tests: 403 scope, over-max guard, server total, submit/reopen lock, fixed split, opening day in school time, widget, draft invisibility, fail-closed scope, current-year limit, audit trail, section-move guard.
+- [x] Security review passed (two-layer ownership, no draft leakage, no client-trusted totals). No critical/high findings; fixed:
+  - M1: the subject scope keyed off the Teacher role and failed open for other roles → now fails closed (`exam.edit` = unscoped).
+  - M2: a current teacher could rewrite older years' drafts → scoped teachers are limited to the current year.
+  - L1: caps were checked against a paper read before the lock → saves re-read the paper under `FOR UPDATE`; `SaveExamSubjects` locks its papers too.
+  - L2: moving an enrollment dragged its marks to another sheet → a student with marks can't change section; single edits are locked when anything on the sheet is submitted.
+  - L3: reopening erased who submitted → changes to entered marks, clears, submits and reopens are written to `audit_logs` (`App\Support\Audit`).
+  - L4: `Mark` was mass-assignable → `$fillable` is the computed values only; links and actors are force-filled; the controller passes validated records.
 
 ## Notes
 

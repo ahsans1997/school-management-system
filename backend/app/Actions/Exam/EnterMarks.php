@@ -2,11 +2,14 @@
 
 namespace App\Actions\Exam;
 
+use App\Enums\MarkStatus;
 use App\Models\ExamSubject;
 use App\Models\Mark;
 use App\Models\Section;
 use App\Models\User;
 use App\Services\Exam\MarksService;
+use App\Services\Exam\ResultService;
+use App\Support\Audit;
 use App\Support\SchoolClock;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -25,7 +28,10 @@ class EnterMarks
 {
     private const LABELS = ['cq' => 'CQ', 'mcq' => 'MCQ', 'practical' => 'Practical'];
 
-    public function __construct(private readonly MarksService $marks) {}
+    public function __construct(
+        private readonly MarksService $marks,
+        private readonly ResultService $results,
+    ) {}
 
     /**
      * Save a sheet. A blank row clears that student's draft mark; not every
@@ -36,18 +42,19 @@ class EnterMarks
      */
     public function sheet(User $user, ExamSubject $paper, Section $section, array $records): void
     {
-        $this->ensureOpen($paper, 'records');
         $records = array_values($records);
 
         DB::transaction(function () use ($user, $paper, $section, $records) {
-            // Saves and submits of the same paper queue up instead of racing.
-            ExamSubject::query()->whereKey($paper->id)->lockForUpdate()->first();
+            $paper = $this->lockPaper($paper);
+            $this->ensureOpen($paper, 'records');
+            $this->ensureNotFrozen($paper);
 
             $existing = $this->marks->marksOn($paper, $section)->get()->keyBy('student_id');
             if ($existing->contains(fn (Mark $m) => $m->isLocked())) {
                 $this->locked();
             }
-            $roster = $this->marks->roster($paper, $section)->keyBy('student_id');
+            // Locked: a student can't change section while their marks are saved.
+            $roster = $this->marks->roster($paper, $section, lock: true)->keyBy('student_id');
 
             $errors = [];
             $values = [];
@@ -68,11 +75,14 @@ class EnterMarks
             foreach ($values as $studentId => $value) {
                 $mark = $existing->get($studentId);
                 if ($value === null) {
-                    $mark?->delete();
+                    if ($mark !== null) {
+                        Audit::record($user, 'marks.cleared', 'marks', $mark, old: $this->snapshot($mark));
+                        $mark->delete();
+                    }
 
                     continue;
                 }
-                $mark ??= new Mark([
+                $mark ??= (new Mark)->forceFill([
                     'exam_subject_id' => $paper->id,
                     'student_id' => $studentId,
                     'student_enrollment_id' => $roster[$studentId]->id,
@@ -83,16 +93,21 @@ class EnterMarks
         });
     }
 
-    /** Change one student's draft marks (same checks as a sheet row). */
+    /**
+     * Change one student's draft marks (same checks as a sheet row). Locked
+     * when anything on its sheet is submitted.
+     *
+     * @param  array<string, mixed>  $input
+     */
     public function one(User $user, Mark $mark, array $input): Mark
     {
-        $paper = $mark->examSubject;
-        $this->ensureOpen($paper, 'marks');
-
-        return DB::transaction(function () use ($user, $mark, $paper, $input) {
-            ExamSubject::query()->whereKey($paper->id)->lockForUpdate()->first();
+        return DB::transaction(function () use ($user, $mark, $input) {
+            $paper = $this->lockPaper($mark->examSubject);
+            $this->ensureOpen($paper, 'marks');
+            $this->ensureNotFrozen($paper);
             $mark->refresh();
-            if ($mark->isLocked()) {
+            $section = $mark->enrollment->section;
+            if ($this->marks->marksOn($paper, $section)->where('status', MarkStatus::Submitted->value)->exists()) {
                 $this->locked();
             }
 
@@ -112,15 +127,46 @@ class EnterMarks
     }
 
     /**
+     * The paper re-read under a row lock: saves, submits and paper edits of
+     * the same paper queue up, and the caps checked are the current ones.
+     */
+    private function lockPaper(ExamSubject $paper): ExamSubject
+    {
+        return ExamSubject::query()->whereKey($paper->id)->lockForUpdate()->firstOrFail()
+            ->setRelation('exam', $paper->exam);
+    }
+
+    /**
+     * Save a row's values. Changing marks already entered is audited (spec
+     * §43); the first entry is recorded on the row itself (entered_by).
+     *
      * @param  array<string, mixed>  $value
      */
     private function write(User $user, Mark $mark, array $value): void
     {
+        $before = $mark->exists ? $this->snapshot($mark) : null;
         $mark->fill($value);
-        if ($mark->isDirty()) {
-            $mark->updated_by = $user->id;
-            $mark->save();
+        if (! $mark->isDirty()) {
+            return;
         }
+        $mark->updated_by = $user->id;
+        $mark->save();
+        if ($before !== null) {
+            Audit::record($user, 'marks.updated', 'marks', $mark, old: $before, new: $this->snapshot($mark));
+        }
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function snapshot(Mark $mark): array
+    {
+        return [
+            'exam_subject_id' => $mark->exam_subject_id,
+            'student_id' => $mark->student_id,
+            ...collect($mark->only(['cq', 'mcq', 'practical', 'total']))->map(fn ($v) => $v === null ? null : (float) $v)->all(),
+            'absent' => $mark->absent,
+        ];
     }
 
     /**
@@ -226,6 +272,14 @@ class EnterMarks
             throw ValidationException::withMessages([
                 $field => 'Marks can be entered from '.Carbon::parse($opens)->format('j M Y').', once the paper is sat.',
             ]);
+        }
+    }
+
+    /** 409 while the class's results are in review or beyond. */
+    private function ensureNotFrozen(ExamSubject $paper): void
+    {
+        if ($status = $this->results->frozen($paper->exam, $paper->class_id)) {
+            abort(409, "The class's results are {$status->label()}, so its marks can't change.");
         }
     }
 

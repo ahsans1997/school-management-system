@@ -2,11 +2,14 @@
 
 namespace App\Actions\Exam;
 
+use App\Enums\ResultStatus;
 use App\Models\ClassSubject;
 use App\Models\Exam;
 use App\Models\ExamSubject;
+use App\Models\Result;
 use App\Models\SchoolClass;
 use App\Models\Section;
+use App\Services\Exam\ResultService;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -20,6 +23,8 @@ use Illuminate\Validation\ValidationException;
  */
 class SaveExamSubjects
 {
+    public function __construct(private readonly ResultService $results) {}
+
     /**
      * @param  array<array-key, array<string, mixed>>  $input  from the request; keys may not be 0..n
      */
@@ -44,7 +49,12 @@ class SaveExamSubjects
             // One configuration save per exam at a time.
             Exam::query()->whereKey($exam->id)->lockForUpdate()->first();
 
-            $existing = ExamSubject::query()->where('exam_id', $exam->id)->where('class_id', $class->id)->get()
+            // Results are built on these papers: frozen once past draft.
+            if ($status = $this->results->frozen($exam, $class->id)) {
+                abort(409, "{$class->name}'s results are {$status->label()}; return them to draft before changing its papers.");
+            }
+
+            $existing = ExamSubject::query()->where('exam_id', $exam->id)->where('class_id', $class->id)->lockForUpdate()->get()
                 ->keyBy(fn (ExamSubject $s) => $this->key($s->class_subject_id, $s->section_id));
             $wanted = collect($papers)->keyBy(fn (array $p) => $this->key($p['class_subject_id'], $p['section_id']));
 
@@ -61,7 +71,9 @@ class SaveExamSubjects
                 throw ValidationException::withMessages($fixed);
             }
 
+            $changed = false;
             foreach ($existing->diffKeys($wanted) as $removed) {
+                $changed = true;
                 try {
                     $removed->delete();
                 } catch (QueryException $e) {
@@ -79,12 +91,19 @@ class SaveExamSubjects
                     'mcq_marks' => $this->decimal($paper['mcq_marks']),
                     'practical_marks' => $this->decimal($paper['practical_marks']),
                 ];
-                $current = $existing->get($key);
-                $current
-                    ? $current->update($values)
-                    : ExamSubject::create([...$values, 'exam_id' => $exam->id, 'class_id' => $class->id]);
+                $current = $existing->get($key) ?? new ExamSubject(['exam_id' => $exam->id, 'class_id' => $class->id]);
+                $current->fill($values);
+                if ($current->isDirty()) {
+                    $changed = true;
+                    $current->save();
+                }
             }
 
+            if ($changed) {
+                // Draft results no longer match the papers.
+                Result::query()->where('exam_id', $exam->id)->where('class_id', $class->id)
+                    ->where('status', ResultStatus::Draft->value)->delete();
+            }
             $exam->touch();
         });
     }

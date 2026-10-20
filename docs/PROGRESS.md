@@ -4,7 +4,7 @@
 
 Legend: ⬜ Not started · 🟡 In progress · 🔵 In review · ✅ Complete · ⏸️ Blocked
 
-**Overall: 18 / 40 modules complete** (13b was split out of Module 13). Phases 1 (Foundation) and 2 (Academic Core) are done; Phase 3 is up to Module 16.
+**Overall: 20 / 40 modules complete** (13b was split out of Module 13). Phases 1 (Foundation), 2 (Academic Core) and 3 (Academic Operations) are done; next is Phase 4 (Finance), starting with Module 19.
 
 ---
 
@@ -40,8 +40,8 @@ Legend: ⬜ Not started · 🟡 In progress · 🔵 In review · ✅ Complete ·
 | [x] | 14 | Attendance | ✅ Complete | 2026-10-05 | [14-attendance.md](modules/14-attendance.md) |
 | [x] | 15 | Class Routine | ✅ Complete | 2026-10-05 | [15-class-routine.md](modules/15-class-routine.md) |
 | [x] | 16 | Exams | ✅ Complete | 2026-10-05 | [16-exams.md](modules/16-exams.md) |
-| [ ] | 17 | Marks Entry | 🔵 In review | — | [17-marks-entry.md](modules/17-marks-entry.md) |
-| [ ] | 18 | Results | ⬜ Not started | — | [18-results.md](modules/18-results.md) |
+| [x] | 17 | Marks Entry | ✅ Complete | 2026-10-20 | [17-marks-entry.md](modules/17-marks-entry.md) |
+| [x] | 18 | Results | ✅ Complete | 2026-10-20 | [18-results.md](modules/18-results.md) |
 
 ## Phase 4 — Finance
 

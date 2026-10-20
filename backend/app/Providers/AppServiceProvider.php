@@ -2,7 +2,11 @@
 
 namespace App\Providers;
 
+use App\Models\Exam;
+use App\Models\ExamSubject;
 use App\Models\Guardian;
+use App\Models\Mark;
+use App\Models\Result;
 use App\Models\Student;
 use App\Models\Teacher;
 use Illuminate\Cache\RateLimiting\Limit;
@@ -26,12 +30,17 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        // Short aliases for users.personable_type (User::PERSON_TYPES). Each
-        // person module registers its model here when it lands.
+        // Short aliases for users.personable_type (User::PERSON_TYPES) — each
+        // person module registers its model here when it lands — and for
+        // audit_logs.auditable_type.
         Relation::morphMap([
             'guardian' => Guardian::class,
             'student' => Student::class,
             'teacher' => Teacher::class,
+            'exam' => Exam::class,
+            'exam_subject' => ExamSubject::class,
+            'mark' => Mark::class,
+            'result' => Result::class,
         ]);
 
         // Brute-force protection on login: 5 attempts/min keyed by email + IP.

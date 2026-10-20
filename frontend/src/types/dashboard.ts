@@ -108,6 +108,25 @@ export interface PendingMarksWidgetData {
   sheets: (MarkSheetSummary & { exam: { id: number; name: string } })[];
 }
 
+/** `my_results` (student) / `child_results` (parent): published only. */
+export interface PublishedResultsWidgetData {
+  linked: boolean;
+  students: {
+    student: { id: number; name: string };
+    results: {
+      id: number;
+      exam: { id: number; name: string };
+      class: string;
+      section: string;
+      gpa: number;
+      grade: string;
+      passed: boolean;
+      position: number | null;
+      published_at: string | null;
+    }[];
+  }[];
+}
+
 export interface ChildAttendanceWidgetData {
   linked: boolean;
   academic_year?: string;

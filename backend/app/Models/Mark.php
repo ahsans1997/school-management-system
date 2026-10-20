@@ -13,8 +13,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class Mark extends Model
 {
-    /** Totals, status and who-did-what are set by the actions, never mass-assigned from input. */
-    protected $guarded = ['id'];
+    /**
+     * Only the values EnterMarks computes. Links, status and who-did-what
+     * are set with forceFill / direct assignment by the actions.
+     */
+    protected $fillable = ['cq', 'mcq', 'practical', 'total', 'absent'];
 
     /**
      * @return array<string, string>

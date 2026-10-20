@@ -15,6 +15,7 @@ use App\Http\Controllers\IdCardController;
 use App\Http\Controllers\MarkController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\PrivateFileController;
+use App\Http\Controllers\ResultController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\RoutineController;
 use App\Http\Controllers\SchoolClassController;
@@ -213,6 +214,24 @@ Route::middleware(['auth:api', 'token.type:access', 'active'])->group(function (
     Route::post('exams/{exam}/marks/submit', [MarkController::class, 'submit'])->middleware('permission:exam.marks_entry');
     Route::post('exams/{exam}/marks/reopen', [MarkController::class, 'reopen'])->middleware('permission:exam.edit');
     Route::put('marks/{mark}', [MarkController::class, 'update'])->middleware('permission:exam.marks_entry');
+
+    // Results. Module 18. Calculated per class from submitted marks
+    // (result.process), then draft → review → approved → published
+    // (result.publish); every step audited. Reading: result.view, teachers
+    // their own sections. /results/me: a student's or parent's own published
+    // results (ownership, no permission).
+    Route::get('exams/{exam}/results/classes', [ResultController::class, 'classes'])->middleware('permission:result.view');
+    Route::get('exams/{exam}/results', [ResultController::class, 'index'])->middleware('permission:result.view');
+    Route::get('exams/{exam}/results/tabulation', [ResultController::class, 'tabulation'])->middleware('permission:result.view');
+    Route::get('exams/{exam}/results/statistics', [ResultController::class, 'statistics'])->middleware('permission:result.view');
+    Route::post('exams/{exam}/results/calculate', [ResultController::class, 'calculate'])->middleware('permission:result.process');
+    Route::post('exams/{exam}/results/review', [ResultController::class, 'review'])->middleware('permission:result.process');
+    Route::post('exams/{exam}/results/approve', [ResultController::class, 'approve'])->middleware('permission:result.publish');
+    Route::post('exams/{exam}/results/publish', [ResultController::class, 'publish'])->middleware('permission:result.publish');
+    Route::post('exams/{exam}/results/return', [ResultController::class, 'returnToDraft'])->middleware('permission:result.publish');
+    Route::post('exams/{exam}/results/unpublish', [ResultController::class, 'unpublish'])->middleware('permission:result.publish');
+    Route::get('results/me', [ResultController::class, 'me']);
+    Route::get('results/{result}/report-card', [ResultController::class, 'reportCard'])->middleware('permission:result.view');
 
     // Grade scales. Module 16. Changing one regrades every result, so writes
     // need exam.grading (Admin only by default).

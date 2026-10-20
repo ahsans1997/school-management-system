@@ -2,107 +2,15 @@
 
 namespace Tests\Feature\Exam;
 
-use App\Models\ClassSubject;
+use App\Models\AuditLog;
 use App\Models\Exam;
-use App\Models\ExamSubject;
-use App\Models\GradeScale;
 use App\Models\Mark;
-use App\Models\Section;
-use App\Models\Student;
-use App\Models\Subject;
-use App\Models\Teacher;
-use App\Models\TeachingAssignment;
+use App\Models\StudentEnrollment;
 use App\Models\User;
-use Tests\Feature\Enrollment\EnrollmentTestCase;
+use Spatie\Permission\Models\Role;
 
-class MarksTest extends EnrollmentTestCase
+class MarksTest extends ExamMarksTestCase
 {
-    private Exam $exam;
-
-    /** Class-wide, one figure out of 100, sat 10 Nov. */
-    private ExamSubject $bangla;
-
-    /** Class-wide, CQ 70 + MCQ 30, sat 12 Nov. */
-    private ExamSubject $maths;
-
-    /** 6A only, CQ 25 + MCQ 12.5 + practical 12.5 = 50, sat 18 Nov. */
-    private ExamSubject $physics;
-
-    private Student $rahim;
-
-    private Student $karim;
-
-    private Student $sumi;
-
-    private User $teacher;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-        $this->travelTo('2026-11-15 09:00');
-
-        $scale = GradeScale::create(['name' => 'GPA 5']);
-        $scale->grades()->create(['name' => 'F', 'grade_point' => 0, 'min_percent' => 0]);
-        $this->exam = Exam::forceCreate([
-            'academic_year_id' => $this->y2026->id, 'grade_scale_id' => $scale->id, 'name' => 'Half Yearly',
-            'type' => 'half_yearly', 'start_date' => '2026-11-10', 'end_date' => '2026-11-20',
-        ]);
-
-        $cs = [];
-        foreach (['Bangla', 'Mathematics', 'Physics'] as $name) {
-            $this->six->subjects()->attach(Subject::create(['name' => $name])->id);
-            $cs[$name] = ClassSubject::query()->where('class_id', $this->six->id)->whereHas('subject', fn ($q) => $q->where('name', $name))->sole();
-        }
-        $paper = fn (string $subject, array $values) => ExamSubject::create([
-            'exam_id' => $this->exam->id, 'class_id' => $this->six->id, 'class_subject_id' => $cs[$subject]->id,
-            'full_marks' => 100, 'pass_marks' => 33, ...$values,
-        ]);
-        $this->bangla = $paper('Bangla', ['exam_date' => '2026-11-10']);
-        $this->maths = $paper('Mathematics', ['cq_marks' => 70, 'mcq_marks' => 30, 'exam_date' => '2026-11-12']);
-        $this->physics = $paper('Physics', [
-            'section_id' => $this->sixA->id, 'full_marks' => 50, 'pass_marks' => 16.5,
-            'cq_marks' => 25, 'mcq_marks' => 12.5, 'practical_marks' => 12.5, 'exam_date' => '2026-11-18',
-        ]);
-
-        $this->rahim = $this->student('Rahim');
-        $this->karim = $this->student('Karim');
-        $this->sumi = $this->student('Sumi');
-        $this->enroll($this->rahim, $this->sixA)->assertCreated();
-        $this->enroll($this->karim, $this->sixA)->assertCreated();
-        $this->enroll($this->sumi, $this->sixB)->assertCreated();
-
-        // Kamal teaches 6A Mathematics and is class teacher of 6B (not enough for marks).
-        $kamal = Teacher::create(['name' => 'Kamal', 'employee_id' => 'T-1', 'joining_date' => '2020-01-01', 'phone' => '01700000001']);
-        TeachingAssignment::create(['teacher_id' => $kamal->id, 'section_id' => $this->sixA->id, 'class_subject_id' => $cs['Mathematics']->id]);
-        $this->sixB->forceFill(['class_teacher_id' => $kamal->id])->save();
-        $this->teacher = User::factory()->create(['name' => 'Kamal', 'personable_type' => 'teacher', 'personable_id' => $kamal->id]);
-        $this->teacher->assignRole('Teacher');
-    }
-
-    private function sheetUrl(ExamSubject $paper, Section $section): string
-    {
-        return "/api/exams/{$this->exam->id}/marks/sheet?exam_subject_id={$paper->id}&section_id={$section->id}";
-    }
-
-    private function save(User $as, ExamSubject $paper, Section $section, array $records)
-    {
-        return $this->asUser($as)->postJson("/api/exams/{$this->exam->id}/marks/bulk", [
-            'exam_subject_id' => $paper->id, 'section_id' => $section->id, 'records' => $records,
-        ]);
-    }
-
-    private function sheetAction(User $as, string $action, ExamSubject $paper, Section $section)
-    {
-        return $this->asUser($as)->postJson("/api/exams/{$this->exam->id}/marks/{$action}", [
-            'exam_subject_id' => $paper->id, 'section_id' => $section->id,
-        ]);
-    }
-
-    private function markOf(Student $student, ExamSubject $paper): Mark
-    {
-        return Mark::query()->where('student_id', $student->id)->where('exam_subject_id', $paper->id)->sole();
-    }
-
     public function test_a_teacher_works_only_on_the_subjects_they_teach(): void
     {
         // Their sheets: just 6A Mathematics, with progress.
@@ -287,5 +195,75 @@ class MarksTest extends EnrollmentTestCase
         $this->assertStringNotContainsString('88', $me);
         $this->assertStringNotContainsString('"total"', $me);
         $this->asUser($studentLogin)->getJson("/api/exams/{$this->exam->id}/marks")->assertForbidden();
+    }
+
+    public function test_the_subject_scope_fails_closed_for_any_role_but_exam_admins(): void
+    {
+        // A custom role given exam.marks_entry, with no teacher record: nothing.
+        Role::findOrCreate('Exam Clerk', 'api')->givePermissionTo('exam.marks_entry');
+        $clerk = $this->userWithRole('Exam Clerk');
+        $this->asUser($clerk)->getJson("/api/exams/{$this->exam->id}/marks")->assertOk()->assertJsonCount(0, 'data');
+        $this->asUser($clerk)->getJson($this->sheetUrl($this->bangla, $this->sixA))->assertForbidden();
+        $this->save($clerk, $this->bangla, $this->sixA, [['student_id' => $this->rahim->id, 'marks' => 50]])->assertForbidden();
+
+        // A teacher who is also Principal is still limited to their own subject.
+        $this->teacher->assignRole('Principal');
+        $this->asUser($this->teacher)->getJson("/api/exams/{$this->exam->id}/marks")->assertOk()->assertJsonCount(1, 'data');
+        $this->asUser($this->teacher)->getJson($this->sheetUrl($this->bangla, $this->sixA))->assertForbidden();
+    }
+
+    public function test_teachers_only_work_on_the_current_years_exams(): void
+    {
+        // Teaching assignments carry no year: next year's (or a past year's) exam is out of reach.
+        $other = Exam::forceCreate([
+            'academic_year_id' => $this->y2027->id, 'grade_scale_id' => $this->scale->id, 'name' => 'Class test',
+            'type' => 'test', 'start_date' => '2027-03-01',
+        ]);
+        $paper = $other->subjects()->create(['class_id' => $this->six->id, 'class_subject_id' => $this->cs['Mathematics']->id, 'full_marks' => 20, 'pass_marks' => 7]);
+
+        $this->asUser($this->teacher)->getJson("/api/exams/{$other->id}/marks")->assertOk()->assertJsonCount(0, 'data');
+        $this->asUser($this->teacher)->getJson($this->sheetUrl($paper, $this->sixA, $other))->assertForbidden();
+        $this->asUser($this->admin)->getJson($this->sheetUrl($paper, $this->sixA, $other))->assertOk();
+    }
+
+    public function test_changes_to_entered_marks_are_audited(): void
+    {
+        $this->save($this->admin, $this->maths, $this->sixA, [['student_id' => $this->rahim->id, 'cq' => 60, 'mcq' => 20]])->assertOk();
+        $this->assertSame(0, AuditLog::query()->count()); // the first entry is on the row itself
+
+        $this->save($this->teacher, $this->maths, $this->sixA, [['student_id' => $this->rahim->id, 'cq' => 65, 'mcq' => 20]])->assertOk();
+        $log = AuditLog::query()->where('action', 'marks.updated')->sole();
+        $this->assertEquals([$this->teacher->id, 'marks', 80, 85], [$log->user_id, $log->module, $log->old_values['total'], $log->new_values['total']]);
+        $this->assertSame('mark', $log->auditable_type);
+
+        $this->save($this->teacher, $this->maths, $this->sixA, [['student_id' => $this->rahim->id]])->assertOk();
+        $this->assertEquals(85, AuditLog::query()->where('action', 'marks.cleared')->sole()->old_values['total']);
+
+        $this->save($this->teacher, $this->maths, $this->sixA, [
+            ['student_id' => $this->rahim->id, 'cq' => 65, 'mcq' => 20],
+            ['student_id' => $this->karim->id, 'absent' => true],
+        ])->assertOk();
+        $this->sheetAction($this->teacher, 'submit', $this->maths, $this->sixA)->assertOk();
+        $this->sheetAction($this->admin, 'reopen', $this->maths, $this->sixA)->assertOk();
+        $reopened = AuditLog::query()->where('action', 'marks.reopened')->sole();
+        $this->assertSame([$this->admin->id, $this->teacher->id, 2], [$reopened->user_id, $reopened->old_values['submitted_by'], $reopened->new_values['marks']]);
+        $this->assertSame(1, AuditLog::query()->where('action', 'marks.submitted')->count());
+
+        // Append-only.
+        $this->expectException(\LogicException::class);
+        $reopened->update(['action' => 'tampered']);
+    }
+
+    public function test_a_student_with_marks_keeps_their_section(): void
+    {
+        $this->save($this->admin, $this->bangla, $this->sixA, [['student_id' => $this->rahim->id, 'marks' => 70]])->assertOk();
+        $move = fn ($student) => $this->asUser($this->admin)->putJson(
+            '/api/enrollments/'.StudentEnrollment::query()->where('student_id', $student->id)->sole()->id,
+            ['section_id' => $this->sixB->id, 'status' => 'active'],
+        );
+
+        $move($this->rahim)->assertUnprocessable()->assertJsonValidationErrors(['section_id']);
+        $move($this->karim)->assertOk(); // no marks yet
+        $this->assertSame(1, Mark::query()->count());
     }
 }

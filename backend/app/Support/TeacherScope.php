@@ -37,13 +37,24 @@ final class TeacherScope
     }
 
     /**
+     * Whether subject-level work (marks) is limited to the user's own
+     * teaching. Fails closed: only exam admins (exam.edit) are unscoped, so
+     * any other role given exam.marks_entry still needs a linked teacher
+     * record and the matching teaching assignment.
+     */
+    public static function subjectScoped(User $user): bool
+    {
+        return ! $user->can('exam.edit');
+    }
+
+    /**
      * Subject-level scope (marks): the teacher teaches this class subject in
      * this section — their own teaching_assignments row. Being class teacher
      * of the section isn't enough.
      */
     public static function teaches(User $user, Section $section, int $classSubjectId): bool
     {
-        if (! self::applies($user)) {
+        if (! self::subjectScoped($user)) {
             return true;
         }
 

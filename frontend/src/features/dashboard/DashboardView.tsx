@@ -12,6 +12,7 @@ import {
   ChartPie,
   ShieldCheck,
   Sparkles,
+  Trophy,
   UserPlus,
   UserRound,
   Users,
@@ -33,6 +34,7 @@ import type {
   ChildAttendanceWidgetData,
   MyAttendanceWidgetData,
   PendingMarksWidgetData,
+  PublishedResultsWidgetData,
   ChildrenWidgetData,
   RecentUsersWidgetData,
   SchoolWidgetData,
@@ -61,6 +63,8 @@ const CUSTOM_KEYS = new Set([
   "my_routine",
   "upcoming_exams",
   "pending_marks",
+  "my_results",
+  "child_results",
 ]);
 
 type Tone =
@@ -575,6 +579,71 @@ function PendingMarksCard({ data }: { data: PendingMarksWidgetData }) {
   );
 }
 
+/** A student's (or each child's) latest published results. */
+function PublishedResultsCard({
+  data,
+  parent,
+}: {
+  data: PublishedResultsWidgetData;
+  parent: boolean;
+}) {
+  const href = parent ? "/parent/results" : "/student/results";
+  const empty = data.students.every((s) => s.results.length === 0);
+  return (
+    <Card
+      title={parent ? "Results" : "My results"}
+      icon={Trophy}
+      tone="amber"
+      action={
+        <Link href={href} className="link">
+          All results →
+        </Link>
+      }
+    >
+      {!data.linked ? (
+        <p className={muted}>
+          Your login isn&apos;t linked to a {parent ? "guardian" : "student"}{" "}
+          record yet.
+        </p>
+      ) : empty ? (
+        <p className={muted}>No published results yet.</p>
+      ) : (
+        <ul className={list}>
+          {data.students.flatMap((s) =>
+            s.results.map((r) => (
+              <li
+                key={r.id}
+                className="flex items-center justify-between gap-3 py-2.5"
+              >
+                <span className="min-w-0">
+                  <span className="block truncate font-medium text-slate-800 dark:text-slate-100">
+                    {r.exam.name}
+                  </span>
+                  <span className="block text-xs text-slate-500">
+                    {parent ? `${s.student.name} · ` : ""}
+                    {r.class} {r.section}
+                    {r.position ? ` · Position ${r.position}` : ""}
+                  </span>
+                </span>
+                <span className="text-right">
+                  <span className="block text-lg leading-tight font-bold tabular-nums">
+                    {r.gpa.toFixed(2)}
+                  </span>
+                  <span
+                    className={`text-xs font-semibold ${r.passed ? "text-emerald-600 dark:text-emerald-400" : "text-rose-600 dark:text-rose-400"}`}
+                  >
+                    {r.grade}
+                  </span>
+                </span>
+              </li>
+            )),
+          )}
+        </ul>
+      )}
+    </Card>
+  );
+}
+
 /** A percentage as a thin coloured bar. */
 function Meter({ value }: { value: number | null }) {
   const width = Math.max(0, Math.min(100, value ?? 0));
@@ -914,6 +983,8 @@ export function DashboardView() {
   const myRoutine = find<TodaysPeriodsWidgetData>("my_routine");
   const upcomingExams = find<UpcomingExamsWidgetData>("upcoming_exams");
   const pendingMarks = find<PendingMarksWidgetData>("pending_marks");
+  const myResults = find<PublishedResultsWidgetData>("my_results");
+  const childResults = find<PublishedResultsWidgetData>("child_results");
   const others = ready.filter((w) => !CUSTOM_KEYS.has(w.key));
 
   const tiles: { key: string; tile: ReactNode }[] = [];
@@ -1026,6 +1097,8 @@ export function DashboardView() {
         )}
         {attendanceTasks && <AttendanceTasksCard data={attendanceTasks} />}
         {pendingMarks && <PendingMarksCard data={pendingMarks} />}
+        {myResults && <PublishedResultsCard data={myResults} parent={false} />}
+        {childResults && <PublishedResultsCard data={childResults} parent />}
         {assigned && <AssignedSubjectsCard data={assigned} />}
         {childAttendance && <ChildAttendanceCard data={childAttendance} />}
         {myAttendance && <MyAttendanceCard data={myAttendance} />}

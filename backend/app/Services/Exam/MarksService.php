@@ -5,6 +5,7 @@ namespace App\Services\Exam;
 use App\Enums\MarkStatus;
 use App\Http\Resources\ExamSubjectResource;
 use App\Http\Resources\MarkResource;
+use App\Models\AcademicYear;
 use App\Models\Exam;
 use App\Models\ExamSubject;
 use App\Models\Mark;
@@ -38,6 +39,7 @@ class MarksService
      */
     public function resolve(User $user, Exam $exam, int $examSubjectId, int $sectionId): array
     {
+        $this->authorizeExam($user, $exam);
         $paper = ExamSubject::query()->with(['schoolClass', 'section', 'classSubject.subject'])
             ->where('exam_id', $exam->id)->findOrFail($examSubjectId);
         $section = Section::query()->with('schoolClass')->findOrFail($sectionId);
@@ -49,6 +51,21 @@ class MarksService
         $paper->setRelation('exam', $exam);
 
         return [$paper, $section];
+    }
+
+    /**
+     * Teaching assignments carry no year, so a scoped teacher works only on
+     * the current year's exams: older papers belong to whoever taught them
+     * then, and only exam admins change them (403).
+     */
+    public function authorizeExam(User $user, Exam $exam): void
+    {
+        abort_if($this->outOfYear($user, $exam), 403, 'Marks for exams of past years can only be changed by an exam admin.');
+    }
+
+    private function outOfYear(User $user, Exam $exam): bool
+    {
+        return TeacherScope::subjectScoped($user) && $exam->academic_year_id !== AcademicYear::current()?->id;
     }
 
     /** The first day marks can be entered: the paper's date, or the exam's start when it isn't scheduled. */
@@ -68,10 +85,11 @@ class MarksService
      *
      * @return Collection<int, StudentEnrollment>
      */
-    public function roster(ExamSubject $paper, Section $section): Collection
+    public function roster(ExamSubject $paper, Section $section, bool $lock = false): Collection
     {
         return StudentEnrollment::query()->with('student')
             ->onRoll($section, $paper->exam->academicYear, $this->opensOn($paper))
+            ->when($lock, fn ($q) => $q->lockForUpdate())
             ->get();
     }
 
@@ -142,14 +160,14 @@ class MarksService
     /**
      * The sheets of an exam the user may work on, paginated: every paper ×
      * section that sits it (a class-wide paper once per section), limited to
-     * a teacher's own subject + section pairs. By class, section, subject;
+     * a teacher's own subject + section pairs in the current year's exams. By class, section, subject;
      * each row carries its section as `sheet_section_id`.
      *
      * @return Builder<ExamSubject>
      */
     public function sheets(User $user, Exam $exam, ?int $classId = null): Builder
     {
-        $teacherId = TeacherScope::applies($user) ? (Teacher::forUser($user)->id ?? 0) : null;
+        $teacherId = TeacherScope::subjectScoped($user) ? (Teacher::forUser($user)->id ?? 0) : null;
 
         return ExamSubject::query()
             ->with(['schoolClass', 'classSubject.subject'])
@@ -158,6 +176,7 @@ class MarksService
             ->join('class_subjects', 'class_subjects.id', '=', 'exam_subjects.class_subject_id')
             ->join('subjects', 'subjects.id', '=', 'class_subjects.subject_id')
             ->where('exam_subjects.exam_id', $exam->id)
+            ->when($this->outOfYear($user, $exam), fn ($q) => $q->whereRaw('1 = 0'))
             ->where(fn ($q) => $q->whereNull('exam_subjects.section_id')->orWhereColumn('exam_subjects.section_id', 'sections.id'))
             ->when($teacherId !== null, fn ($q) => $q->whereExists(fn ($s) => $s->from('teaching_assignments')
                 ->whereColumn('teaching_assignments.section_id', 'sections.id')

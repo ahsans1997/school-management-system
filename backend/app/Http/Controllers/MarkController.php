@@ -74,7 +74,7 @@ class MarkController extends Controller
     public function store(SaveMarksRequest $request, Exam $exam, EnterMarks $enter): JsonResponse
     {
         [$paper, $section] = $this->resolve($request, $exam);
-        $enter->sheet($request->user(), $paper, $section, $request->input('records'));
+        $enter->sheet($request->user(), $paper, $section, $request->validated('records'));
 
         return response()->json(['data' => $this->marks->sheet($request->user(), $paper, $section)]);
     }
@@ -92,7 +92,7 @@ class MarkController extends Controller
     public function reopen(MarkSheetRequest $request, Exam $exam, SubmitMarks $submit): JsonResponse
     {
         [$paper, $section] = $this->resolve($request, $exam);
-        $submit->reopen($paper, $section);
+        $submit->reopen($request->user(), $paper, $section);
 
         return response()->json(['data' => $this->marks->sheet($request->user(), $paper, $section)]);
     }
@@ -102,6 +102,7 @@ class MarkController extends Controller
     {
         $paper = $mark->examSubject;
         abort_if($paper->exam === null, 404); // the exam is archived
+        $this->marks->authorizeExam($request->user(), $paper->exam);
         TeacherScope::authorizeSubject($request->user(), $mark->enrollment->section, $paper->class_subject_id);
 
         return new MarkResource($enter->one($request->user(), $mark, $request->validated()));

@@ -2,8 +2,10 @@
 
 namespace App\Actions\Exam;
 
+use App\Enums\ResultStatus;
 use App\Models\AcademicYear;
 use App\Models\Exam;
+use App\Models\Result;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
@@ -62,6 +64,16 @@ class SaveExam
             }
             if ($errors !== []) {
                 throw ValidationException::withMessages($errors);
+            }
+
+            // Results are graded on the exam's scale: switching scales is
+            // refused once any class is past draft, and clears draft results.
+            if ((int) $values['grade_scale_id'] !== $exam->grade_scale_id) {
+                $frozen = Result::query()->where('exam_id', $exam->id)->where('status', '!=', ResultStatus::Draft->value)->exists();
+                if ($frozen) {
+                    throw ValidationException::withMessages(['grade_scale_id' => 'Results of this exam are in review or published, so its grade scale can\'t change.']);
+                }
+                Result::query()->where('exam_id', $exam->id)->delete();
             }
 
             $exam->update($values);

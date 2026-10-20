@@ -4,6 +4,7 @@ namespace App\Actions\Enrollment;
 
 use App\Enums\EnrollmentStatus;
 use App\Models\AcademicYear;
+use App\Models\Mark;
 use App\Models\Section;
 use App\Models\Student;
 use App\Models\StudentEnrollment;
@@ -67,8 +68,17 @@ class Enrollments
     ): StudentEnrollment {
         return DB::transaction(function () use ($enrollment, $section, $roll, $status, $endedOn, $exitReason) {
             $year = $enrollment->academicYear;
+            // The enrollment row first: marks entry locks the roll it saves
+            // against, so a move and a marks save can't interleave.
+            StudentEnrollment::query()->whereKey($enrollment->id)->lockForUpdate()->first();
             $moving = $section->id !== $enrollment->section_id;
-            $this->lock($section);
+            $this->lock($section, $enrollment->section);
+
+            // Marks belong to the section the paper was sat in (its mark
+            // sheet), so a student with marks stays in their section.
+            if ($moving && Mark::query()->where('student_enrollment_id', $enrollment->id)->exists()) {
+                $this->fail('section_id', 'This student already has exam marks in their current section this year, so they can\'t move to another section.');
+            }
 
             // Taking a seat it didn't hold before: moving while active, or re-activating.
             $takesSeat = $status === EnrollmentStatus::Active

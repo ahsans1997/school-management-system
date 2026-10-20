@@ -21,6 +21,12 @@ Excludes: application error/access logging and monitoring (spec §63, infrastruc
 
 - `audit_logs` — id, user_id (FK, nullable for system), action (string), module (string, e.g. `payments`), auditable_type + auditable_id (polymorphic record ref), old_values (json, nullable), new_values (json, nullable), ip_address (string), user_agent (nullable), created_at. Indexes: (user_id), (module, created_at), (auditable_type, auditable_id). No `updated_at`/soft deletes — rows are immutable.
 - References: `users`; polymorphically references any audited model (payments, results, students, school_settings, …).
+- **Already in place (2026-10-20, Modules 17–18):**
+  - The `audit_logs` table with this schema.
+  - The append-only `AuditLog` model.
+  - `App\Support\Audit::record()`, which reads the IP and user agent from the request.
+  - Explicit entries are already written for marks changes after entry, clears, submits and reopens, and for every results step (calculated → published / unpublished).
+  - This module adds the `Auditable` trait/observer for automatic capture, wires the other modules, and builds the viewer.
 
 ## Permissions
 

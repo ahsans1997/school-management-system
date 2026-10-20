@@ -15,6 +15,7 @@ import {
   School,
   Settings,
   ShieldCheck,
+  Trophy,
   UserCog,
   UserRound,
   UsersRound,
@@ -97,6 +98,12 @@ const NAV: readonly NavItem[] = [
     label: "Marks entry",
     permission: "exam.marks_entry",
     icon: ClipboardPen,
+  },
+  {
+    href: "/admin/results",
+    label: "Results",
+    permission: "result.view",
+    icon: Trophy,
   },
   {
     href: "/admin/grade-scales",

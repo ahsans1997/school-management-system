@@ -6,6 +6,7 @@ import {
   ClipboardPen,
   House,
   NotebookPen,
+  Trophy,
 } from "lucide-react";
 import type { ReactNode } from "react";
 import type { NavItem } from "@/components/AppShell";
@@ -27,6 +28,12 @@ const NAV: readonly NavItem[] = [
     label: "Marks entry",
     permission: "exam.marks_entry",
     icon: ClipboardPen,
+  },
+  {
+    href: "/teacher/results",
+    label: "Results",
+    permission: "result.view",
+    icon: Trophy,
   },
 ];
 
